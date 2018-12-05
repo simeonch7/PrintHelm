@@ -1,0 +1,10 @@
+/Objects/bin
+/SPA.b4a.meta
+/Objects/gen
+/Objects/shell
+/Objects/src
+/Objects/SPA.apk
+/Objects/*.dex
+/Objects/ObfuscatorMap.txt
+/Objects/res/xml
+/Objects/AndroidManifest.xml
