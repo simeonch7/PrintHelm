@@ -1,2 +1,2 @@
-# PrintHelm
-Diplomа Project
+# Smart Printer For Android
+Diplomа Project 
