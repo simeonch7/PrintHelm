@@ -17,7 +17,7 @@ Sub Process_Globals
 	'Debug режим на принтерите за проследяване на комуникацията в Log
 	Public Const PrinterDebugMode As Boolean = True
 	
-	Public Const WatermarkText As String = "*** Axis Cloud Software ***"
+	Public Const WatermarkText As String = "***  Smart Printer for Android ***"
 	Public Const WatermarkURL As String = "https://www.microinvest.net"
 End Sub
 
