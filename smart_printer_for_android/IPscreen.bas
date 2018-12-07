@@ -56,7 +56,7 @@ End Sub
 ' Построяване на екрана / Builds the UI of the screen
 Public Sub build_Screen
 	loginPanel_Configurations
-	start_up
+'	start_up
 	
 	Private edtWidth,edtHeight As Int
 	Private btnWidth,btnHeight As Int
@@ -116,7 +116,7 @@ Private Sub loginPanel_Configurations
 	PrinterPort.SingleLine = True
 	PrinterPort.Hint = Main.translate.GetString("hintPort")
 	PrinterPort.HintColor = Colors.Gray
-	PrinterPort.TextSize = 14
+'	PrinterPort.TextSize = 14
 
 	checkloginPanel.TextColor=Colors.White
 	checkloginPanel.TextSize = 14
@@ -147,12 +147,12 @@ Private Sub PrinterPort_FocusChanged (HasFocus As Boolean)
 End Sub
 
 'Записва в RAF файл текущия потребител / Writes the current PrinterIP 
-Private Sub write_Usrs
-	raf.Initialize(File.DirDefaultExternal, "PrinterIPs.config", False)
-	raf.WriteEncryptedObject(usrString, ProgramData.rafEncPass, raf.CurrentPosition)
-	raf.WriteEncryptedObject(PrinterPortString, ProgramData.rafEncPass, raf.CurrentPosition)
-	raf.Close
-End Sub
+'Private Sub write_Usrs
+'	raf.Initialize(File.DirDefaultExternal, "PrinterIPs.config", False)
+'	raf.WriteEncryptedObject(usrString, ProgramData.rafEncPass, raf.CurrentPosition)
+'	raf.WriteEncryptedObject(PrinterPortString, ProgramData.rafEncPass, raf.CurrentPosition)
+'	raf.Close
+'End Sub
 
 'Чете от RAF файл текущия потребител
 Private Sub Read_SavedUsrs

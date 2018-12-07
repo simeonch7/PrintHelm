@@ -27,18 +27,18 @@ Library7=usb
 Library8=felusbserial
 Library9=serial
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="5" android:targetSdkVersion="26"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~'End of default text.~\n~
-Module1=PrinterStatusSVItem
-Module10=ProgramData
-Module11=Translator
-Module12=Version
-Module13=ScriptMaster
-Module14=PrinterPriceCalculator
-Module15=BytesBuilder
-Module16=Countries
+Module1=SettingsScreen
+Module10=PrinterStatusScreen
+Module11=ProgramData
+Module12=Translator
+Module13=Version
+Module14=ScriptMaster
+Module15=PrinterPriceCalculator
+Module16=BytesBuilder
 Module17=PrinterConstants
 Module18=Device
 Module19=Constants
-Module2=PrinterPOS
+Module2=Countries
 Module20=HelperFunctions
 Module21=UISizes
 Module22=Utilities
@@ -48,13 +48,13 @@ Module25=B4XEval
 Module26=ImageResources
 Module27=OperationFunctions
 Module28=PriceMathFunctions
-Module3=IPscreen
-Module4=SettingsScreen
-Module5=SPAservice
-Module6=ButtonWithNotifications
-Module7=PrinterMain
-Module8=PrinterStatusSVItems
-Module9=PrinterStatusScreen
+Module3=SPAservice
+Module4=PrinterStatusSVItem
+Module5=PrinterPOS
+Module6=IPscreen
+Module7=ButtonWithNotifications
+Module8=PrinterMain
+Module9=PrinterStatusSVItems
 NumberOfFiles=3
 NumberOfLibraries=19
 NumberOfModules=28
@@ -126,6 +126,15 @@ Sub Activity_Create(FirstTime As Boolean)
 	loginScr.build_Screen
 	settingsScr.Initialize
 	Activity.AddView(settingsScr.asView, 0, 0, 100%x, 100%y)
+	
+End Sub
+
+Sub Activity_Resume
+	StartService(SPAservice)
+End Sub
+
+Sub Activity_Pause (UserClosed As Boolean)
+	StopService(SPAservice)
 End Sub
 
 Private Sub LoadInitialSettingsStandart
@@ -198,15 +207,18 @@ Private Sub SearchForDeviceLanguage
 		SelectedLanguage = lng_EN
 	End If
 End Sub
+
 Sub changePanels
 	'Бутона Вход се деактивира. Против спам
-	loginScr.asview.Enabled=False
+	If loginScr.asview.Enabled Then
 	
 	loginScr.asview.Enabled = False
 	loginScr.asview.Visible = False
 	
 	settingsScr.asView.Enabled = True
 	settingsScr.asview.Visible = True
+	
+	End If
 End Sub
 
 private Sub sendOperation
