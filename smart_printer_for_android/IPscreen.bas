@@ -167,11 +167,9 @@ End Sub
 
 'Метода, който вкарва потребителя в системата / Method for log in 
 Private Sub ButtonloginPanel_Click
-	'Бутона Вход се деактивира. Против спам
-	btnloginPanel.Enabled=False
-	
+	CallSub(Main, "changePanels")	
 End Sub
-
+	
 Private Sub isConnect_Click
 	If checkNet Then
 		lblConnection.Text = "Connected"

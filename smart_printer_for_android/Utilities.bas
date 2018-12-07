@@ -488,6 +488,24 @@ Public Sub GetMyIP As String
 End Sub
 #End Region
 
+#Region Имена на продуктите
+Public Sub ProductName(FullName As Boolean) As String
+	Dim s As String
+
+	Select Case Version.ProductID
+		Case 130: s = "Microinvest Restaurant"
+		Case 131: s = "Microinvest FastPOS"
+		Case 137: s = "Microinvest FastMSPOS"
+		Case 138: s = "Microinvest НҰР Касса"
+		Case 201: s = "Multisoft MSPOS-K"
+	End Select
+	
+	If FullName Then s = s & CRLF & "For Android"
+	
+	Return s
+End Sub
+#End Region
+
 #Region Системни и помощни функции
 'Превръща HEX в цвят
 Public Sub Clr(MyColor As String) As Int

@@ -40,13 +40,6 @@ Sub Server_HandleRequest (Request As ServletRequest, Response As ServletResponse
 		Select True
 			Case Request.RequestURI = "/"
 				HandleMainPage (Response)
-			Case Request.RequestURI.StartsWith("/list/")
-				HandleList (Request, Response)
-			Case Request.RequestURI.StartsWith("/download/")
-				SetContentType(Request.RequestURI, Response)
-				Response.SendFile("", DecodePath(Request.RequestURI.SubString(9)))
-			Case Request.RequestURI.StartsWith("/upload/")
-				HandleUpload(Request, Response)
 			Case Else
 				'send a file as a response (this section is enough in order to host a site)
 				SetContentType(Request.RequestURI, Response)
