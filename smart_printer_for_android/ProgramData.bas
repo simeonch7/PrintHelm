@@ -71,6 +71,8 @@ Private Sub Process_Globals
 	Public selectedPartnerID As Int = 0
 	Public selectedObjectID As Int
 
+	Public req As String
+'	Public devicePort As Int
 End Sub
 
 'Инициализиране на обекта / Initializes the object

@@ -168,6 +168,11 @@ End Sub
 'Метода, който вкарва потребителя в системата / Method for log in 
 Private Sub ButtonloginPanel_Click
 	CallSub(Main, "changePanels")	
+'	If PrinterPort.Text = Null Then
+'		ProgramData.devicePort = PrinterPort.Text
+'		Log("porta"&PrinterPort)
+'		Log("porta2"&ProgramData.devicePort)
+'	End If
 End Sub
 	
 Private Sub isConnect_Click

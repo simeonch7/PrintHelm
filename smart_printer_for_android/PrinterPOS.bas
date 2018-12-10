@@ -7,8 +7,6 @@ Version=7.3
 Sub Class_Globals
 	'General
 	Private masterPrinter As PrinterMain				'Ignore (the variable is actually used, the ide is buggy)
-	Private statusItem As PrinterStatusSVItem	'Reference to item in StatusScreen
-	Private userAction As ResumableSub			'Used to get action when error interupt printing.
 	
 	Private selectedCmdSet As Int 
 	
@@ -571,9 +569,6 @@ Private Sub setDeviceParams(FiscalChars As Int, nonFiscalChars As Int)
 	DeviceParameters.NonFiscalChars = nonFiscalChars
 End Sub
 
-Public Sub setStatus_Item(item As PrinterStatusSVItem)
-	statusItem = item
-End Sub
 
 'Set Connection parameters
 Public Sub SetConnection_Parameters(connectionParams As TConnectionParameters)
@@ -602,18 +597,16 @@ End Sub
 
 'Execute all jobs
 #Region Connection
-Public Sub doJobs
-	statusItem.changeStatus(PrinterConstants.Printing)
-	
+Public Sub doJobs	
 	Select Case DeviceConnection
-		Case Conn_BT
-			If Not(BTAdmin.IsInitialized) Then BTAdmin.Initialize("BluetoothAdmin")
-			If Not(BTPort.IsInitialized) Then BTPort.Initialize("RemoteDevice")
-			If BTPort.IsEnabled Then
-				BTPort.Connect(ConnectionParameters.DeviceMAC)
-			Else
-				ConnectionError
-			End If
+'		Case Conn_BT
+'			If Not(BTAdmin.IsInitialized) Then BTAdmin.Initialize("BluetoothAdmin")
+'			If Not(BTPort.IsInitialized) Then BTPort.Initialize("RemoteDevice")
+'			If BTPort.IsEnabled Then
+'				BTPort.Connect(ConnectionParameters.DeviceMAC)
+'			Else
+'				ConnectionError
+'			End If
 
 		Case Conn_LAN
 			If Not(MySocket.IsInitialized) Then MySocket.Initialize("RemoteDevice")
@@ -626,7 +619,7 @@ Public Sub doJobs
 				If Not(USBAdmin.HasPermission(MyDevice)) Then
 					ToastMessageShow(Main.translate.GetString("msgAllowUsbConnection"), True)
 					USBAdmin.RequestPermission(MyDevice)
-					ConnectionError
+'					ConnectionError
 				Else
 					USBSerial.Initialize("USBSerial", MyDevice, -1)
 					USBSerial.BaudRate = ConnectionParameters.BaudRate
@@ -639,7 +632,7 @@ Public Sub doJobs
 					Catch
 						USBSerial.Close
 						
-						ConnectionError
+'						ConnectionError
 						Return
 					End Try
 				
@@ -647,29 +640,29 @@ Public Sub doJobs
 				End If
 			Else
 				ToastMessageShow(Main.translate.GetString("msgNoDevice"),False)
-				ConnectionError
+'				ConnectionError
 			End If
 	End Select
 End Sub
 
-Private Sub ConnectionError
-	handleUserAction(PrinterConstants.ERR_NoCommunication)
-	Wait For UserAction_Click(action As Int)
-				
-	Select action
-		Case PrinterConstants.Action_Retry
-			statusItem.changeStatus(PrinterConstants.Printing)
-			doJobs
-				
-		Case PrinterConstants.Action_Ignore
-			statusItem.changeStatus(PrinterConstants.Printing)
-			doJobs
-		
-		Case PrinterConstants.Action_Abort
-			statusItem.changeStatus(PrinterConstants.ERR_NoError)
-			Jobs.Clear
-	End Select
-End Sub
+'Private Sub ConnectionError
+'	handleUserAction(PrinterConstants.ERR_NoCommunication)
+'	Wait For UserAction_Click(action As Int)
+'				
+'	Select action
+'		Case PrinterConstants.Action_Retry
+'			statusItem.changeStatus(PrinterConstants.Printing)
+'			doJobs
+'				
+'		Case PrinterConstants.Action_Ignore
+'			statusItem.changeStatus(PrinterConstants.Printing)
+'			doJobs
+'		
+'		Case PrinterConstants.Action_Abort
+'			statusItem.changeStatus(PrinterConstants.ERR_NoError)
+'			Jobs.Clear
+'	End Select
+'End Sub
 
 Private Sub RemoteDevice_Connected(Successful As Boolean)
 			
@@ -701,7 +694,7 @@ Private Sub RemoteDevice_Connected(Successful As Boolean)
 			TryLoops = 3
 			Utilities.FileLog("No connection to the printer")
 			
-			handleUserAction(PrinterConstants.ERR_NoCommunication)
+'			handleUserAction(PrinterConstants.ERR_NoCommunication)
 			Wait For UserAction_Click(action As Int)
 			
 			Select action
@@ -754,7 +747,7 @@ Private Sub ExecuteTask
 		Case Conn_COM: 	USBSerial.Close
 	End Select
 	
-	statusItem.changeStatus(PrinterConstants.ERR_NoError)
+'	statusItem.changeStatus(PrinterConstants.ERR_NoError)
 End Sub
 
 Private Sub EventName_DataAvailable (Buffer() As Byte)
@@ -789,6 +782,8 @@ Private Sub FiscalPayment(job As TPrnJobFiscalPayment)
 End Sub
 
 Private Sub FiscalClose(job As TPrnJobFiscalClose)
+	CallSub(Main, "getRequest")
+
 	AddFooter
 	AddEmptyLines
 	CutPaper
@@ -806,6 +801,7 @@ Private Sub NonFiscalPrintText(job As TPrnJobNonFiscalPrintText)
 End Sub
 
 Private Sub NonFiscalClose(job As TPrnJobNonFiscalClose)
+	CallSub(Main, "getRequest")
 	AddFooter
 	AddEmptyLines
 	CutPaper	
@@ -852,13 +848,13 @@ Private Sub USBSerial_DataAvailable (Buffer() As Byte)
 End Sub
 #End Region
 
-Private Sub handleUserAction(error As Int)
-	If statusItem.IsInitialized Then
-		userAction = statusItem.getUserAction(error)
-		Wait For (userAction) Complete (Result As Int)
-		CallSub2(Me, "UserAction_Click", Result)
-	End If
-End Sub
+'Private Sub handleUserAction(error As Int)
+'	If statusItem.IsInitialized Then
+'		userAction = statusItem.getUserAction(error)
+'		Wait For (userAction) Complete (Result As Int)
+'		CallSub2(Me, "UserAction_Click", Result)
+'	End If
+'End Sub
 
 'Акумулиране на данни за печат в буфера
 Private Sub Send(s As String)

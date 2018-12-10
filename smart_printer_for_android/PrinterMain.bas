@@ -36,8 +36,6 @@ Private Sub Class_Globals
 	Private Const IDPrefixStep As Int = 500			'Step to Next ID
 	Private callBack As Object						'CallBack = POSScreen
 	
-	Private ScreenProgress As PrinterStatusScreen
-	
 	Public ActivePrinters As List
 End Sub
 
@@ -59,8 +57,6 @@ Public Sub Initialize(CB As Object)
 End Sub
 
 Public Sub initPrintingScreen(parent As Panel, buttonHolder As Panel)
-	ScreenProgress.Initialize(Me, callBack)
-	ScreenProgress.BuildScreen(parent, buttonHolder)
 	ReadPrinters	
 End Sub
 
@@ -129,39 +125,37 @@ Private Sub incrementIDPrefix
 	IDPrefix = IDPrefix + IDPrefixStep
 End Sub
 
-''Add printer to Main.ActivePrinters
-'Public Sub addToActivePrinter(printer As TActivePrinter)
-'	'First try to find the printer by name. 
-'	'If not found tries to find the printer by ID
-'	'If found by ID and the printers are from old version there is chance that the driver will not be set curectly
-'	Dim initPrinter As Printer
-'	initPrinter = getInitialPrinterByName(printer.name)
-'	If initPrinter <> Null Then 	
-'		printer.id = initPrinter.id
-'	Else
-'		initPrinter = getInitialPrinterByID(printer.id)
-'		If initPrinter <> Null Then 
-'			printer.name = initPrinter.name
-'		Else
-'			Log("Unknown printer: " & printer.id & " " & printer.name)	
-'			Return
-'		End If
-'	End If
-'	
-'	'Configure Active Printer
-'	Dim oPrinter As Object = CallSub(initPrinter.ref, "getPrinter_Instance")'MakeNewPrinterInstance(printer)
-'	CallSub2(oPrinter,"setSelected_Printer", printer.id)
-'	CallSub2(oPrinter,"SetConnection_Parameters", printer.connectionParams)
-'	printer.driver = oPrinter
-'	
-'	'Add to Active Printers
-'	ActivePrinters.Add(printer)
-'	ScreenProgress.AddPrinter(printer)
-'End Sub
+'Add printer to Main.ActivePrinters
+Public Sub addToActivePrinter(printer As TActivePrinter)
+	'First try to find the printer by name.
+	'If not found tries to find the printer by ID
+	'If found by ID and the printers are from old version there is chance that the driver will not be set curectly
+	Dim initPrinter As Printer
+	initPrinter = getInitialPrinterByName(printer.name)
+	If initPrinter <> Null Then
+		printer.id = initPrinter.id
+	Else
+		initPrinter = getInitialPrinterByID(printer.id)
+		If initPrinter <> Null Then
+			printer.name = initPrinter.name
+		Else
+			Log("Unknown printer: " & printer.id & " " & printer.name)
+			Return
+		End If
+	End If
+	
+	'Configure Active Printer
+	Dim oPrinter As Object = CallSub(initPrinter.ref, "getPrinter_Instance")'MakeNewPrinterInstance(printer)
+	CallSub2(oPrinter,"setSelected_Printer", printer.id)
+	CallSub2(oPrinter,"SetConnection_Parameters", printer.connectionParams)
+	printer.driver = oPrinter
+	
+	'Add to Active Printers
+	ActivePrinters.Add(printer)
+End Sub
 
 Public Sub removeFromActivePrinter(index As Int)
 	ActivePrinters.RemoveAt(index)
-	ScreenProgress.removePrinter(index)
 End Sub
 
 'Add printers to local map of all printers.

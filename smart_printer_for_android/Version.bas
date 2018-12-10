@@ -5,8 +5,8 @@ Type=StaticCode
 Version=7.3
 @EndOfDesignText@
 Private Sub Process_Globals
-	Public ProductID As Int = 301							'Product Identifier (301 some number)
-	Public ProgramName As String = "AGG"
+	Public ProductID As Int = 303							'Product Identifier (301 some number)
+	Public ProgramName As String = "SPA"
 	Public ProductInDictionary As String = "AndroidProjects"
 End Sub
 
