@@ -276,11 +276,11 @@ Public Sub RunPostProcessing(Script As List, lineChars As Int,commandSet As Int)
 	scripts.Initialize
 	
 	'Go through every line
-	For i = 0 To Script.Size - 1
-		Dim line As String= Script.Get(i)						'Get the line
-		line = PostProcessingSingleLine(line, cmdSet, lineChars)	'Process the line
-		scripts.Add(line)										'Add new line in list
-	Next
+'	For i = 0 To Script.Size - 1
+'		Dim line As String= Script.Get(i)						'Get the line
+'		line = PostProcessingSingleLine(line, cmdSet, lineChars)	'Process the line
+'		scripts.Add(line)										'Add new line in list
+'	Next
 
 	Return scripts												'Return list with lines
 End Sub

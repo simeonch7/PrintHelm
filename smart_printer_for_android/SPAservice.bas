@@ -26,7 +26,6 @@ Sub Service_Create
 	n.SetInfo("Http Server is running", "", Main)
 	Service.StartForeground(1, n)
 '	port = ProgramData.devicePort
-' 	MIcustomviews library not set 
 End Sub
 
 Sub Service_Start (StartingIntent As Intent)

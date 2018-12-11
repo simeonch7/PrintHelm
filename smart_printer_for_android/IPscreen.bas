@@ -4,7 +4,6 @@ ModulesStructureVersion=1
 Type=Class
 Version=7.3
 @EndOfDesignText@
-
 Private Sub Class_Globals
 	Private raf As RandomAccessFile
 	Private loginPanel As Panel
@@ -12,26 +11,9 @@ Private Sub Class_Globals
 	Private PrinterIP, PrinterPort As EditText
 	Public btnloginPanel As Button
 	Public CAD As CustomAlertDialog
-	Private checkloginPanel As CheckBox
 	Private usrString, PrinterPortString As String
 	Private settingsBG As BitmapDrawable
 	Private BMP_Options As Bitmap
-End Sub
-
-'Проверка за съществуване на директории и фаилове / Folder and file check on start up
-Private Sub start_up
-	If File.Exists(File.DirDefaultExternal , "PrinterIPs.config")  = True And File.Size (File.DirDefaultExternal , "PrinterIPs.config") > 0 Then
-		checkloginPanel.Checked = True
-	End If
-	
-	If checkloginPanel.Checked Then
-		Read_SavedUsrs
-		PrinterIP.Text = usrString
-		PrinterPort.Text = PrinterPortString
-	Else
-		PrinterIP.Text = ""
-		PrinterPort.Text = ""
-	End If
 End Sub
 
 'Инициализиране на обекта / Initializes the object
@@ -41,7 +23,6 @@ Public Sub Initialize
 	loginPanel.Initialize("loginPanelPanelsFake")
 	PrinterIP.Initialize("PrinterIPName")
 	PrinterPort.Initialize("PrinterPort")
-	checkloginPanel.Initialize("Remember")
 	btnloginPanel.Initialize("ButtonloginPanel")
 	BMP_Options.Initialize(File.DirAssets, "options_icon.png")
 
@@ -76,16 +57,14 @@ Public Sub build_Screen
 	loginPanel.AddView(PrinterIP,left, loginPanel.Height*(0.3),edtWidth, edtHeight)
 	loginPanel.AddView(PrinterPort, left, PrinterIP.Top+PrinterIP.Height*1.5+Padding, edtWidth, edtHeight)
 		
-	loginPanel.AddView(checkloginPanel, left + Padding, PrinterPort.Top + edtHeight * 1.5, btnWidth, btnHeight)
+	loginPanel.AddView(lblConnection, left + Padding, PrinterPort.Top + edtHeight * 1.5, btnWidth, btnHeight)
 	Padding = 7%x
-	loginPanel.AddView(btnloginPanel, checkloginPanel.Left + checkloginPanel.Width + Padding, checkloginPanel.Top, btnWidth / 2, btnHeight)
+	loginPanel.AddView(btnloginPanel, lblConnection.Left + lblConnection.Width + Padding, lblConnection.Top, btnWidth / 2, btnHeight)
 
-	loginPanel.AddView(lblConnection, left + Padding, checkloginPanel.Top + edtHeight * 1.5, btnWidth, btnHeight)
 
 
 	
-	btnloginPanel.Enabled=True
-'	refreshloginPanel_Labels
+'	btnloginPanel.Enabled=True
 End Sub
 
 'Прилагане на стилове за външния вид на екрана за влизане / Applying visual styles for loginPanel screen
@@ -102,7 +81,7 @@ Private Sub loginPanel_Configurations
 	PrinterIP.Padding = Array As Int(15,0,0,0)
 	PrinterIP.SingleLine = True
 
-	Dim ssocket As ServerSocket		'Ignore
+	Dim ssocket As ServerSocket
 	Log("Ip address: " & ssocket.GetMyWifiIP)
 	If ssocket.GetMyWifiIP = "127.0.0.1" Then
 		PrinterIP.Text = "Device not connected to local network"
@@ -110,24 +89,19 @@ Private Sub loginPanel_Configurations
 		PrinterIP.Text = ssocket.GetMyWifiIP
 		PrinterPort.Text =  SPAservice.port
 	End If
-	ssocket.Close
+
 
 	HelperFunctions.Apply_ViewStyle(PrinterPort,Colors.Black,Colors.White,Colors.White,Colors.White,Colors.White,Colors.White,Colors.White,60)
 	PrinterPort.Padding = Array As Int(15,0,0,0)
 	PrinterPort.SingleLine = True
 	PrinterPort.Hint = Main.translate.GetString("hintPort")
 	PrinterPort.HintColor = Colors.Gray
-'	PrinterPort.TextSize = 14
-
-	checkloginPanel.TextColor=Colors.White
-	checkloginPanel.TextSize = 14
-	checkloginPanel.Gravity = Gravity.CENTER_VERTICAL
-	checkloginPanel.Text = Main.translate.GetString("rememberSettings")
 
 	btnloginPanel.Gravity = Gravity.CENTER
 	btnloginPanel.Background = settingsBG
 	
 	lblConnection.TextSize = 14
+	lblConnection.Gravity = Gravity.CENTER
 
 	If checkNet Then
 		lblConnection.Text = "Connected"
@@ -169,15 +143,9 @@ End Sub
 'Метода, който вкарва потребителя в системата / Method for log in 
 Private Sub ButtonloginPanel_Click
 	CallSub(Main, "changePanels")	
-'	If PrinterPort.Text = Null Then
-'		ProgramData.devicePort = PrinterPort.Text
-'		Log("porta"&PrinterPort)
-'		Log("porta2"&ProgramData.devicePort)
-'	End If
 End Sub
 	
 Private Sub isConnect_Click
-	
 	If checkNet Then
 		lblConnection.Text = "Connected"
 		lblConnection.TextColor = Colors.Green
@@ -194,7 +162,6 @@ Public Sub checkNet As Boolean
 	Response.Initialize
 	Error.Initialize
 	'Ping Google DNS - if you can't reach this you are in serious trouble!
-	
 	p.Shell("ping -c 1 8.8.8.8",Null,Response,Error)
 	Log("======= Response ========")
 	Log(Response)

@@ -221,65 +221,65 @@ Public Sub DoJobs
 		Dim tempDevParams As TDeviceParameters
 		tempDevParams = CallSub(APrinter.driver,"GetDevice_Parameters")
 		
-		Dim ScriptsProcess,tempScripts As PrinterScripts
-		ScriptsProcess.Initialize
-		
-		'DON'T CHANGE: Use temp scripts, not Aprinter.Scripts
-		tempScripts.Initialize
-		tempScripts.Headers.Initialize
-		tempScripts.Headers.AddAll(APrinter.ScriptsTemplate.Headers)
-		If tempScripts.Headers.Size = 0 And fiscalMemoryMode = False Then tempScripts.Headers = defaultScripts.Headers
-		
-		tempScripts.Footers.Initialize
-		tempScripts.Footers.AddAll(APrinter.ScriptsTemplate.Footers)
-		If tempScripts.Footers.Size = 0 And fiscalMemoryMode = False Then tempScripts.Footers = defaultScripts.Footers
-		
-		tempScripts.Details.Initialize
-		tempScripts.Details.AddAll(APrinter.ScriptsTemplate.Details)
-		If tempScripts.Details.Size = 0 Then tempScripts.Details = defaultScripts.Details
-		
-		
-		tempScripts.Totals.Initialize
-		tempScripts.Totals.AddAll(APrinter.ScriptsTemplate.Totals)
-		If tempScripts.Totals.Size = 0 Then tempScripts.Totals = defaultScripts.Totals
-		
+'		Dim ScriptsProcess,tempScripts As PrinterScripts
+'		ScriptsProcess.Initialize
+'		
+'		'DON'T CHANGE: Use temp scripts, not Aprinter.Scripts
+'		tempScripts.Initialize
+'		tempScripts.Headers.Initialize
+'		tempScripts.Headers.AddAll(APrinter.ScriptsTemplate.Headers)
+'		If tempScripts.Headers.Size = 0 And fiscalMemoryMode = False Then tempScripts.Headers = defaultScripts.Headers
+'		
+'		tempScripts.Footers.Initialize
+'		tempScripts.Footers.AddAll(APrinter.ScriptsTemplate.Footers)
+'		If tempScripts.Footers.Size = 0 And fiscalMemoryMode = False Then tempScripts.Footers = defaultScripts.Footers
+'		
+'		tempScripts.Details.Initialize
+'		tempScripts.Details.AddAll(APrinter.ScriptsTemplate.Details)
+'		If tempScripts.Details.Size = 0 Then tempScripts.Details = defaultScripts.Details
+'		
+'		
+'		tempScripts.Totals.Initialize
+'		tempScripts.Totals.AddAll(APrinter.ScriptsTemplate.Totals)
+'		If tempScripts.Totals.Size = 0 Then tempScripts.Totals = defaultScripts.Totals
+'		
 		
 		'Pre Processing Header
-		Dim HeaderResultMap As Map = ScriptMaster.RunPreProcessing(tempScripts.Headers, tempDevParams.FiscalChars)
-		Dim HeaderscriptJobs As List = HeaderResultMap.Get("jobs")
-		Dim HeaderScriptNormal As List = HeaderResultMap.Get("script")
-		ScriptsProcess.Headers = HeaderScriptNormal
-		
-		For Each job As Object In HeaderscriptJobs
-			CallSub2(APrinter.driver, "AddJob", job)
-		Next
-		
+'		Dim HeaderResultMap As Map = ScriptMaster.RunPreProcessing(tempScripts.Headers, tempDevParams.FiscalChars)
+'		Dim HeaderscriptJobs As List = HeaderResultMap.Get("jobs")
+'		Dim HeaderScriptNormal As List = HeaderResultMap.Get("script")
+'		ScriptsProcess.Headers = HeaderScriptNormal
+'		
+'		For Each job As Object In HeaderscriptJobs
+'			CallSub2(APrinter.driver, "AddJob", job)
+'		Next
+'		
 		'Jobs
 		For Each job As Object In Jobs
 			CallSub2(APrinter.driver, "AddJob", job)
 		Next
 		
 		'Pre Processing Footer
-		Dim FooterResultMap As Map = ScriptMaster.RunPreProcessing(tempScripts.Footers, tempDevParams.FiscalChars)
-		Dim FooterScriptJobs As List = FooterResultMap.Get("jobs")
-		Dim FootersScriptNormal As List = FooterResultMap.Get("script")
-		ScriptsProcess.Footers = FootersScriptNormal
-				
-		For Each job As Object In FooterScriptJobs
-			CallSub2(APrinter.driver, "AddJob", job)
-		Next
-		
-		'Add details and totals scripts
-		ScriptsProcess.Details = tempScripts.Details
-		ScriptsProcess.Totals = tempScripts.Totals
-		
+'		Dim FooterResultMap As Map = ScriptMaster.RunPreProcessing(tempScripts.Footers, tempDevParams.FiscalChars)
+'		Dim FooterScriptJobs As List = FooterResultMap.Get("jobs")
+'		Dim FootersScriptNormal As List = FooterResultMap.Get("script")
+'		ScriptsProcess.Footers = FootersScriptNormal
+'				
+'		For Each job As Object In FooterScriptJobs
+'			CallSub2(APrinter.driver, "AddJob", job)
+'		Next
+'		
+'		'Add details and totals scripts
+'		ScriptsProcess.Details = tempScripts.Details
+'		ScriptsProcess.Totals = tempScripts.Totals
+'		
 		'set the driver scripts
-		CallSub2(APrinter.driver,"Assign_Scripts",ScriptsProcess)
+'		CallSub2(APrinter.driver,"Assign_Scripts",ScriptsProcess)
 	
 		CallSubDelayed(APrinter.driver,"doJobs")
 	Next
 	
-	CallSub(callBack, "Print_Finished")
+	CallSubDelayed(callBack, "Print_Finished")
 	
 	Jobs.Clear
 End Sub
@@ -301,7 +301,7 @@ private Sub LoadSavedPrinters
 		Log(LastException)
 	End Try
 End Sub
-
+'
 Private Sub ReadPrinters
 	'Clear printer settings file for debuging
 	'If File.Exists(File.DirDefaultExternal, "Printers.config") Then File.Delete(File.DirDefaultExternal, "Printers.config")

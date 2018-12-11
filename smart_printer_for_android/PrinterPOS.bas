@@ -34,8 +34,8 @@ Sub Class_Globals
 	Private PrinterCodePage As String = ""
 	Private PrinterInitString As String = ""
 	Private PrinterCutterString As String = ""
-	Private BTAdmin As BluetoothAdmin  'ignore
-	Private BTPort As Serial	'ignore
+	Private BTAdmin As BluetoothAdmin
+	Private BTPort As Serial
 	Private MySocket As Socket
 	Private USBAdmin As UsbManager
 	Private USBSerial As felUsbSerial
@@ -759,15 +759,15 @@ Private Sub FiscalOpen(job As TPrnJobFiscalOpen)
 	
 	Send(PrinterInitString)
 	
-	AddHeader	
+'	AddHeader	
 End Sub
 
 Private Sub FiscalSellItem(job As TPrnJobFiscalSellItem)
 	priceCalculator.addItem(job)
 	
-	For Each text As String In ScriptMaster.RunDetailScript(scripts.Details,job, DeviceParameters.fiscalChars, selectedCmdSet)
-		Send(text)
-	Next
+'	For Each text As String In ScriptMaster.RunDetailScript(scripts.Details,job, DeviceParameters.fiscalChars, selectedCmdSet)
+'		Send(text)
+'	Next
 End Sub
 
 Private Sub FiscalPrintText(job As TPrnJobFiscalPrintText)
@@ -776,15 +776,15 @@ End Sub
 
 Private Sub FiscalPayment(job As TPrnJobFiscalPayment)
 	priceCalculator.AddPayment(job)
-	For Each text As String In ScriptMaster.RunTotalScript(scripts.Totals, DeviceParameters.FiscalChars, priceCalculator, selectedCmdSet)
-		Send(text)
-	Next
+'	For Each text As String In ScriptMaster.RunTotalScript(scripts.Totals, DeviceParameters.FiscalChars, priceCalculator, selectedCmdSet)
+'		Send(text)
+'	Next
 End Sub
 
 Private Sub FiscalClose(job As TPrnJobFiscalClose)
 	CallSub(Main, "getRequest")
 
-	AddFooter
+'	AddFooter
 	AddEmptyLines
 	CutPaper
 End Sub
@@ -793,7 +793,7 @@ Private Sub NonFiscalOpen(job As TPrnJobNonFiscalOpen)
 	priceCalculator.Reset
 	
 	Send(PrinterInitString)	
-	AddHeader
+'	AddHeader
 End Sub
 
 Private Sub NonFiscalPrintText(job As TPrnJobNonFiscalPrintText)
@@ -802,7 +802,7 @@ End Sub
 
 Private Sub NonFiscalClose(job As TPrnJobNonFiscalClose)
 	CallSub(Main, "getRequest")
-	AddFooter
+'	AddFooter
 	AddEmptyLines
 	CutPaper	
 End Sub

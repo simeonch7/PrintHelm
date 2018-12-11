@@ -1,25 +1,24 @@
 ﻿Build1=Default,microinvest.SPA
-File1=1017215.jpg
-File2=6082.jpg
-File3=dictionary.xml
-File4=login_background.jpg
-File5=options_icon.png
+File1=6082.jpg
+File2=dictionary.xml
+File3=login_background.jpg
+File4=options_icon.png
 FileGroup1=Default Group
 FileGroup2=Default Group
 FileGroup3=Default Group
 FileGroup4=Default Group
-FileGroup5=Default Group
 Group=Default Group
 IconFile=
 Library1=core
 Library10=network
 Library11=byteconverter
-Library12=javaobject
-Library13=encryption
-Library14=oslibrary
-Library15=ahlocale
-Library16=httpserver
-Library17=stringutils
+Library12=micustomviews
+Library13=javaobject
+Library14=encryption
+Library15=oslibrary
+Library16=ahlocale
+Library17=httpserver
+Library18=stringutils
 Library2=xmlsax
 Library3=randomaccessfile
 Library4=reflection
@@ -28,34 +27,34 @@ Library6=phone
 Library7=usb
 Library8=felusbserial
 Library9=serial
-ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="5" android:targetSdkVersion="26"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~AddPermission(android.permission.INTERNET)~\n~'End of default text.~\n~
+ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="5" android:targetSdkVersion="26"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~'End of default text.~\n~~\n~AddPermission(android.hardware.usb.action.USB_DEVICE_DETACHED)~\n~CreateResource(xml, device_filter.xml,~\n~<resources>		~\n~    <usb-device />	~\n~</resources>~\n~)~\n~AddApplicationText(~\n~<activity android:name=".main" >~\n~   <intent-filter>~\n~    <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />~\n~   </intent-filter>  ~\n~    <meta-data android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" android:resource="@xml/device_filter" />   ~\n~ </activity>~\n~)
 Module1=SPAservice
-Module10=PrinterConstants
-Module11=PrinterPriceCalculator
-Module12=BytesBuilder
-Module13=DataTypes
-Module14=ProgramData
-Module15=OperationFunctions
+Module10=Utilities
+Module11=DataTypes
+Module12=Translator
+Module13=ProgramData
+Module14=OperationFunctions
+Module15=PrinterConstants
 Module16=Version
 Module17=ButtonWithNotifications
-Module18=ScriptMaster
+Module18=Countries
 Module19=Device
-Module2=HelperFunctions
+Module2=SettingsScreen
 Module20=Constants
 Module21=UISizes
 Module22=Settings
 Module23=B4XEval
 Module24=ImageResources
 Module25=PriceMathFunctions
-Module3=PrinterMain
-Module4=PrinterPOS
-Module5=SettingsScreen
-Module6=IPscreen
-Module7=Utilities
-Module8=Translator
-Module9=Countries
-NumberOfFiles=5
-NumberOfLibraries=17
+Module3=IPscreen
+Module4=PrinterMain
+Module5=PrinterPOS
+Module6=PrinterPriceCalculator
+Module7=BytesBuilder
+Module8=ScriptMaster
+Module9=HelperFunctions
+NumberOfFiles=4
+NumberOfLibraries=18
 NumberOfModules=25
 Version=8.5
 @EndOfDesignText@
@@ -67,7 +66,6 @@ Version=8.5
 	#SupportedOrientations: portrait
 	#CanInstallToExternalStorage: False
 	#BridgeLogger: True
-	
 #End Region
 
 #Region  Activity Attributes 
@@ -117,6 +115,7 @@ End Sub
 Sub Globals
 	Public loginScr As IPscreen
 	Public settingsScr As SettingsScreen
+
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -141,11 +140,11 @@ Sub Activity_Create(FirstTime As Boolean)
 End Sub
 
 Sub Activity_Resume
-	StartService(SPAservice)
+'	StartService(SPAservice)
 End Sub
 
 Sub Activity_Pause (UserClosed As Boolean)
-	StopService(SPAservice)
+'	StopService(SPAservice)
 End Sub
 
 Public Sub getRequest As String
@@ -166,6 +165,7 @@ Sub changePanels
 		
 		settingsScr.asView.Enabled = True
 		settingsScr.asview.Visible = True
+'		settingsScr.fillSettings
 	End If
 End Sub
 
@@ -179,7 +179,7 @@ Private Sub Print_Finished
 	ProgramData.partnerPhone = ""
 End Sub
 
-'метод,с който пренаписваме бутона за връщане назад на у-вото
+'метод,с който пренаписваме бутонът за връщане назад на у-вото
 Sub Activity_KeyPress (KeyCode As Int) As Boolean
 	
 	Private ext As Int = 0
@@ -187,12 +187,11 @@ Sub Activity_KeyPress (KeyCode As Int) As Boolean
 	
 		If settingsScr.asView.Visible = True Then
 			settingsScr.asView.Visible = False
-			settingsScr.asView.Enabled = False
 			loginScr.asView.Visible = True
-			loginScr.asView.Enabled = True
+			loginScr.asview.Enabled = True
 			ext = ext + 1
 		End If
-	
+		
 		ext = ext - 1
 		
 		If loginScr.asView.Visible = True And ext = -1 Then

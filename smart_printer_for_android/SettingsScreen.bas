@@ -4,7 +4,6 @@ ModulesStructureVersion=1
 Type=Class
 Version=8.3
 @EndOfDesignText@
-
 Sub Class_Globals
 	Private settingsPanel As Panel
 	Private country, language, printer, spnPrinter, Boud As Spinner
@@ -145,24 +144,24 @@ Sub SettingsUI
 	settingsPanel.AddView(LabelPrinter, 2%x, language.Top + language.Height + 15dip, 35%x, 5%y)
 	settingsPanel.AddView(printer, 2%x, LabelPrinter.Top + LabelPrinter.Height, 40%x, 8%y)
 	
-	settingsPanel.AddView(LabelIPport, LabelCountry.Left + LabelCountry.Width + 25%x, LabelCountry.Top, 40%x, 5%y)
-	settingsPanel.AddView(IPport, LabelIPport.Left, LabelIPport.Top + LabelIPport.Height, 40%x, 8%y)
+	settingsPanel.AddView(LabelIPport, LabelCountry.Left + LabelCountry.Width + 30%x, LabelCountry.Top, 35%x, 5%y)
+	settingsPanel.AddView(IPport, LabelIPport.Left, LabelIPport.Top + LabelIPport.Height, 35%x, 8%y)
 
-	settingsPanel.AddView(LabelBoudOrIp, LabelIPport.Left, IPport.Top + IPport.Height + 15dip, 40%x, 5%y)
-	settingsPanel.AddView(Boud, LabelIPport.Left, LabelBoudOrIp.Top + LabelBoudOrIp.Height, 40%x, 8%y)
-	settingsPanel.AddView(IPaddress, LabelIPport.Left, LabelBoudOrIp.Top + LabelBoudOrIp.Height, 40%x, 8%y)
+	settingsPanel.AddView(LabelBoudOrIp, LabelIPport.Left, IPport.Top + IPport.Height + 15dip, 35%x, 8%y)
+	settingsPanel.AddView(Boud, LabelIPport.Left, LabelBoudOrIp.Top + LabelBoudOrIp.Height, 35%x, 8%y)
+	settingsPanel.AddView(IPaddress, LabelIPport.Left, LabelBoudOrIp.Top + LabelBoudOrIp.Height, 35%x, 8%y)
 	IPaddress.Visible = False
 	IPaddress.Enabled = False
 	If GetDeviceLayoutValues.Width < GetDeviceLayoutValues.Height Then
-		settingsPanel.AddView(LabelOperator, Boud.Left+Boud.Width -35%x, Boud.Top + Boud.Height + 20%y, 35%x, 5%y)
-		settingsPanel.AddView(operator, LabelOperator.Left, LabelOperator.Top+LabelOperator.Height, LabelOperator.Width, 7%y)
-		settingsPanel.AddView(LabelPassword,LabelOperator.Left, operator.Top+operator.Height+15dip, LabelOperator.Width, 5%y)
-		settingsPanel.AddView(password, LabelOperator.Left, LabelPassword.Top+LabelPassword.Height, LabelOperator.Width, 7%y)
+		settingsPanel.AddView(LabelOperator, LabelIPport.Left, Boud.Top + Boud.Height + 5%y, 35%x, 5%y)
+		settingsPanel.AddView(operator, LabelIPport.Left, LabelOperator.Top+LabelOperator.Height, LabelOperator.Width, 7%y)
+		settingsPanel.AddView(LabelPassword,LabelIPport.Left, operator.Top+operator.Height, LabelOperator.Width, 5%y)
+		settingsPanel.AddView(password, LabelIPport.Left, LabelPassword.Top+LabelPassword.Height, LabelOperator.Width, 7%y)
 	Else
-		settingsPanel.AddView(LabelOperator, Boud.Left+Boud.Width -35%x, Boud.Top + Boud.Height + 10%y, 35%x, 5%y)
-		settingsPanel.AddView(operator, Boud.Left+Boud.Width -35%x, LabelOperator.Top+LabelOperator.Height, LabelOperator.Width, 15%y)
-		settingsPanel.AddView(LabelPassword,LabelOperator.Left, operator.Top+operator.Height+15dip, LabelOperator.Width, 5%y)
-		settingsPanel.AddView(password, LabelOperator.Left, LabelPassword.Top+LabelPassword.Height, LabelOperator.Width, 15%y)
+		settingsPanel.AddView(LabelOperator, LabelIPport.Left, Boud.Top + Boud.Height + 5%y, 35%x, 5%y)
+		settingsPanel.AddView(operator, LabelIPport.Left, LabelOperator.Top+LabelOperator.Height, LabelOperator.Width, 15%y)
+		settingsPanel.AddView(LabelPassword,LabelIPport.Left, operator.Top+operator.Height, LabelOperator.Width, 5%y)
+		settingsPanel.AddView(password, LabelIPport.Left, LabelPassword.Top+LabelPassword.Height, LabelOperator.Width, 15%y)
 	End If
 	settingsPanel.AddView(saveSettings, 33.33%x, 85%y, 33.33%x, 10%y)
 	
@@ -306,9 +305,7 @@ Sub ColorPickerAndLabelTexts
 	LabelBoudOrIp.Text = "Boud rate"
 	LabelOperator.Text = "Operator"
 	LabelPassword.Text = "Password"
-	
-'	settingsPanel.Color = Colors.ARGB(255, 99, 159, 255)
-	
+		
 	saveSettings.Text = "Save!"
 	saveSettings.Color= Colors.DarkGray
 	saveSettings.TextColor = Colors.LightGray
@@ -348,13 +345,16 @@ Sub countrySpinner_ItemClick (Position As Int, Value As Object)
 	readinfo.country = Value
 End Sub
 
+Sub BoudSpinner_ItemClick (Position As Int, Value As Object)
+	readinfo.speed = Value
+End Sub
+
 Sub languageSpinner_ItemClick (Position As Int, Value As Object)
 	readinfo.language = Value
 End Sub
 
 Sub codeTableSpinner_ItemClick (Position As Int, Value As Object)
 	readinfo.codeTable = Value
-	
 End Sub
 
 Sub deviceSpinner_ItemClick (Position As Int, Value As Object)
@@ -363,7 +363,7 @@ Sub deviceSpinner_ItemClick (Position As Int, Value As Object)
 	fillSettings
 End Sub
 
-Private Sub fillSettings
+public Sub fillSettings
 	Dim printerInfo As Printer = masterP.getInitialPrinterByName(selectedPrinterName)
 	CallSub2(printerInfo.ref,"setSelected_Printer", printerInfo.id)
 	Dim m As Map = CallSub(printerInfo.ref,"getDevice_SettingsRequirements")
@@ -376,13 +376,11 @@ End Sub
 private Sub runMap(m As Map, isFiscal As Boolean)
 	clearSettingSV
 
-
 	For Each setting As Int In m.Keys
 		genereteSettingView(setting, m.Get(setting))
 	Next
 	
 	setSettings
-
 End Sub
 
 
@@ -395,7 +393,12 @@ Public Sub refillSpPrinters
 	
 	For Each printerAc As TActivePrinter In masterP.ActivePrinters
 		spnPrinter.Add(printerAc.name)
-		Boud.SelectedIndex = Boud.IndexOf(printerAc.connectionParams.BaudRate)
+		For i = 0 To Boud.Size-1
+			If Boud.GetItem(i) = Boud.IndexOf(printerAc.connectionParams.BaudRate) Then
+				Boud.SelectedIndex = i
+			End If
+		Next
+		
 		IPaddress.Text = printerAc.connectionParams.IPAddress
 		IPport.Text = printerAc.connectionParams.IPPort
 		IPport.Text = printerAc.connectionParams.IPport
@@ -477,7 +480,7 @@ Private Sub checkConnectionParams As Boolean
 	End If
 End Sub
 
-Private Sub genereteSettingView(setting As Int, value As String)
+public Sub genereteSettingView(setting As Int, value As String)
 '	If controlsMap.ContainsKey(setting) Then Return top
 			
 	Select setting
@@ -491,13 +494,18 @@ Private Sub genereteSettingView(setting As Int, value As String)
 			Boud.Visible = True
 			Boud.Enabled = True
 			Boud.Tag = setting
-			Boud.AddAll(BoudRatesList)
-			
+			BoudprinterFill
 			'Set spinner selected index
-			Dim valueIndex As Int = BoudRatesList.IndexOf(value)
-			If valueIndex = - 1 Then valueIndex = 3
-			Boud.SelectedIndex = valueIndex
 			
+			For i = 0 To Boud.Size-1
+				If Boud.GetItem(i) = value Then
+					Boud.SelectedIndex = i
+				End If
+			Next
+'			Dim valueIndex As Int = Boud.IndexOf(value)
+'			If valueIndex = - 1 Then valueIndex = 3
+'			Boud.SelectedIndex = valueIndex
+'			
 			'Put Control in map
 			controlsMap.Put(setting,Boud)
 				
@@ -546,8 +554,8 @@ End Sub
 Sub settingsFill
 	If File.Exists(File.DirInternal, "initialSetting.config") = True And File.Size(File.DirInternal, "initialSetting.config") > 0 Then
 		readinfo = raf.ReadEncryptedObject(ProgramData.rafEncPass,0)
-'		IPaddress.Text = readinfo.IPaddress
-'		IPport.Text = readinfo.port
+		IPaddress.Text = readinfo.IPaddress
+		IPport.Text = readinfo.port
 		operator.Text = readinfo.operator
 		password.Text = readinfo.password
 		For i = 0 To country.Size-1
@@ -560,11 +568,11 @@ Sub settingsFill
 				language.SelectedIndex = i
 			End If
 		Next
-'		For i = 0 To Boud.Size-1
-'			If Boud.GetItem(i) = readinfo.speed Then
-'				Boud.SelectedIndex = i
-'			End If
-'		Next
+		For i = 0 To Boud.Size-1
+			If Boud.GetItem(i) = readinfo.speed Then
+				Boud.SelectedIndex = i
+			End If
+		Next
 		For i = 0 To printer.Size-1
 			If printer.GetItem(i) = readinfo.Device Then
 				printer.SelectedIndex = i
@@ -574,8 +582,13 @@ Sub settingsFill
 		Next
 				
 	Else
+		IPaddress.Text = ""
+		IPport.Text = ""
+		operator.Text = ""
+		password.Text = ""
 		country.SelectedIndex = 0
 		language.SelectedIndex = 0
+		Boud.SelectedIndex = 0
 		printer.SelectedIndex = 0
 	End If
 End Sub
