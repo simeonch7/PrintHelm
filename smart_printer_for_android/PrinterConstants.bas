@@ -77,7 +77,7 @@ End Sub
 
 Public Sub initCommandSets
 	Dim ESC As String = Chr(0x1B)
-	Dim FS As String = Chr(0x1C)
+	Dim FS As String = Chr(0x1C) 'ignore
 	Dim GS As String = Chr(0x1D)
 		
 	'EPSON Style

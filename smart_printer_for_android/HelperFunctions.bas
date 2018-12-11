@@ -33,6 +33,8 @@ Public Sub Apply_ViewStyle (Control As View, TextColor As Int, ColorA As Int, Co
 	If Control Is Spinner Then
 		Private sp As Spinner = Control
 		sp.TextColor = TextColor
+		sp.DropdownBackgroundColor = Colors.ARGB(255, 13, 17, 135)
+		sp.DropdownTextColor = Colors.ARGB(255, 213, 213, 229)
 	End If		
 	'Apply background gradient
 	Control.Background = Helper_Gradient(ColorA, ColorB, ColorPressedA, ColorPressedB, ColorDisabledA, ColorDisabledB, CornerRound)

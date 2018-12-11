@@ -929,7 +929,7 @@ Public Sub AddImage (act As Panel, control As View, image As String, imagePaddin
 	imageView.BringToFront
 End Sub
 
-'Добавя сянка. За да се добави сянака и картинка: 
+'Добавя сянка. За да се добави сянка и картинка: 
 '-Картинката да се добави след сянката и без imagePadding(ще се размести)
 Public Sub AddShadow(act As Panel,control As View,radius As Int, width As Int,color As Int, size As Int)
 	Dim pan As Panel

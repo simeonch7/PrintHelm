@@ -1,21 +1,25 @@
 ﻿Build1=Default,microinvest.SPA
-File1=dictionary.xml
-File2=login_background.jpg
-File3=options_icon.png
+File1=1017215.jpg
+File2=6082.jpg
+File3=dictionary.xml
+File4=login_background.jpg
+File5=options_icon.png
 FileGroup1=Default Group
 FileGroup2=Default Group
 FileGroup3=Default Group
+FileGroup4=Default Group
+FileGroup5=Default Group
 Group=Default Group
 IconFile=
 Library1=core
 Library10=network
 Library11=byteconverter
-Library12=micustomviews
-Library13=javaobject
-Library14=encryption
-Library15=oslibrary
-Library16=ahlocale
-Library17=httpserver
+Library12=javaobject
+Library13=encryption
+Library14=oslibrary
+Library15=ahlocale
+Library16=httpserver
+Library17=stringutils
 Library2=xmlsax
 Library3=randomaccessfile
 Library4=reflection
@@ -24,33 +28,33 @@ Library6=phone
 Library7=usb
 Library8=felusbserial
 Library9=serial
-ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="5" android:targetSdkVersion="26"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~'End of default text.~\n~
-Module1=SettingsScreen
-Module10=Translator
-Module11=ProgramData
-Module12=OperationFunctions
-Module13=IPscreen
-Module14=PrinterConstants
-Module15=Version
-Module16=ButtonWithNotifications
-Module17=Countries
+ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="5" android:targetSdkVersion="26"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~AddPermission(android.permission.INTERNET)~\n~'End of default text.~\n~
+Module1=SPAservice
+Module10=PrinterConstants
+Module11=PrinterPriceCalculator
+Module12=BytesBuilder
+Module13=DataTypes
+Module14=ProgramData
+Module15=OperationFunctions
+Module16=Version
+Module17=ButtonWithNotifications
 Module18=ScriptMaster
 Module19=Device
-Module2=PrinterMain
+Module2=HelperFunctions
 Module20=Constants
 Module21=UISizes
 Module22=Settings
 Module23=B4XEval
 Module24=ImageResources
 Module25=PriceMathFunctions
-Module3=PrinterPOS
-Module4=Utilities
-Module5=HelperFunctions
-Module6=PrinterPriceCalculator
-Module7=BytesBuilder
-Module8=SPAservice
-Module9=DataTypes
-NumberOfFiles=3
+Module3=PrinterMain
+Module4=PrinterPOS
+Module5=SettingsScreen
+Module6=IPscreen
+Module7=Utilities
+Module8=Translator
+Module9=Countries
+NumberOfFiles=5
 NumberOfLibraries=17
 NumberOfModules=25
 Version=8.5
@@ -63,6 +67,7 @@ Version=8.5
 	#SupportedOrientations: portrait
 	#CanInstallToExternalStorage: False
 	#BridgeLogger: True
+	
 #End Region
 
 #Region  Activity Attributes 
@@ -110,9 +115,8 @@ Sub Process_Globals
 End Sub
 
 Sub Globals
-Public loginScr As IPscreen
+	Public loginScr As IPscreen
 	Public settingsScr As SettingsScreen
-
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -132,7 +136,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	settingsScr.Initialize
 	Activity.AddView(settingsScr.asView, 0, 0, 100%x, 100%y)
 	
-'	settingsScr.settingsFill
+	settingsScr.settingsFill
 
 End Sub
 
@@ -151,77 +155,6 @@ End Sub
 
 Public Sub readytoPrint
 	CallSub(settingsScr, "POS_Print")
-End Sub
-
-Private Sub LoadInitialSettingsStandart
-	Try
-		If File.Exists(File.DirDefaultExternal, "initialSetting.config") = True And File.Size(File.DirDefaultExternal, "initialSetting.config") > 0 Then
-			Private raf As RandomAccessFile
-			raf.Initialize(File.DirDefaultExternal, "initialSetting.config", False)
-			Countries.SelectedCountry = raf.ReadEncryptedObject(ProgramData.rafEncPass, raf.CurrentPosition)
-			SelectedLanguage = raf.ReadEncryptedObject(ProgramData.rafEncPass, raf.CurrentPosition)
-			localDefaultFontSize = raf.ReadEncryptedObject(ProgramData.rafEncPass, raf.CurrentPosition)
-			ScreenOrientation = raf.ReadEncryptedObject(ProgramData.rafEncPass, raf.CurrentPosition)
-		Else 'No config file exists so check for language
-			SearchForDeviceLanguage
-			Countries.SelectedCountry = Countries.Bulgaria
-			localDefaultFontSize = 14
-			ScreenOrientation = orientationLandscape
-			
-			Private raf As RandomAccessFile
-			raf.Initialize(File.DirDefaultExternal, "initialSetting.config", False)
-			raf.WriteEncryptedObject(Countries.Bulgaria, ProgramData.rafEncPass, raf.CurrentPosition)
-			raf.WriteEncryptedObject(lng_EN, ProgramData.rafEncPass, raf.CurrentPosition)
-			raf.WriteEncryptedObject(14, ProgramData.rafEncPass, raf.CurrentPosition)
-			raf.WriteEncryptedObject(0, ProgramData.rafEncPass, raf.CurrentPosition)
-			raf.WriteEncryptedObject(0, ProgramData.rafEncPass, raf.CurrentPosition)
-			raf.WriteEncryptedObject(0, ProgramData.rafEncPass, raf.CurrentPosition)
-		End If
-	Catch
-		Log("LoadInitialSettingsStandart Exeption: " & LastException)
-		
-		Private raf As RandomAccessFile
-		raf.Initialize(File.DirDefaultExternal, "initialSetting.config", False)
-		raf.WriteEncryptedObject(Countries.Bulgaria, ProgramData.rafEncPass, raf.CurrentPosition)
-		raf.WriteEncryptedObject(lng_EN, ProgramData.rafEncPass, raf.CurrentPosition)
-		raf.WriteEncryptedObject(14, ProgramData.rafEncPass, raf.CurrentPosition)
-		raf.WriteEncryptedObject(0, ProgramData.rafEncPass, raf.CurrentPosition)
-		raf.WriteEncryptedObject(0, ProgramData.rafEncPass, raf.CurrentPosition)
-		raf.WriteEncryptedObject(0, ProgramData.rafEncPass, raf.CurrentPosition)
-		
-		Countries.SelectedCountry = Countries.Bulgaria
-		SelectedLanguage = lng_EN
-		localDefaultFontSize = 14
-		ScreenOrientation = orientationLandscape
-	End Try
-	
-	If Countries.SelectedCountry = Countries.Universe Then Countries.SelectedCountry = Countries.Bulgaria
-	If localDefaultFontSize = 0 Then localDefaultFontSize = 14
-	If SelectedLanguage = "" Then SelectedLanguage = lng_EN
-End Sub
-
-Private Sub SearchForDeviceLanguage
-	Dim s As String
-	s = Locale.Language.ToUpperCase
-	Dim langList As List
-	langList.Initialize
-	langList.AddAll(langList)
-	Dim FoundLanguage As Boolean
-	
-	'Search for the existing language in our dictionary
-	For i = 0 To langList.Size - 1
-		Dim lang As String = langList.Get(i)
-		If lang = s Then
-			SelectedLanguage = s
-			FoundLanguage = True
-			Exit
-		End If
-	Next
-	
-	'Finaly English
-	If Not(FoundLanguage) Then
-		SelectedLanguage = lng_EN
-	End If
 End Sub
 
 Sub changePanels
@@ -244,4 +177,39 @@ End Sub
 Private Sub Print_Finished
 	sendOperation
 	ProgramData.partnerPhone = ""
+End Sub
+
+'метод,с който пренаписваме бутона за връщане назад на у-вото
+Sub Activity_KeyPress (KeyCode As Int) As Boolean
+	
+	Private ext As Int = 0
+	If KeyCode = KeyCodes.KEYCODE_BACK Then
+	
+		If settingsScr.asView.Visible = True Then
+			settingsScr.asView.Visible = False
+			settingsScr.asView.Enabled = False
+			loginScr.asView.Visible = True
+			loginScr.asView.Enabled = True
+			ext = ext + 1
+		End If
+	
+		ext = ext - 1
+		
+		If loginScr.asView.Visible = True And ext = -1 Then
+			
+			Private result As Int
+			result = Msgbox2("Are you sure?", "Exit!", "Yes", "Cancel", "No", Null)
+			If result = DialogResponse.POSITIVE Then
+				ExitApplication
+				StopService(SPAservice)
+			End If
+
+		End If
+		
+		Return True
+	Else
+
+		Return False
+	End If
+	
 End Sub

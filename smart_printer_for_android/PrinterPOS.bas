@@ -34,8 +34,8 @@ Sub Class_Globals
 	Private PrinterCodePage As String = ""
 	Private PrinterInitString As String = ""
 	Private PrinterCutterString As String = ""
-	Private BTAdmin As BluetoothAdmin
-	Private BTPort As Serial
+	Private BTAdmin As BluetoothAdmin  'ignore
+	Private BTPort As Serial	'ignore
 	Private MySocket As Socket
 	Private USBAdmin As UsbManager
 	Private USBSerial As felUsbSerial

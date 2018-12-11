@@ -7,9 +7,9 @@ Version=8.3
 
 Sub Class_Globals
 	Private settingsPanel As Panel
-	Private country, language, printer, codeTable, spnPrinter, speed As Spinner
-	Private IPport, IPaddress, operator, password, serialPort As EditText
-	Private LabelCountry, LabelLanguage, LabelPrinter, LabelPortorIPaddress, LabelSpeedorIPport, LabelCodeTable, LabelOperator, LabelPassword As Label
+	Private country, language, printer, spnPrinter, Boud As Spinner
+	Private IPport, IPaddress, operator, password As EditText
+	Private LabelCountry, LabelLanguage, LabelPrinter, LabelIPport, LabelBoudOrIp, LabelOperator, LabelPassword As Label
 	Private BoudRatesList As List
 	Private PrinterList As List
 	Private masterP As PrinterMain
@@ -23,25 +23,36 @@ Sub Class_Globals
 	Dim readinfo As information
 	Private controlsMap As Map								'Hold all the settings controls
 	Private saveSettings As Button
+	
+	Private Const COLOR_NormalTop As Int 	  =	0xff4ac2ff	'Light blue
+	Private Const COLOR_NormalBottom As Int   =	0xff149be0	'Darker blue
+	Private Const COLOR_PressedTop As Int 	  =	0xff2cb7ff	'Same light blue
+	Private Const COLOR_PressedBottom As Int  =	0xff2cb7ff	'Same light blue
+	Private Const COLOR_DisabledTop As Int    =	0x66040509	'Semi-transperant black
+	Private Const COLOR_DisabledBottom As Int =	0x66040509	'Semi-transperant black
+	Private Const ButtonRounding As Int = 60	'How much rounding is done on the buttons & edit text corners
+'	Private Const COLOR_Dropdown As Int = 		0xFF012136
 
-
+	Private background As BitmapDrawable
+	
 End Sub
 
 Public Sub Initialize
 	settingsPanel.Initialize("settingsPanel")
+	
+	background.Initialize(LoadBitmap(File.DirAssets, "6082.jpg"))
+	settingsPanel.Background = background
+	
 '	printersAdd.Initialize
-	country.Initialize("countrySpinner")	
+	country.Initialize("countrySpinner")
 	language.Initialize("languageSpinner")
 	
 	printer.Initialize("deviceSpinner")
 		
-	serialPort.Initialize("serialPortSpinner")	
-	speed.Initialize("speedSpinner")
+	Boud.Initialize("BoudSpinner")
 
 	IPport.Initialize("IPport")
 	IPaddress.Initialize("IPaddress")
-
-	codeTable.Initialize("codeTableSpinner")
 	
 	operator.Initialize("opertorEditText")
 	password.Initialize("passwordEditText")
@@ -49,9 +60,8 @@ Public Sub Initialize
 	LabelCountry.Initialize("countryLabel")
 	LabelLanguage.Initialize("languageLabel")
 	LabelPrinter.Initialize("deviceLabel")
-	LabelPortorIPaddress.Initialize("serialPortLabel")
-	LabelSpeedorIPport.Initialize("speedLabel")
-	LabelCodeTable.Initialize("codeTableLabel")
+	LabelIPport.Initialize("IPportLabel")
+	LabelBoudOrIp.Initialize("BoudLabel")
 	LabelOperator.Initialize("opertorLabel")
 	LabelPassword.Initialize("passwordLabel")
 	saveSettings.Initialize("Save")
@@ -86,17 +96,28 @@ Public Sub Initialize
 	settingsPanel.Visible = False
 	printerSpinnerFill
 	languageprinterFill
-'	speedprinterFill
+	BoudprinterFill
 	deviceprinterFill
+	
+	HelperFunctions.Apply_ViewStyle(saveSettings, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
+	HelperFunctions.Apply_ViewStyle(country, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
+	HelperFunctions.Apply_ViewStyle(language, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
+	HelperFunctions.Apply_ViewStyle(printer, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
+	HelperFunctions.Apply_ViewStyle(Boud, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
+	HelperFunctions.Apply_ViewStyle(IPport, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
+	HelperFunctions.Apply_ViewStyle(IPaddress, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
+	HelperFunctions.Apply_ViewStyle(operator, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
+	HelperFunctions.Apply_ViewStyle(password, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
+	
 End Sub
 
 Sub printerSpinnerFill
-Log(Countries.getCountries)
+	'Log(Countries.getCountries)
 
-For Each m As String In Countries.getCountries.Keys
-		Log("Country:" & m)
+	For Each m As String In Countries.getCountries.Keys
+'		Log("Country:" & m)
 		country.Add(m)
-Next
+	Next
 End Sub
 
 Private Sub languageprinterFill
@@ -111,6 +132,11 @@ Private Sub deviceprinterFill
 	printer.AddAll(PrinterList)
 End Sub
 
+Private Sub BoudprinterFill
+	Boud.Clear
+	Boud.AddAll(BoudRatesList)
+End Sub
+
 Sub SettingsUI
 	settingsPanel.AddView(LabelCountry, 2%x, 5%y, 30%x, 5%y)
 	settingsPanel.AddView(country, 2%x, LabelCountry.Top + LabelCountry.Height, 40%x, 8%y)
@@ -118,38 +144,28 @@ Sub SettingsUI
 	settingsPanel.AddView(language, 2%x, LabelLanguage.Top + LabelLanguage.Height , 40%x, 8%y)
 	settingsPanel.AddView(LabelPrinter, 2%x, language.Top + language.Height + 15dip, 35%x, 5%y)
 	settingsPanel.AddView(printer, 2%x, LabelPrinter.Top + LabelPrinter.Height, 40%x, 8%y)
-	settingsPanel.AddView(LabelCodeTable, 2%x, printer.Top + printer.Height + 15dip, 40%x, 5%y)
-	settingsPanel.AddView(codeTable, 2%x, LabelCodeTable.Top + LabelCodeTable.Height, 40%x, 8%y)
 	
-	
-	settingsPanel.AddView(LabelPortorIPaddress, LabelCountry.Left + LabelCountry.Width + 30%x, LabelCountry.Top, 35%x, 5%y)
-	settingsPanel.AddView(serialPort, LabelPortorIPaddress.Left, LabelPortorIPaddress.Top + LabelPortorIPaddress.Height, 35%x, 8%y)
-	If GetDeviceLayoutValues.Width < GetDeviceLayoutValues.Height Then
-'		settingsPanel.AddView(IPaddress, LabelPortorIPaddress.Left, LabelPortorIPaddress.Top + LabelPortorIPaddress.Height, 35%x, 7%y)
-'	Else
-'		settingsPanel.AddView(IPaddress, LabelPortorIPaddress.Left, LabelPortorIPaddress.Top + LabelPortorIPaddress.Height, 35%x, 16%y)
-	End If
-	settingsPanel.AddView(LabelSpeedorIPport, LabelPortorIPaddress.Left, serialPort.Top + serialPort.Height + 7%y, 55%x, 5%y)
-	
-	If GetDeviceLayoutValues.Width < GetDeviceLayoutValues.Height Then
-	
-'		settingsPanel.AddView(IPport, LabelPortorIPaddress.Left, LabelSpeedorIPport.Top + LabelSpeedorIPport.Height, 35%x, 7%y)
-	Else
-'		settingsPanel.AddView(IPport, LabelPortorIPaddress.Left, LabelSpeedorIPport.Top + LabelSpeedorIPport.Height, 35%x, 15%y)
-	End If
+	settingsPanel.AddView(LabelIPport, LabelCountry.Left + LabelCountry.Width + 25%x, LabelCountry.Top, 40%x, 5%y)
+	settingsPanel.AddView(IPport, LabelIPport.Left, LabelIPport.Top + LabelIPport.Height, 40%x, 8%y)
 
-	settingsPanel.AddView(speed, LabelPortorIPaddress.Left, LabelSpeedorIPport.Top + LabelSpeedorIPport.Height, 35%x, 8%y)
+	settingsPanel.AddView(LabelBoudOrIp, LabelIPport.Left, IPport.Top + IPport.Height + 15dip, 40%x, 5%y)
+	settingsPanel.AddView(Boud, LabelIPport.Left, LabelBoudOrIp.Top + LabelBoudOrIp.Height, 40%x, 8%y)
+	settingsPanel.AddView(IPaddress, LabelIPport.Left, LabelBoudOrIp.Top + LabelBoudOrIp.Height, 40%x, 8%y)
+	IPaddress.Visible = False
+	IPaddress.Enabled = False
 	If GetDeviceLayoutValues.Width < GetDeviceLayoutValues.Height Then
-		settingsPanel.AddView(LabelOperator, LabelPortorIPaddress.Left, speed.Top + speed.Height + 5%y, 35%x, 5%y)
-		settingsPanel.AddView(operator, LabelPortorIPaddress.Left, LabelOperator.Top+LabelOperator.Height, LabelOperator.Width, 7%y)
-		settingsPanel.AddView(LabelPassword,LabelPortorIPaddress.Left, operator.Top+operator.Height, LabelOperator.Width, 5%y)
-		settingsPanel.AddView(password, LabelPortorIPaddress.Left, LabelPassword.Top+LabelPassword.Height, LabelOperator.Width, 7%y)
+		settingsPanel.AddView(LabelOperator, Boud.Left+Boud.Width -35%x, Boud.Top + Boud.Height + 20%y, 35%x, 5%y)
+		settingsPanel.AddView(operator, LabelOperator.Left, LabelOperator.Top+LabelOperator.Height, LabelOperator.Width, 7%y)
+		settingsPanel.AddView(LabelPassword,LabelOperator.Left, operator.Top+operator.Height+15dip, LabelOperator.Width, 5%y)
+		settingsPanel.AddView(password, LabelOperator.Left, LabelPassword.Top+LabelPassword.Height, LabelOperator.Width, 7%y)
 	Else
-		settingsPanel.AddView(LabelOperator, LabelPortorIPaddress.Left, speed.Top + speed.Height + 5%y, 35%x, 5%y)
-		settingsPanel.AddView(operator, LabelPortorIPaddress.Left, LabelOperator.Top+LabelOperator.Height, LabelOperator.Width, 15%y)
-		settingsPanel.AddView(LabelPassword,LabelPortorIPaddress.Left, operator.Top+operator.Height, LabelOperator.Width, 5%y)
-		settingsPanel.AddView(password, LabelPortorIPaddress.Left, LabelPassword.Top+LabelPassword.Height, LabelOperator.Width, 15%y)
+		settingsPanel.AddView(LabelOperator, Boud.Left+Boud.Width -35%x, Boud.Top + Boud.Height + 10%y, 35%x, 5%y)
+		settingsPanel.AddView(operator, Boud.Left+Boud.Width -35%x, LabelOperator.Top+LabelOperator.Height, LabelOperator.Width, 15%y)
+		settingsPanel.AddView(LabelPassword,LabelOperator.Left, operator.Top+operator.Height+15dip, LabelOperator.Width, 5%y)
+		settingsPanel.AddView(password, LabelOperator.Left, LabelPassword.Top+LabelPassword.Height, LabelOperator.Width, 15%y)
 	End If
+	settingsPanel.AddView(saveSettings, 33.33%x, 85%y, 33.33%x, 10%y)
+	
 End Sub
 
 
@@ -187,13 +203,10 @@ Private Sub POS_Print
 	PJobOpen.Initialize
 	PJobOpen.Phone = phone'\ProgramData.partnerPhone
 	masterP.AddJob(PJobOpen)
-	ProgramData.req = ProgramData.req.SubString2(1,ProgramData.req.Length - 1)
-	Private buffer() As Byte = ProgramData.req.GetBytes("UTF-8")
-	ProgramData.req = ProgramData.req.Replace("%3C", "<")
-	ProgramData.req = ProgramData.req.Replace("%3E", ">")
-	ProgramData.req = ProgramData.req.Replace("%20", " ")
-	Log(ProgramData.req)	
-	inn.InitializeFromBytesArray(buffer, 0, buffer.Length)
+'	ProgramData.req = ProgramData.req.SubString2(1,ProgramData.req.Length - 1)
+'	Private buffer() As Byte = ProgramData.req.GetBytes("UTF-8")
+	inn.InitializeFromBytesArray(SPAservice.urlResponse.GetBytes("UTF8"),0,SPAservice.urlResponse.GetBytes("UTF8").Length)
+'	inn.InitializeFromBytesArray(buffer, 0, buffer.Length)
 	Log(inn.BytesAvailable)
 	Try
 		templates.Parse(inn, "xml")
@@ -238,19 +251,19 @@ Private Sub POS_Print
 		masterP.AddJob(PJobFinish)
 		masterP.DoJobs
 	Catch
-		Log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+		Log("Failed")
 	End Try
 End Sub
 
 Private Sub xml_StartElement (Uri As String, Name As String, Attributes As Attributes)
-	
+	Log(Name)
 End Sub
 
 'Построява се обкет номенклатура (Item) или групите във зависимост от инициализацията./ Items or groups are 
 'created depending on the initialization
 Private Sub xml_EndElement (Uri As String, Name As String, Text As StringBuilder)
 	Private paymentMethod As String
-	If Name.EqualsIgnoreCase("Payment") Then 
+	If Name.EqualsIgnoreCase("Payment") Then
 		Select Name.EqualsIgnoreCase(paymentMethod)
 			Case paymentMethod.EqualsIgnoreCase("Cash"): payMethod = ProgramData.PAYMENT_CASH
 			Case paymentMethod.EqualsIgnoreCase("Account"): payMethod = ProgramData.PAYMENT_BANK
@@ -266,8 +279,8 @@ Private Sub xml_EndElement (Uri As String, Name As String, Text As StringBuilder
 	If Name.EqualsIgnoreCase("Voucher") Then vaucher = Text
 	
 	
-	If Name.EqualsIgnoreCase("Items") Then
-'		If Name.EqualsIgnoreCase("Item") Then
+	If Name.EqualsIgnoreCase("Item") Then
+		Log("Item here")
 	End If
 End Sub
 #End Region
@@ -278,44 +291,57 @@ Sub asView As Panel
 End Sub
 
 Sub ColorPickerAndLabelTexts
-	LabelCountry.TextColor = Colors.Black
-	LabelLanguage.TextColor = Colors.Black
-	LabelPrinter.TextColor = Colors.Black
-	LabelPortorIPaddress.TextColor = Colors.Black
-	LabelSpeedorIPport.TextColor = Colors.Black
-	LabelCodeTable.TextColor = Colors.Black
-	LabelOperator.TextColor = Colors.Black
-	LabelPassword.TextColor = Colors.Black
+	LabelCountry.TextColor = Colors.LightGray
+	LabelLanguage.TextColor = Colors.LightGray
+	LabelPrinter.TextColor = Colors.LightGray
+	LabelIPport.TextColor = Colors.LightGray
+	LabelBoudOrIp.TextColor = Colors.LightGray
+	LabelOperator.TextColor = Colors.LightGray
+	LabelPassword.TextColor = Colors.LightGray
 	
 	LabelCountry.Text = "Country"
 	LabelLanguage.Text = "Language"
 	LabelPrinter.Text = "Device"
-	LabelPortorIPaddress.Text = "Port"
-	LabelSpeedorIPport.Text = "Speed"
-	LabelCodeTable.Text = "Code table"
+	LabelIPport.Text = "Port"
+	LabelBoudOrIp.Text = "Boud rate"
 	LabelOperator.Text = "Operator"
 	LabelPassword.Text = "Password"
 	
-	settingsPanel.Color = Colors.ARGB(255, 99, 159, 255)
+'	settingsPanel.Color = Colors.ARGB(255, 99, 159, 255)
+	
+	saveSettings.Text = "Save!"
+	saveSettings.Color= Colors.DarkGray
+	saveSettings.TextColor = Colors.LightGray
 End Sub
 
 Sub Save_click
-			Try
-				Dim ActivePrinter As TActivePrinter
-				ActivePrinter.Initialize
-				ActivePrinter.connectionParams = getConnectionParams
-				ActivePrinter.name = selectedPrinterName
+	
+	readinfo.IPaddress = IPaddress.Text
+	readinfo.port = IPport.Text
+	readinfo.operator = operator.Text
+	readinfo.password = password.Text
+	raf.WriteEncryptedObject(readinfo, ProgramData.rafEncPass,0)
+	ToastMessageShow("Saved!", False)
+
+End Sub
+
+Private Sub setSettings
+	Try
+		Dim ActivePrinter As TActivePrinter
+		ActivePrinter.Initialize
+		ActivePrinter.connectionParams = getConnectionParams
+		ActivePrinter.name = selectedPrinterName
 '				ActivePrinter.ScriptsTemplate = getScripts
 
-				If Not(checkConnectionParams) Then Return
+		If Not(checkConnectionParams) Then Return
 		
-				masterP.addToActivePrinter(ActivePrinter)
-				refillSpPrinters
-			Catch
-				Log(LastException)
-				Msgbox("Failed", "Failed")
+		masterP.addToActivePrinter(ActivePrinter)
+		refillSpPrinters
+	Catch
+		Log(LastException)
+		Msgbox("Failed", "Failed")
 '				Msgbox(Main.translate.GetString("msgPrinterFailedToAdd"),Main.translate.GetString("lblWarning"))
-			End Try
+	End Try
 End Sub
 
 Sub countrySpinner_ItemClick (Position As Int, Value As Object)
@@ -333,10 +359,11 @@ End Sub
 
 Sub deviceSpinner_ItemClick (Position As Int, Value As Object)
 	selectedPrinterName = Value
+	readinfo.Device = Value
 	fillSettings
 End Sub
 
-Private Sub fillSettings	
+Private Sub fillSettings
 	Dim printerInfo As Printer = masterP.getInitialPrinterByName(selectedPrinterName)
 	CallSub2(printerInfo.ref,"setSelected_Printer", printerInfo.id)
 	Dim m As Map = CallSub(printerInfo.ref,"getDevice_SettingsRequirements")
@@ -354,7 +381,7 @@ private Sub runMap(m As Map, isFiscal As Boolean)
 		genereteSettingView(setting, m.Get(setting))
 	Next
 	
-	Save_click
+	setSettings
 
 End Sub
 
@@ -368,6 +395,10 @@ Public Sub refillSpPrinters
 	
 	For Each printerAc As TActivePrinter In masterP.ActivePrinters
 		spnPrinter.Add(printerAc.name)
+		Boud.SelectedIndex = Boud.IndexOf(printerAc.connectionParams.BaudRate)
+		IPaddress.Text = printerAc.connectionParams.IPAddress
+		IPport.Text = printerAc.connectionParams.IPPort
+		IPport.Text = printerAc.connectionParams.IPport
 	Next
 End Sub
 
@@ -376,17 +407,15 @@ Private Sub getConnectionParams As TConnectionParameters
 	connectionParams.Initialize
 	For Each key As Int In controlsMap.Keys
 		Dim control As Object = controlsMap.Get(key)
-'		 = controlsMap.Get(key)
 		Select key
 			Case Main.PS_BaudRate
 				Dim cSpinner As Spinner = control
-'				Dim cSpinner As Spinner = control
 				If cSpinner.SelectedIndex = -1 Then : getConnectionParamsFailed = True
-				Else : connectionParams.BaudRate = cSpinner.SelectedItem
+				Else
+					connectionParams.BaudRate = cSpinner.SelectedItem
 				End If
 				
 			Case Main.PS_IPAddress
-				Dim cEditText As EditText = control
 				Dim s As String = control
 				If s.Length = 0 Then
 					getConnectionParamsFailed = True
@@ -400,7 +429,8 @@ Private Sub getConnectionParams As TConnectionParameters
 			Case Main.PS_IPPort
 				Dim cEditText As EditText = control
 				If cEditText.Text.Length = 0 Then : getConnectionParamsFailed = True
-				Else : connectionParams.IPPort = cEditText.Text
+				Else
+					connectionParams.IPPort = cEditText.Text
 				End If
 				
 			Case Main.PS_Password
@@ -409,17 +439,17 @@ Private Sub getConnectionParams As TConnectionParameters
 				Else : connectionParams.Password = cEditText.Text
 				End If
 				
-			Case Main.PS_SerialPort
+			Case Main.PS_IPport
 				Dim cEditText As EditText = control
 				If cEditText.Text.Length = 0 Then : getConnectionParamsFailed = True
-				Else : connectionParams.SerialPort = cEditText.Text
+				Else : connectionParams.IPport = cEditText.Text
 				End If
 				
 			Case Main.PS_UserID
 				Dim cEditText As EditText = control
 				If cEditText.Text.Length = 0 Then : getConnectionParamsFailed = True
 				Else : connectionParams.UserID = cEditText.Text
-				End If				
+				End If
 		End Select
 	Next
 	
@@ -451,25 +481,34 @@ Private Sub genereteSettingView(setting As Int, value As String)
 '	If controlsMap.ContainsKey(setting) Then Return top
 			
 	Select setting
-		Case Main.PS_BaudRate	
+		Case Main.PS_BaudRate
 			'Build Spinner
-			printer.Initialize("printerSetting")
-			printer.Tag = setting
-			printer.AddAll(BoudRatesList)
-			printer.DropdownTextColor = Colors.White
-			printer.DropdownBackgroundColor = Colors.DarkGray
+'			printer.Initialize("printerSetting")
+			LabelBoudOrIp.Text = "Boud rate"
+			IPport.Enabled = False
+			IPaddress.Visible = False
+			IPaddress.Enabled = False
+			Boud.Visible = True
+			Boud.Enabled = True
+			Boud.Tag = setting
+			Boud.AddAll(BoudRatesList)
 			
 			'Set spinner selected index
 			Dim valueIndex As Int = BoudRatesList.IndexOf(value)
 			If valueIndex = - 1 Then valueIndex = 3
-			printer.SelectedIndex = valueIndex
+			Boud.SelectedIndex = valueIndex
 			
 			'Put Control in map
-			controlsMap.Put(setting,printer)
+			controlsMap.Put(setting,Boud)
 				
-		Case Main.PS_IPAddress	
+		Case Main.PS_IPAddress
 			'Build EditText
-			IPaddress.Initialize("edtSetting")
+			LabelBoudOrIp.Text = "IP Address"
+			
+			IPaddress.Visible = True
+			IPaddress.Enabled = True
+			Boud.Visible = False
+			Boud.Enabled = False
 			IPaddress.Text = value
 			IPaddress.TextColor = Colors.Black
 			IPaddress.Tag = setting
@@ -477,9 +516,8 @@ Private Sub genereteSettingView(setting As Int, value As String)
 			
 			controlsMap.Put(setting,IPaddress.Text)
 			
-		Case Main.PS_IPPort			
+		Case Main.PS_IPPort
 			'Build EditText
-			IPport.Initialize("edtSetting")
 			IPport.Text = value
 			IPport.TextColor = Colors.White
 			IPport.Tag = setting
@@ -488,8 +526,7 @@ Private Sub genereteSettingView(setting As Int, value As String)
 			
 			controlsMap.Put(setting,IPport)
 			
-		Case Main.PS_Password			
-			password.Initialize("edtSetting")
+		Case Main.PS_Password
 			password.Text = value
 			password.SingleLine = True
 			password.TextColor = Colors.White
@@ -497,22 +534,48 @@ Private Sub genereteSettingView(setting As Int, value As String)
 			controlsMap.Put(setting,password)
 			
 		Case Main.PS_UserID
-			operator.Initialize("edtSetting")
 			operator.Text = value
 			operator.SingleLine = True
 			operator.TextColor = Colors.White
 			
 			controlsMap.Put(setting, operator)
-			
-		Case Main.PS_SerialPort
-			serialPort.Initialize("edtSetting")
-			serialPort.Text = value
-			serialPort.TextColor = Colors.White
-			serialPort.SingleLine = True
-			serialPort.Tag = setting
-			serialPort.InputType = serialPort.INPUT_TYPE_NUMBERS
-			
-			controlsMap.Put(setting,serialPort)
 	End Select
 
+End Sub
+
+Sub settingsFill
+	If File.Exists(File.DirInternal, "initialSetting.config") = True And File.Size(File.DirInternal, "initialSetting.config") > 0 Then
+		readinfo = raf.ReadEncryptedObject(ProgramData.rafEncPass,0)
+'		IPaddress.Text = readinfo.IPaddress
+'		IPport.Text = readinfo.port
+		operator.Text = readinfo.operator
+		password.Text = readinfo.password
+		For i = 0 To country.Size-1
+			If country.GetItem(i) = readinfo.country Then
+				country.SelectedIndex = i
+			End If
+		Next
+		For i = 0 To language.Size-1
+			If language.GetItem(i) = readinfo.language Then
+				language.SelectedIndex = i
+			End If
+		Next
+'		For i = 0 To Boud.Size-1
+'			If Boud.GetItem(i) = readinfo.speed Then
+'				Boud.SelectedIndex = i
+'			End If
+'		Next
+		For i = 0 To printer.Size-1
+			If printer.GetItem(i) = readinfo.Device Then
+				printer.SelectedIndex = i
+				selectedPrinterName  = readinfo.Device
+				fillSettings
+			End If
+		Next
+				
+	Else
+		country.SelectedIndex = 0
+		language.SelectedIndex = 0
+		printer.SelectedIndex = 0
+	End If
 End Sub

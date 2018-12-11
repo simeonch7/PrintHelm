@@ -4,6 +4,7 @@ ModulesStructureVersion=1
 Type=Class
 Version=7.3
 @EndOfDesignText@
+
 Private Sub Class_Globals
 	Private raf As RandomAccessFile
 	Private loginPanel As Panel
@@ -101,7 +102,7 @@ Private Sub loginPanel_Configurations
 	PrinterIP.Padding = Array As Int(15,0,0,0)
 	PrinterIP.SingleLine = True
 
-	Dim ssocket As ServerSocket
+	Dim ssocket As ServerSocket		'Ignore
 	Log("Ip address: " & ssocket.GetMyWifiIP)
 	If ssocket.GetMyWifiIP = "127.0.0.1" Then
 		PrinterIP.Text = "Device not connected to local network"
@@ -109,7 +110,7 @@ Private Sub loginPanel_Configurations
 		PrinterIP.Text = ssocket.GetMyWifiIP
 		PrinterPort.Text =  SPAservice.port
 	End If
-
+	ssocket.Close
 
 	HelperFunctions.Apply_ViewStyle(PrinterPort,Colors.Black,Colors.White,Colors.White,Colors.White,Colors.White,Colors.White,Colors.White,60)
 	PrinterPort.Padding = Array As Int(15,0,0,0)
@@ -176,6 +177,7 @@ Private Sub ButtonloginPanel_Click
 End Sub
 	
 Private Sub isConnect_Click
+	
 	If checkNet Then
 		lblConnection.Text = "Connected"
 		lblConnection.TextColor = Colors.Green
@@ -192,6 +194,7 @@ Public Sub checkNet As Boolean
 	Response.Initialize
 	Error.Initialize
 	'Ping Google DNS - if you can't reach this you are in serious trouble!
+	
 	p.Shell("ping -c 1 8.8.8.8",Null,Response,Error)
 	Log("======= Response ========")
 	Log(Response)
