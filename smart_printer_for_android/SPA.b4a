@@ -1,12 +1,16 @@
 ﻿Build1=Default,microinvest.SPA
 File1=6082.jpg
 File2=dictionary.xml
-File3=login_background.jpg
-File4=options_icon.png
+File3=glossy_3d_blue_arrow_left.png
+File4=glossy_3d_blue_arrow_right.png
+File5=login_background.jpg
+File6=options_icon.png
 FileGroup1=Default Group
 FileGroup2=Default Group
 FileGroup3=Default Group
 FileGroup4=Default Group
+FileGroup5=Default Group
+FileGroup6=Default Group
 Group=Default Group
 IconFile=
 Library1=core
@@ -29,31 +33,31 @@ Library8=felusbserial
 Library9=serial
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="5" android:targetSdkVersion="26"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~'End of default text.~\n~~\n~AddPermission(android.hardware.usb.action.USB_DEVICE_DETACHED)~\n~CreateResource(xml, device_filter.xml,~\n~<resources>		~\n~    <usb-device />	~\n~</resources>~\n~)~\n~AddApplicationText(~\n~<activity android:name=".main" >~\n~   <intent-filter>~\n~    <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />~\n~   </intent-filter>  ~\n~    <meta-data android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" android:resource="@xml/device_filter" />   ~\n~ </activity>~\n~)
 Module1=SPAservice
-Module10=Utilities
-Module11=DataTypes
-Module12=Translator
-Module13=ProgramData
-Module14=OperationFunctions
-Module15=PrinterConstants
-Module16=Version
-Module17=ButtonWithNotifications
-Module18=Countries
-Module19=Device
+Module10=BytesBuilder
+Module11=HelperFunctions
+Module12=Utilities
+Module13=Translator
+Module14=ProgramData
+Module15=OperationFunctions
+Module16=PrinterConstants
+Module17=Version
+Module18=ButtonWithNotifications
+Module19=Countries
 Module2=SettingsScreen
-Module20=Constants
-Module21=UISizes
-Module22=Settings
-Module23=B4XEval
-Module24=ImageResources
+Module20=Device
+Module21=Constants
+Module22=UISizes
+Module23=Settings
+Module24=B4XEval
 Module25=PriceMathFunctions
-Module3=IPscreen
+Module3=DataTypes
 Module4=PrinterMain
-Module5=PrinterPOS
-Module6=PrinterPriceCalculator
-Module7=BytesBuilder
-Module8=ScriptMaster
-Module9=HelperFunctions
-NumberOfFiles=4
+Module5=ImageResources
+Module6=ScriptMaster
+Module7=PrinterPOS
+Module8=IPscreen
+Module9=PrinterPriceCalculator
+NumberOfFiles=6
 NumberOfLibraries=18
 NumberOfModules=25
 Version=8.5
@@ -73,7 +77,7 @@ Version=8.5
 	#IncludeTitle: False
 #End Region
 
-Sub Process_Globals
+Sub Process_Globals	
 	Public translate As Translator
 	Public localDefaultFontSize, intWorkMode As Int
 	Public Const orientationLandscape As Int = 0

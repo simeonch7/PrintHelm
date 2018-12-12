@@ -17,7 +17,8 @@ Sub Process_Globals
 	Type PaymentButton(ID As Int, Name As String, PaymentMethod As Int, FiscalMode As Int, CompanyID As Int)
 	Type ECRReceipt (ReceiptID As Int, Total As Double, ECRID As String, ReceiptType As Int)
 	Type Operation(ID As Int, CompanyID As Int, ObjectID As Int, PartnerID As Int, UserID As Int, PaymentID As Int, Amount As Double, AmountVat As Double, AmountWithVat As Double, PricesWithVat As Int, NullVat As Int, IsVat As Int, Items As List, Payments As Map, DateIssued As String, OperType As Int, ECReceipt As ECRReceipt)
-	Type information(country As String, language As String, Device As String, port As String, speed As String, IPaddress As String, codeTable As String, operator As String, password As String)
+	Type information(country As String, language As String, Device As String, port As String, speed As String, IPaddress As String, codeTable As String, operator As String, password As String, headerOne As String)
+
 
 End Sub
 
