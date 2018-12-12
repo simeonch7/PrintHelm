@@ -64,11 +64,15 @@ Private Sub Process_Globals
 	
 	Public PartnersMap As Map
 	Public ObjectsMap As Map
+	
+	Public PartnersBulstatMap As Map
+	Public PartnersCardNumberMap, PartnersPhoneNumberMap As Map
+
 
 	Public partnerPhone As String
 	Public strLastOperation As String
 
-	Public selectedPartnerID As Int = 0
+	Public selectedPartnerID As Int
 	Public selectedObjectID As Int
 
 	Public req As String
@@ -92,6 +96,17 @@ Public Sub Initialize
 '	GroupColor_Pressed = HelperFunctions.Clr("0D5E89")
 	PressedTextColor = Colors.Black
 	ButtonLeft = 5%x
+	
+	PartnersMap.Initialize
+	ObjectsMap.Initialize
+	CurrentCompany.Initialize
+	CurrentUser.Initialize
+	
+	
+	PartnersBulstatMap.Initialize
+	PartnersCardNumberMap.Initialize
+	PartnersPhoneNumberMap.Initialize
+
 End Sub
 
 

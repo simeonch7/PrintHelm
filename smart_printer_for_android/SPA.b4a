@@ -33,34 +33,34 @@ Library8=felusbserial
 Library9=serial
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="5" android:targetSdkVersion="26"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~'End of default text.~\n~~\n~AddPermission(android.hardware.usb.action.USB_DEVICE_DETACHED)~\n~CreateResource(xml, device_filter.xml,~\n~<resources>		~\n~    <usb-device />	~\n~</resources>~\n~)~\n~AddApplicationText(~\n~<activity android:name=".main" >~\n~   <intent-filter>~\n~    <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />~\n~   </intent-filter>  ~\n~    <meta-data android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" android:resource="@xml/device_filter" />   ~\n~ </activity>~\n~)
 Module1=SPAservice
-Module10=BytesBuilder
-Module11=HelperFunctions
-Module12=Utilities
-Module13=Translator
-Module14=ProgramData
-Module15=OperationFunctions
-Module16=PrinterConstants
-Module17=Version
-Module18=ButtonWithNotifications
-Module19=Countries
+Module10=PrinterPriceCalculator
+Module11=BytesBuilder
+Module12=Device
+Module13=PriceMathFunctions
+Module14=IPscreen
+Module15=Translator
+Module16=OperationFunctions
+Module17=PrinterConstants
+Module18=Version
+Module19=ButtonWithNotifications
 Module2=SettingsScreen
-Module20=Device
+Module20=Countries
 Module21=Constants
 Module22=UISizes
 Module23=Settings
 Module24=B4XEval
-Module25=PriceMathFunctions
-Module3=DataTypes
-Module4=PrinterMain
-Module5=ImageResources
-Module6=ScriptMaster
-Module7=PrinterPOS
-Module8=IPscreen
-Module9=PrinterPriceCalculator
+Module25=ImageResources
+Module3=ScriptMaster
+Module4=ProgramData
+Module5=PrinterPOS
+Module6=DataTypes
+Module7=PrinterMain
+Module8=HelperFunctions
+Module9=Utilities
 NumberOfFiles=6
 NumberOfLibraries=18
 NumberOfModules=25
-Version=8.5
+Version=8
 @EndOfDesignText@
 #Region  Project Attributes 
 	#ApplicationLabel: Smart Printer for Android
@@ -124,6 +124,7 @@ End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
 	Math.Initialize(Me, "Math")
+	ProgramData.Initialize
 
 	ImageResources.LoadImages
 	

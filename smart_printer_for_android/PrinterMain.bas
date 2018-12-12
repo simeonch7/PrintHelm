@@ -276,10 +276,12 @@ Public Sub DoJobs
 '		set the driver scripts
 		CallSub2(APrinter.driver,"Assign_Scripts",ScriptsProcess)
 	
-		CallSubDelayed(APrinter.driver,"doJobs")
+		CallSub(APrinter.driver,"doJobs")
+'		CallSubDelayed(APrinter.driver,"doJobs")
 	Next
 	
 	CallSubDelayed(callBack, "Print_Finished")
+'	CallSub(callBack, "Print_Finished")
 	
 	Jobs.Clear
 End Sub

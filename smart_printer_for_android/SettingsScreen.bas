@@ -7,8 +7,8 @@ Version=8.3
 Sub Class_Globals
 	Private settingsPanel As Panel
 	Private country, language, printer, spnPrinter, Boud As Spinner
-	Private IPport, IPaddress, operator, password, headerOne As EditText
-	Private LabelCountry, LabelLanguage, LabelPrinter, LabelIPport, LabelBoudOrIp, LabelOperator, LabelPassword, HeaderOneLabel As Label
+	Private IPport, IPaddress, operator, password As EditText
+	Private LabelCountry, LabelLanguage, LabelPrinter, LabelIPport, LabelBoudOrIp, LabelOperator, LabelPassword As Label
 	Private BoudRatesList As List
 	Private PrinterList As List
 	Private masterP As PrinterMain
@@ -42,7 +42,9 @@ Sub Class_Globals
 	
 	Private itCart As CartItem
 	Private partner As Partner
-'	Private company As Company
+'	Private workingCompany As Company
+	Private workingUser As CurrentUser	
+	Private workingobject As StoreObject
 	Private tagUP As Int = 0
 	Private cHeadersList, cFootersList, cDetailesList, cTotalsList As List
 
@@ -53,9 +55,6 @@ Public Sub Initialize
 	advancedSettingsOpen.Initialize("advancedSettingsOpen")
 	advancedSettingsClose.Initialize("advancedSettingsClose")
 	headersPanel.Initialize("headersPanel")
-	HeaderOneLabel.Initialize("HeaderOneLabel")
-	headerOne.Initialize("headerone")
-	headersPanel.Color = Colors.LightGray
 	cFootersList.Initialize
 	cDetailesList.Initialize
 	cHeadersList.Initialize
@@ -72,7 +71,7 @@ Public Sub Initialize
 	advancedSettingsClose.Enabled = False
 	advancedSettingsClose.Visible= False
 	
-
+'	printersAdd.Initialize
 	country.Initialize("countrySpinner")
 	language.Initialize("languageSpinner")
 	
@@ -108,10 +107,10 @@ Public Sub Initialize
 	
 	SettingsUI
 	PrinterList.Initialize
-
+'	addData
 	templates.Initialize
 	masterP.Initialize(Me)
-
+'	"1200", "2400", "4800", "9600", "14400", "19200", "38400", "57600", "115200")
 	BoudRatesList.Add(1200)
 	BoudRatesList.Add(2400)
 	BoudRatesList.Add(4800)
@@ -138,8 +137,7 @@ Public Sub Initialize
 	HelperFunctions.Apply_ViewStyle(IPaddress, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 	HelperFunctions.Apply_ViewStyle(operator, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 	HelperFunctions.Apply_ViewStyle(password, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
-	HelperFunctions.Apply_ViewStyle(headerOne, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
-
+	
 End Sub
 
 Sub advancedSettingsOpen_Click
@@ -147,17 +145,6 @@ Sub advancedSettingsOpen_Click
 	advancedSettingsClose.visible = True
 	advancedSettingsOpen.enabled = False
 	advancedSettingsOpen.visible = False
-	headersPanel.SetLayoutAnimated(250, 0%x, 0%y, 75%x, 100%y)
-	country.Enabled = False
-	language.Enabled = False
-	printer.Enabled = False
-	Boud.Enabled = False
-	operator.Enabled = False
-	password.Enabled = False
-	IPport.Enabled = False
-	IPaddress.Enabled = False
-	saveSettings.Enabled = False
-	saveSettings.Visible = False
 End Sub
 
 Sub advancedSettingsClose_Click
@@ -165,24 +152,13 @@ Sub advancedSettingsClose_Click
 	advancedSettingsClose.visible = False
 	advancedSettingsOpen.enabled = True
 	advancedSettingsOpen.visible = True
-	headersPanel.SetLayoutAnimated(250, -75%x, 0%y, 75%x, 100%y)
-	settingsPanel.Enabled = True
-	country.Enabled = True
-	language.Enabled = True
-	printer.Enabled = True
-	Boud.Enabled = True
-	operator.Enabled = True
-	password.Enabled = True
-	If IPport.Text <> "0" Then
-	IPport.Enabled = True
-	End If
-	IPaddress.enabled = True
-	saveSettings.Enabled = True
-	saveSettings.Visible = True
 End Sub
 
 Sub printerSpinnerFill
+	'Log(Countries.getCountries)
+
 	For Each m As String In Countries.getCountries.Keys
+'		Log("Country:" & m)
 		country.Add(m)
 	Next
 End Sub
@@ -236,10 +212,6 @@ Sub SettingsUI
 	advancedSettingsOpen.width = 70dip
 	settingsPanel.AddView(advancedSettingsOpen, LabelCountry.Left, saveSettings.Top+saveSettings.Height-advancedSettingsOpen.Height, 70dip, 70dip)
 	settingsPanel.AddView(advancedSettingsClose, 98%x - advancedSettingsOpen.Width, saveSettings.Top+saveSettings.Height-advancedSettingsOpen.Height, 70dip, 70dip)
-	settingsPanel.AddView(headersPanel, -75%x, 0%y, 75%x, 100%y)
-	headersPanel.AddView(HeaderOneLabel, 2%x, 5%y, 30%x, 5%y)
-	headersPanel.AddView(headerOne,2%x, HeaderOneLabel.Top + HeaderOneLabel.Height, 40%x, 8%y)
-	
 End Sub
 
 
@@ -288,7 +260,7 @@ Private Sub POS_Print
 		PJobItem.PLU = itCart.itemCode
 		PJobItem.ItemName = itCart.ItemName
 		PJobItem.Quantity = itCart.qtty
-		PJobItem.Price = PriceMathFunctions.GetSinglePriceWithVat(itCart)
+		PJobItem.Price = itCart.itemPrice
 		PJobItem.ItemMeasure = itCart.measureName
 		PJobItem.VatPercent = itCart.VatPercent
 		PJobItem.VatIndex = itCart.VatIndex
@@ -335,6 +307,14 @@ Private Sub xml_StartElement (Uri As String, Name As String, Attributes As Attri
 		partner.Initialize
 		tagUP = 2
 	End If
+	If Name.EqualsIgnoreCase("Operator") Then
+		workingUser.Initialize
+		tagUP = 3
+	End If
+	If Name.EqualsIgnoreCase("Location") Then
+		workingobject.Initialize
+		tagUP = 4
+	End If
 End Sub
 
 'Построява се обкет номенклатура (Item) или групите във зависимост от инициализацията./ Items or groups are 
@@ -352,72 +332,145 @@ Private Sub xml_EndElement (Uri As String, Name As String, Text As StringBuilder
 			If Name.EqualsIgnoreCase("TaxPercent")  Then itCart.VATPercent = Text
 			If Name.EqualsIgnoreCase("Discount") 	Then itCart.VATPercent = Text
 		Case 2
-			If Name.EqualsIgnoreCase("CompanyId")   Then partner.CompanyID = Text
-			If Name.EqualsIgnoreCase("id")          Then partner.ID = Text
-			If Name.EqualsIgnoreCase("Code")        Then partner.partnerCode = Text
-			If Name.EqualsIgnoreCase("Company")     Then partner.CompanyName = Text
-			If Name.EqualsIgnoreCase("Address")     Then partner.Address = Text
-			If Name.EqualsIgnoreCase("PriceGroup")  Then partner.PriceGroup = Text - 1
-			If Name.EqualsIgnoreCase("Bulstat")     Then partner.Bulstat = Text
-			If Name.EqualsIgnoreCase("City")        Then partner.City = Text
-			If Name.EqualsIgnoreCase("Discount")    Then partner.discount = Text
-			If Name.EqualsIgnoreCase("eMail")       Then partner.email = Text
-			If Name.EqualsIgnoreCase("MOL")         Then partner.mol = Text
-			If Name.EqualsIgnoreCase("Type")        Then partner.PartnerType = Text
-			If Name.EqualsIgnoreCase("Phone")       Then partner.phone = Text
+			If Name.EqualsIgnoreCase("Code") Then partner.partnerCode = Text
+			If Name.EqualsIgnoreCase("Company") Then partner.CompanyName = Text
+			If Name.EqualsIgnoreCase("Address") Then partner.Address = Text
+			If Name.EqualsIgnoreCase("PriceGroup") Then partner.PriceGroup = Text - 1
+			If Name.EqualsIgnoreCase("Bulstat") Then partner.Bulstat = Text
+			If Name.EqualsIgnoreCase("City") Then partner.City = Text
+			If Name.EqualsIgnoreCase("Discount") Then partner.discount = Text
+			If Name.EqualsIgnoreCase("eMail") Then partner.email = Text
+			If Name.EqualsIgnoreCase("MOL") Then partner.mol = Text
+			If Name.EqualsIgnoreCase("Type") Then partner.PartnerType = Text
+			If Name.EqualsIgnoreCase("Phone") Then partner.phone = Text
 '			If Name.EqualsIgnoreCase("Deleted") Then IsDeleted = Text
-			If Name.EqualsIgnoreCase("CardNumber")  Then partner.CardNumber = Text
+			If Name.EqualsIgnoreCase("CardNumber") Then partner.CardNumber = Text
 	
 			If Name.EqualsIgnoreCase("TaxNo") Then
 				If Text.ToString = "" Then  Text.Append("0")
 				partner.taxNo = Text
 			End If
+			
+			If Name.EqualsIgnoreCase("Partner") Then
+					Private partner As Partner
+					partner.Initialize
+					partner = Copy_WorkingToLocalObject
+					ProgramData.selectedPartnerID = partner.partnerCode
+					ProgramData.PartnersMap.Put(partner.partnerCode,partner)
+					If partner.Bulstat <> "" Then ProgramData.PartnersBulstatMap.Put(partner.Bulstat,partner.id)
+					If partner.CardNumber <> "" Then ProgramData.PartnersCardNumberMap.Put(partner.CardNumber,partner.id)
+					If partner.phone <> "" Then ProgramData.PartnersPhoneNumberMap.Put(partner.phone,partner.id)
+			End If
+		Case 3
+			If Name.EqualsIgnoreCase("Code") Then  ProgramData.selectedPartnerID = Text
+			If Name.EqualsIgnoreCase("Name") Then  workingUser.Name = Text
+			If Name.EqualsIgnoreCase("Group") Then  workingUser.GroupName = Text
+			
+			If Name.EqualsIgnoreCase("Operator") Then
+				ProgramData.CurrentUser = UserCopyWorkingToLocalUser
+			End If			
+		Case 4
+			If Name.EqualsIgnoreCase("Code") Then workingobject.storeCode = Text
+			If Name.EqualsIgnoreCase("Name") Then workingobject.storeName = Text
 
+			If Name.EqualsIgnoreCase("Location") Then
+				Private objectStorer As StoreObject
+
+				objectStorer = CopyWorkingToLocalObject
+				ProgramData.selectedObjectID = objectStorer.storeCode
+
+				ProgramData.ObjectsMap.Put(objectStorer.storeCode,objectStorer)
+
+			End If
+
+			
 	End Select
-
+	
 		
 '	If Name.EqualsIgnoreCase("Item") Then
 '	End If
 	If Name.EqualsIgnoreCase("Payment") Then
 		Select Name.EqualsIgnoreCase(paymentMethod)
-			Case paymentMethod.EqualsIgnoreCase("Cash"):    payMethod = ProgramData.PAYMENT_CASH
+			Case paymentMethod.EqualsIgnoreCase("Cash"): payMethod = ProgramData.PAYMENT_CASH
 			Case paymentMethod.EqualsIgnoreCase("Account"): payMethod = ProgramData.PAYMENT_BANK
-			Case paymentMethod.EqualsIgnoreCase("Card"):    payMethod = ProgramData.PAYMENT_CARD
+			Case paymentMethod.EqualsIgnoreCase("Card"): payMethod = ProgramData.PAYMENT_CARD
 			Case paymentMethod.EqualsIgnoreCase("Voucher"): payMethod = ProgramData.PAYMENT_TALN
 		End Select
 	End If
 	
 	
-	If Name.EqualsIgnoreCase("Cash")    Then cash = Text
+	If Name.EqualsIgnoreCase("Cash") Then cash = Text
 	If Name.EqualsIgnoreCase("Account") Then bank = Text
-	If Name.EqualsIgnoreCase("Card")    Then card = Text
+	If Name.EqualsIgnoreCase("Card") Then card = Text
 	If Name.EqualsIgnoreCase("Voucher") Then vaucher = Text
 
 End Sub
 #End Region
- 
+
+Private Sub CopyWorkingToLocalObject As StoreObject
+	Private localitem As StoreObject
+	localitem.Initialize
+'	localitem.CompanyID = workingobject.CompanyID
+'	localitem.ID = workingobject.ID
+	localitem.storeCode = workingobject.storeCode
+	localitem.storeName = workingobject.storeName
+'	localitem.storeAddress = workingobject.storeAddress
+'	localitem.PriceGroup = workingobject.PriceGroup
+	Return localitem
+End Sub
+
+Private Sub Copy_WorkingToLocalObject As Partner
+	Private localitem As Partner
+	localitem.Initialize
+'	localitem.CompanyID = partner.CompanyID
+'	localitem.ID = partner.ID
+	localitem.partnerCode = partner.partnerCode
+	localitem.CompanyName = partner.CompanyName
+	localitem.Address = partner.Address
+	localitem.PriceGroup = partner.PriceGroup
+	localitem.Bulstat = partner.Bulstat
+	localitem.CardNumber = partner.CardNumber
+	localitem.City = partner.City
+	localitem.discount = partner.discount
+	localitem.email = partner.email
+	localitem.mol = partner.mol
+	localitem.PartnerType = partner.PartnerType
+	localitem.phone=partner.phone
+	localitem.taxNo = partner.taxNo
+	Return localitem
+End Sub
+
+Private Sub UserCopyWorkingToLocalUser As CurrentUser
+	Private localitem As CurrentUser
+'	localitem.id = workingUser.id
+	localitem.CompanyId = workingUser.CompanyId
+	localitem.Name = workingUser.Name
+	localitem.email = workingUser.email
+	localitem.phone = workingUser.phone
+	localitem.GroupName = workingUser.GroupName
+	Return localitem
+End Sub
 
 Sub asView As Panel
 	Return settingsPanel
 End Sub
 
 Sub ColorPickerAndLabelTexts
-	LabelCountry.TextColor =  Colors.LightGray
+	LabelCountry.TextColor = Colors.LightGray
 	LabelLanguage.TextColor = Colors.LightGray
-	LabelPrinter.TextColor =  Colors.LightGray
-	LabelIPport.TextColor =   Colors.LightGray
+	LabelPrinter.TextColor = Colors.LightGray
+	LabelIPport.TextColor = Colors.LightGray
 	LabelBoudOrIp.TextColor = Colors.LightGray
 	LabelOperator.TextColor = Colors.LightGray
 	LabelPassword.TextColor = Colors.LightGray
 	
-	LabelCountry.Text =  "Country"
+	LabelCountry.Text = "Country"
 	LabelLanguage.Text = "Language"
-	LabelPrinter.Text =  "Device"
-	LabelIPport.Text =   "Port"
+	LabelPrinter.Text = "Device"
+	LabelIPport.Text = "Port"
 	LabelBoudOrIp.Text = "Boud rate"
 	LabelOperator.Text = "Operator"
 	LabelPassword.Text = "Password"
-	HeaderOneLabel.Text = "Header One"
 		
 	saveSettings.Text = "Save!"
 	saveSettings.Color= Colors.DarkGray
@@ -430,7 +483,6 @@ Sub Save_click
 	readinfo.port = IPport.Text
 	readinfo.operator = operator.Text
 	readinfo.password = password.Text
-	readinfo.headerOne = headerOne.Text
 	raf.WriteEncryptedObject(readinfo, ProgramData.rafEncPass,0)
 	ToastMessageShow("Saved!", False)
 
@@ -506,7 +558,7 @@ Private Sub setSettings
 	Catch
 		Log(LastException)
 		Msgbox("Failed", "Failed")
-'		Msgbox(Main.translate.GetString("msgPrinterFailedToAdd"),Main.translate.GetString("lblWarning")) - exception with translator
+'				Msgbox(Main.translate.GetString("msgPrinterFailedToAdd"),Main.translate.GetString("lblWarning"))
 	End Try
 End Sub
 
@@ -522,9 +574,9 @@ Sub languageSpinner_ItemClick (Position As Int, Value As Object)
 	readinfo.language = Value
 End Sub
 
-'Sub codeTableSpinner_ItemClick (Position As Int, Value As Object)
-'	readinfo.codeTable = Value
-'End Sub
+Sub codeTableSpinner_ItemClick (Position As Int, Value As Object)
+	readinfo.codeTable = Value
+End Sub
 
 Sub deviceSpinner_ItemClick (Position As Int, Value As Object)
 	selectedPrinterName = Value
@@ -723,11 +775,6 @@ End Sub
 Sub settingsFill
 	If File.Exists(File.DirInternal, "initialSetting.config") = True And File.Size(File.DirInternal, "initialSetting.config") > 0 Then
 		readinfo = raf.ReadEncryptedObject(ProgramData.rafEncPass,0)
-		If readinfo.headerOne = Null Then 
-			headerOne.Text = "" 
-		Else		
-		headerOne.Text = readinfo.headerOne
-		End If
 		IPaddress.Text = readinfo.IPaddress
 		IPport.Text = readinfo.port
 		operator.Text = readinfo.operator
@@ -750,7 +797,7 @@ Sub settingsFill
 		For i = 0 To printer.Size-1
 			If printer.GetItem(i) = readinfo.Device Then
 				printer.SelectedIndex = i
-				selectedPrinterName  =  readinfo.Device
+				selectedPrinterName  = readinfo.Device
 				fillSettings
 			End If
 		Next
