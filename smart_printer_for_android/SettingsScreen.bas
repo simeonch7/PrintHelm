@@ -40,6 +40,9 @@ Sub Class_Globals
 	Private background As BitmapDrawable
 	
 	
+	Private intLanguageIndex As Int
+	
+	
 	Private itCart As CartItem
 	Private partner As Partner
 '	Private workingCompany As Company
@@ -101,8 +104,9 @@ Public Sub Initialize
 	raf.Initialize(File.DirInternal, "initialSetting.config", False)
 	readinfo.Initialize
 	tempList.Initialize
-
+	language.SelectedIndex = language.IndexOf(Main.SelectedLanguage)
 	
+
 	ColorPickerAndLabelTexts
 	
 	SettingsUI
@@ -137,6 +141,8 @@ Public Sub Initialize
 	HelperFunctions.Apply_ViewStyle(IPaddress, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 	HelperFunctions.Apply_ViewStyle(operator, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 	HelperFunctions.Apply_ViewStyle(password, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
+	
+	
 	
 End Sub
 
@@ -181,6 +187,9 @@ Private Sub BoudprinterFill
 End Sub
 
 Sub SettingsUI
+	intLanguageIndex = 0							'Български език / Language is Bulgarian
+
+	
 	settingsPanel.AddView(LabelCountry, 2%x, 5%y, 30%x, 5%y)
 	settingsPanel.AddView(country, 2%x, LabelCountry.Top + LabelCountry.Height, 40%x, 8%y)
 	settingsPanel.AddView(LabelLanguage, 2%x, country.Top + country.Height + 15dip, 40%x, 5%y)
@@ -464,15 +473,15 @@ Sub ColorPickerAndLabelTexts
 	LabelOperator.TextColor = Colors.LightGray
 	LabelPassword.TextColor = Colors.LightGray
 	
-	LabelCountry.Text = "Country"
-	LabelLanguage.Text = "Language"
-	LabelPrinter.Text = "Device"
-	LabelIPport.Text = "Port"
-	LabelBoudOrIp.Text = "Boud rate"
-	LabelOperator.Text = "Operator"
-	LabelPassword.Text = "Password"
+	LabelCountry.Text = Main.translate.GetString("lblCountry")
+	LabelLanguage.Text = Main.translate.GetString("lblLanguage")
+	LabelPrinter.Text = Main.translate.GetString("lblDevice")
+	LabelIPport.Text = Main.translate.GetString("lblPort")
+	LabelBoudOrIp.Text = Main.translate.GetString("lblBoud")
+	LabelOperator.Text = Main.translate.GetString("lblOpertor")
+	LabelPassword.Text = Main.translate.GetString("lblPassword")
 		
-	saveSettings.Text = "Save!"
+	saveSettings.Text = Main.translate.GetString("lblSave")
 	saveSettings.Color= Colors.DarkGray
 	saveSettings.TextColor = Colors.LightGray
 End Sub
@@ -484,7 +493,7 @@ Sub Save_click
 	readinfo.operator = operator.Text
 	readinfo.password = password.Text
 	raf.WriteEncryptedObject(readinfo, ProgramData.rafEncPass,0)
-	ToastMessageShow("Saved!", False)
+	ToastMessageShow(Main.translate.GetString("ToastSave"), False)
 
 End Sub
 
@@ -557,8 +566,7 @@ Private Sub setSettings
 		refillSpPrinters
 	Catch
 		Log(LastException)
-		Msgbox("Failed", "Failed")
-'				Msgbox(Main.translate.GetString("msgPrinterFailedToAdd"),Main.translate.GetString("lblWarning"))
+		Msgbox(Main.translate.GetString("msgPrinterFailedToAdd"),Main.translate.GetString("lblWarning"))
 	End Try
 End Sub
 
@@ -571,8 +579,29 @@ Sub BoudSpinner_ItemClick (Position As Int, Value As Object)
 End Sub
 
 Sub languageSpinner_ItemClick (Position As Int, Value As Object)
+	intLanguageIndex = Position
+	Main.SelectedLanguage = Value
+	Main.translate.SetLanguage(Value)
+	InitialSetSignsRefresh
 	readinfo.language = Value
 End Sub
+
+'Опресняване на надписите в първоначалните настройки / Refreshes signs in Initial settings
+Public Sub InitialSetSignsRefresh
+	LabelCountry.Text = Main.translate.GetString("lblCountry")
+	LabelLanguage.Text = Main.translate.GetString("lblLanguage")
+	LabelPrinter.Text = Main.translate.GetString("lblDevice")
+	LabelIPport.Text = Main.translate.GetString("lblPort")
+	LabelBoudOrIp.Text = Main.translate.GetString("lblBoud")
+	LabelOperator.Text = Main.translate.GetString("lblOpertor")
+	LabelPassword.Text = Main.translate.GetString("lblPassword")
+	saveSettings.Text = Main.translate.GetString("lblSave")
+'	InitialSetAddOrientations
+'	InitialSetAddCountries
+'	InitialSetAddLanguages
+	CallSub(Main,"Login_SignsRefresh")	' Когато опресним надписите тук, ще се опресняват и надписите в другите модули
+End Sub
+
 
 Sub codeTableSpinner_ItemClick (Position As Int, Value As Object)
 	readinfo.codeTable = Value
@@ -708,7 +737,7 @@ public Sub genereteSettingView(setting As Int, value As String)
 		Case Main.PS_BaudRate
 			'Build Spinner
 '			printer.Initialize("printerSetting")
-			LabelBoudOrIp.Text = "Boud rate"
+			LabelBoudOrIp.Text = Main.translate.GetString("lblBoud")
 			IPport.Enabled = False
 			IPaddress.Visible = False
 			IPaddress.Enabled = False
@@ -732,7 +761,7 @@ public Sub genereteSettingView(setting As Int, value As String)
 				
 		Case Main.PS_IPAddress
 			'Build EditText
-			LabelBoudOrIp.Text = "IP Address"
+			LabelBoudOrIp.Text = Main.translate.GetString("lblIPadd")
 			
 			IPaddress.Visible = True
 			IPaddress.Enabled = True

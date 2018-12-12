@@ -84,7 +84,7 @@ Private Sub loginPanel_Configurations
 	Dim ssocket As ServerSocket
 	Log("Ip address: " & ssocket.GetMyWifiIP)
 	If ssocket.GetMyWifiIP = "127.0.0.1" Then
-		PrinterIP.Text = "Device not connected to local network"
+		PrinterIP.Text = Main.translate.GetString("NolocalNet")  '"Device not connected to local network"
 	Else
 		PrinterIP.Text = ssocket.GetMyWifiIP
 		PrinterPort.Text =  SPAservice.port
@@ -104,11 +104,11 @@ Private Sub loginPanel_Configurations
 	lblConnection.Gravity = Gravity.CENTER
 
 	If checkNet Then
-		lblConnection.Text = "Connected"
+		lblConnection.Text = Main.translate.GetString("lblConnection")
 		lblConnection.TextColor = Colors.Green
 
 	Else
-		lblConnection.Text = "Disconnected"
+		lblConnection.Text = Main.translate.GetString("lblNoconnection")
 		lblConnection.TextColor = Colors.Red
 	End If
 
@@ -147,10 +147,10 @@ End Sub
 	
 Private Sub isConnect_Click
 	If checkNet Then
-		lblConnection.Text = "Connected"
+		lblConnection.Text = Main.translate.GetString("lblConnection")
 		lblConnection.TextColor = Colors.Green
 	Else
-		lblConnection.Text = "Disconnected"
+		lblConnection.Text = Main.translate.GetString("lblNoconnection")
 		lblConnection.TextColor = Colors.Red
 		ToastMessageShow("No Internet Connection", False)
 	End If
@@ -176,6 +176,14 @@ Public Sub checkNet As Boolean
 		Return False
 	End If
 End Sub
+
+Public Sub refreshLogin_Labels
+	isConnect_Click
+	appTitle.Text = Main.translate.GetString("title")
+	PrinterPort.Hint = Main.translate.GetString("hintPort")
+
+End Sub
+
 
 Public Sub asView As Panel
 	Return loginPanel

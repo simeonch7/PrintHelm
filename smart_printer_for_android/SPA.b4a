@@ -32,31 +32,31 @@ Library7=usb
 Library8=felusbserial
 Library9=serial
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="5" android:targetSdkVersion="26"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~'End of default text.~\n~~\n~AddPermission(android.hardware.usb.action.USB_DEVICE_DETACHED)~\n~CreateResource(xml, device_filter.xml,~\n~<resources>		~\n~    <usb-device />	~\n~</resources>~\n~)~\n~AddApplicationText(~\n~<activity android:name=".main" >~\n~   <intent-filter>~\n~    <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />~\n~   </intent-filter>  ~\n~    <meta-data android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" android:resource="@xml/device_filter" />   ~\n~ </activity>~\n~)
-Module1=SPAservice
-Module10=PrinterPriceCalculator
-Module11=BytesBuilder
-Module12=Device
-Module13=PriceMathFunctions
-Module14=IPscreen
-Module15=Translator
-Module16=OperationFunctions
-Module17=PrinterConstants
-Module18=Version
-Module19=ButtonWithNotifications
-Module2=SettingsScreen
-Module20=Countries
-Module21=Constants
-Module22=UISizes
-Module23=Settings
-Module24=B4XEval
-Module25=ImageResources
-Module3=ScriptMaster
-Module4=ProgramData
-Module5=PrinterPOS
-Module6=DataTypes
-Module7=PrinterMain
-Module8=HelperFunctions
-Module9=Utilities
+Module1=SettingsScreen
+Module10=PrinterMain
+Module11=HelperFunctions
+Module12=Utilities
+Module13=PrinterPriceCalculator
+Module14=BytesBuilder
+Module15=Device
+Module16=PriceMathFunctions
+Module17=OperationFunctions
+Module18=PrinterConstants
+Module19=Version
+Module2=IPscreen
+Module20=ButtonWithNotifications
+Module21=Countries
+Module22=Constants
+Module23=UISizes
+Module24=Settings
+Module25=B4XEval
+Module3=ImageResources
+Module4=Translator
+Module5=SPAservice
+Module6=ScriptMaster
+Module7=ProgramData
+Module8=PrinterPOS
+Module9=DataTypes
 NumberOfFiles=6
 NumberOfLibraries=18
 NumberOfModules=25
@@ -141,6 +141,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	Activity.AddView(settingsScr.asView, 0, 0, 100%x, 100%y)
 	
 	settingsScr.settingsFill
+	Load_Language
 
 End Sub
 
@@ -183,6 +184,15 @@ Private Sub Print_Finished
 	sendOperation
 	ProgramData.partnerPhone = ""
 End Sub
+
+Public Sub Login_SignsRefresh 
+	CallSub(loginScr, "refreshLogin_Labels")
+End Sub
+
+Private Sub Load_Language
+	translate.SetLanguage(SelectedLanguage)
+End Sub
+
 
 'метод,с който пренаписваме бутонът за връщане назад на у-вото
 Sub Activity_KeyPress (KeyCode As Int) As Boolean
