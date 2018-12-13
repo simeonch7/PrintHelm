@@ -8,7 +8,7 @@ Sub Class_Globals
 	Private settingsPanel As Panel
 	Private country, language, printer, spnPrinter, Boud As Spinner
 	Private IPport, IPaddress, operator, password As EditText
-	Private LabelCountry, LabelLanguage, LabelPrinter, LabelIPport, LabelBoudOrIp, LabelOperator, LabelPassword As Label
+	Private LabelCountry, LabelLanguage, LabelPrinter, LabelIPport, LabelBoudOrIp, LabelOperator, LabelPassword, LabelAcPrinter As Label
 	Private BoudRatesList As List
 	Private PrinterList As List
 	Private masterP As PrinterMain
@@ -21,7 +21,12 @@ Sub Class_Globals
 	Dim raf As RandomAccessFile
 	Dim readinfo As information
 	Private controlsMap As Map								'Hold all the settings controls
-	Private saveSettings, btnTest As Button
+	Private saveSettings As Button
+	Private spnActivePrinter As Spinner
+	Private btnPrinterRemove As Button
+	Private Const ButtonsRounding As Int = 5
+	Private BTmap As Map
+
 	Private tempList As List
 	Private background, settingsOpen, settingsClose As BitmapDrawable
 	Private saveSettings, advancedSettingsOpen, advancedSettingsClose As Button
@@ -94,10 +99,11 @@ Public Sub Initialize
 	LabelBoudOrIp.Initialize("BoudLabel")
 	LabelOperator.Initialize("opertorLabel")
 	LabelPassword.Initialize("passwordLabel")
+	LabelAcPrinter.Initialize("AcPrnLabel")
 	saveSettings.Initialize("Save")
 '	btnTest.Initialize("Test")
-
-	
+	spnActivePrinter.Initialize("PrinterChoose")
+	btnPrinterRemove.Initialize("removePrinter")
 	Countries.Initialize
 	
 	BoudRatesList.Initialize
@@ -108,6 +114,7 @@ Public Sub Initialize
 	tempList.Initialize
 	language.SelectedIndex = language.IndexOf(Main.SelectedLanguage)
 	
+	BTmap.Initialize
 
 	ColorPickerAndLabelTexts
 	
@@ -144,8 +151,7 @@ Public Sub Initialize
 	HelperFunctions.Apply_ViewStyle(IPaddress, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 	HelperFunctions.Apply_ViewStyle(operator, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 	HelperFunctions.Apply_ViewStyle(password, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
-	
-	
+	HelperFunctions.Apply_ViewStyle(btnPrinterRemove, Colors.White, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.BUTTON_ROUNDING + ButtonsRounding)
 	
 End Sub
 
@@ -199,6 +205,7 @@ Sub SettingsUI
 	settingsPanel.AddView(language, 2%x, LabelLanguage.Top + LabelLanguage.Height , 40%x, 8%y)
 	settingsPanel.AddView(LabelPrinter, 2%x, language.Top + language.Height + 15dip, 35%x, 5%y)
 	settingsPanel.AddView(printer, 2%x, LabelPrinter.Top + LabelPrinter.Height, 40%x, 8%y)
+	settingsPanel.AddView(LabelAcPrinter, 2%x, printer.Top + printer.Height + 15dip, 35%x, 5%y)
 	
 	settingsPanel.AddView(LabelIPport, LabelCountry.Left + LabelCountry.Width + 30%x, LabelCountry.Top, 35%x, 5%y)
 	settingsPanel.AddView(IPport, LabelIPport.Left, LabelIPport.Top + LabelIPport.Height, 35%x, 8%y)
@@ -227,6 +234,10 @@ Sub SettingsUI
 	advancedSettingsOpen.width = 70dip
 	settingsPanel.AddView(advancedSettingsOpen, LabelCountry.Left, saveSettings.Top+saveSettings.Height-advancedSettingsOpen.Height, 70dip, 70dip)
 	settingsPanel.AddView(advancedSettingsClose, 98%x - advancedSettingsOpen.Width, saveSettings.Top+saveSettings.Height-advancedSettingsOpen.Height, 70dip, 70dip)
+	
+	settingsPanel.AddView(spnActivePrinter, 2%x, LabelAcPrinter.Top + LabelAcPrinter.Height + UISizes.DefaultPadding, 35%x, 5%y)
+	settingsPanel.AddView(btnPrinterRemove, spnActivePrinter.Left + spnActivePrinter.Width + UISizes.DefaultPadding, spnActivePrinter.top, 5%x, 5%y)
+
 End Sub
 
 
@@ -500,6 +511,7 @@ Sub ColorPickerAndLabelTexts
 	LabelCountry.TextColor = Colors.LightGray
 	LabelLanguage.TextColor = Colors.LightGray
 	LabelPrinter.TextColor = Colors.LightGray
+	LabelAcPrinter.TextColor = Colors.LightGray
 	LabelIPport.TextColor = Colors.LightGray
 	LabelBoudOrIp.TextColor = Colors.LightGray
 	LabelOperator.TextColor = Colors.LightGray
@@ -508,6 +520,7 @@ Sub ColorPickerAndLabelTexts
 	LabelCountry.Text = Main.translate.GetString("lblCountry")
 	LabelLanguage.Text = Main.translate.GetString("lblLanguage")
 	LabelPrinter.Text = Main.translate.GetString("lblDevice")
+	LabelAcPrinter.Text = Main.translate.GetString("lblACDevice")
 	LabelIPport.Text = Main.translate.GetString("lblPort")
 	LabelBoudOrIp.Text = Main.translate.GetString("lblBoud")
 	LabelOperator.Text = Main.translate.GetString("lblOpertor")
@@ -516,7 +529,13 @@ Sub ColorPickerAndLabelTexts
 	saveSettings.Text = Main.translate.GetString("lblSave")
 	saveSettings.Color= Colors.DarkGray
 	saveSettings.TextColor = Colors.LightGray
-'	
+	
+	spnActivePrinter.TextColor = Colors.White
+	spnActivePrinter.DropdownTextColor = Colors.White
+	spnActivePrinter.DropdownBackgroundColor = Colors.DarkGray
+
+	btnPrinterRemove.Text = "-"
+
 '	btnTest.Text = Main.translate.GetString("lblTest")
 '	btnTest.Color= Colors.DarkGray
 '	btnTest.TextColor = Colors.LightGray
@@ -658,6 +677,7 @@ Public Sub InitialSetSignsRefresh
 	LabelCountry.Text = Main.translate.GetString("lblCountry")
 	LabelLanguage.Text = Main.translate.GetString("lblLanguage")
 	LabelPrinter.Text = Main.translate.GetString("lblDevice")
+	LabelAcPrinter.Text = Main.translate.GetString("lblACDevice")
 	LabelIPport.Text = Main.translate.GetString("lblPort")
 	LabelBoudOrIp.Text = Main.translate.GetString("lblBoud")
 	LabelOperator.Text = Main.translate.GetString("lblOpertor")
@@ -768,6 +788,15 @@ Private Sub getConnectionParams As TConnectionParameters
 				If cEditText.Text.Length = 0 Then : getConnectionParamsFailed = True
 				Else : connectionParams.UserID = cEditText.Text
 				End If
+				
+			Case Main.PS_DeviceMAC
+				Dim cTable As Map = control
+				
+				If cTable.Size = 0 Then :	getConnectionParamsFailed = True
+				Else
+					connectionParams.DeviceMAC = cTable.GetValueAt(0)
+				End If
+						
 		End Select
 	Next
 	
@@ -859,6 +888,20 @@ public Sub genereteSettingView(setting As Int, value As String)
 			operator.TextColor = Colors.White
 			
 			controlsMap.Put(setting, operator)
+			
+		Case Main.PS_DeviceMAC
+			'Init BTPort
+			Dim btPort As Serial
+			btPort.Initialize("BTPort")
+				For Each name As String In btPort.GetPairedDevices.Keys
+			
+					BTmap.Put(name, btPort.GetPairedDevices.Get(name))
+				Next
+							
+			controlsMap.Put(setting,BTmap)
+			
+
+		
 	End Select
 
 End Sub

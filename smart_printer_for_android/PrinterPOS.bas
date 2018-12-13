@@ -599,14 +599,14 @@ End Sub
 #Region Connection
 Public Sub doJobs	
 	Select Case DeviceConnection
-'		Case Conn_BT
-'			If Not(BTAdmin.IsInitialized) Then BTAdmin.Initialize("BluetoothAdmin")
-'			If Not(BTPort.IsInitialized) Then BTPort.Initialize("RemoteDevice")
-'			If BTPort.IsEnabled Then
-'				BTPort.Connect(ConnectionParameters.DeviceMAC)
-'			Else
+		Case Conn_BT
+			If Not(BTAdmin.IsInitialized) Then BTAdmin.Initialize("BluetoothAdmin")
+			If Not(BTPort.IsInitialized) Then BTPort.Initialize("RemoteDevice")
+			If BTPort.IsEnabled Then
+				BTPort.Connect(ConnectionParameters.DeviceMAC)
+			Else
 '				ConnectionError
-'			End If
+			End If
 
 		Case Conn_LAN
 			If Not(MySocket.IsInitialized) Then MySocket.Initialize("RemoteDevice")
