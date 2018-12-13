@@ -145,7 +145,7 @@ Private Sub ButtonloginPanel_Click
 	CallSub(Main, "changePanels")	
 End Sub
 	
-Private Sub isConnect_Click
+Private Sub isConnect
 	If checkNet Then
 		lblConnection.Text = Main.translate.GetString("lblConnection")
 		lblConnection.TextColor = Colors.Green
@@ -178,7 +178,7 @@ Public Sub checkNet As Boolean
 End Sub
 
 Public Sub refreshLogin_Labels
-	isConnect_Click
+	isConnect
 	appTitle.Text = Main.translate.GetString("title")
 	PrinterPort.Hint = Main.translate.GetString("hintPort")
 

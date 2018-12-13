@@ -82,7 +82,7 @@ Private Sub ReplacePreProcScript(line As String, lineChars As Int) As String
 		Case line.Contains( "<taxno>") 	 			: line = line.Replace("<taxno>", ProgramData.CurrentCompany.Taxno)
 			
 			'CurrentObject
-		Case line.Contains( "<objectname>") 		: line = line.Replace("<objectname>", tempObj.storeName)
+		Case line.Contains( "<objectname>") 		: line = line.Replace("<objectname>", "")
 		Case line.Contains( "<objectaddress>") 		: line = line.Replace("<objectaddress>", tempObj.storeAddress)
 		Case line.Contains( "<object>") 			: line = line.Replace("<object>", tempObj.storeName)
 		Case line.Contains( "<objectcode>") 		: line = line.Replace("<objectcode>", tempObj.storeCode)
@@ -116,7 +116,7 @@ Private Sub ReplacePreProcScript(line As String, lineChars As Int) As String
 		Case line.Contains( "<tablegroup>") 		: line = line.Replace("<tablegroup>", "Table group")
 			
 			'CurrentCompanyInfo
-		Case line.Contains( "<owner>") 				: line = line.Replace("<owner>", ProgramData.CurrentCompany.CompanyName)
+		Case line.Contains( "<owner>") 				: line = line.Replace("<owner>", ProgramData.CurrentUser.Name)
 		Case line.Contains( "<ownermol>") 			: line = line.Replace("<ownermol>", ProgramData.CurrentCompany.ContactPerson)
 		Case line.Contains( "<ownervatid>") 		: line = line.Replace("<ownervatid>", ProgramData.CurrentCompany.TaxNo)
 		Case line.Contains( "<ownertaxid>") 		: line = line.Replace("<ownertaxid>", ProgramData.CurrentCompany.INN)
@@ -189,6 +189,7 @@ Private Sub ReplacePreProcScript(line As String, lineChars As Int) As String
 		Case line.Contains( "<towords>") 			: line = line.Replace("<towords>", "Prints numbers to words")
 	End Select
 	Return line
+
 End Sub
 
 Private Sub ReplacePreProcJobs(line As String) As Object

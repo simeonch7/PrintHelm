@@ -64,6 +64,7 @@ Private Sub Process_Globals
 	
 	Public PartnersMap As Map
 	Public ObjectsMap As Map
+	Public GroupItemsMat As Map
 	
 	Public PartnersBulstatMap As Map
 	Public PartnersCardNumberMap, PartnersPhoneNumberMap As Map
@@ -106,6 +107,7 @@ Public Sub Initialize
 	PartnersBulstatMap.Initialize
 	PartnersCardNumberMap.Initialize
 	PartnersPhoneNumberMap.Initialize
+	GroupItemsMat.Initialize
 
 End Sub
 

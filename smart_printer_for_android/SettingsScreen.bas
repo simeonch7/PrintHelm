@@ -45,7 +45,6 @@ Sub Class_Globals
 	
 	Private itCart As CartItem
 	Private partner As Partner
-'	Private workingCompany As Company
 	Private workingUser As CurrentUser	
 	Private workingobject As StoreObject
 	Private tagUP As Int = 0
@@ -263,18 +262,20 @@ Private Sub POS_Print
 	Try
 		templates.Parse(inn, "xml")
 		
-		Private PJobItem As TPrnJobFiscalSellItem
-		PJobItem.Initialize
 		
-		PJobItem.PLU = itCart.itemCode
-		PJobItem.ItemName = itCart.ItemName
-		PJobItem.Quantity = itCart.qtty
-		PJobItem.Price = itCart.itemPrice
-		PJobItem.ItemMeasure = itCart.measureName
-		PJobItem.VatPercent = itCart.VatPercent
-		PJobItem.VatIndex = itCart.VatIndex
-		masterP.AddJob(PJobItem)
-
+		For Each itemCart As CartItem In ProgramData.GroupItemsMat.Values
+			Private PJobItem As TPrnJobFiscalSellItem
+			PJobItem.Initialize
+			PJobItem.PLU = itemCart.itemCode
+			PJobItem.ItemName = itemCart.ItemName
+			PJobItem.Quantity = itemCart.qtty
+			PJobItem.Price = itemCart.itemPrice
+			PJobItem.ItemMeasure = itemCart.measureName
+			PJobItem.VatPercent = itemCart.VatPercent
+			PJobItem.VatIndex = itemCart.VatIndex
+			masterP.AddJob(PJobItem)
+		Next
+		
 		Private PJobPayment As TPrnJobFiscalPayment
 		PJobPayment.Initialize
 		PJobPayment.PayType = payMethod
@@ -312,17 +313,13 @@ Private Sub xml_StartElement (Uri As String, Name As String, Attributes As Attri
 		itCart.Initialize
 		tagUP = 1
 	End If
-	If Name.EqualsIgnoreCase("Partner") Then
+	If Name.EqualsIgnoreCase("Partner") Then	'обект
 		partner.Initialize
 		tagUP = 2
 	End If
-	If Name.EqualsIgnoreCase("Operator") Then
+	If Name.EqualsIgnoreCase("Owner") Then   'партньор
 		workingUser.Initialize
 		tagUP = 3
-	End If
-	If Name.EqualsIgnoreCase("Location") Then
-		workingobject.Initialize
-		tagUP = 4
 	End If
 End Sub
 
@@ -339,22 +336,35 @@ Private Sub xml_EndElement (Uri As String, Name As String, Text As StringBuilder
 			If Name.EqualsIgnoreCase("Quantity") 	Then itCart.qtty = Text
 			If Name.EqualsIgnoreCase("TaxGroup") 	Then itCart.VATIndex = Text
 			If Name.EqualsIgnoreCase("TaxPercent")  Then itCart.VATPercent = Text
-			If Name.EqualsIgnoreCase("Discount") 	Then itCart.VATPercent = Text
+			If Name.EqualsIgnoreCase("Discount") 	Then itCart.VATPercent = Text		
+			
+			If Name.EqualsIgnoreCase("Item") 	Then 
+				ProgramData.CurrentCompany.PricePercision = 2
+				Private itemCart As CartItem
+				
+				itemCart = CopyWorkingToLocalItem
+'				ProgramData.selectedObjectID = objectStorer.storeCode
+'				tempList.Add(itemCart)
+				ProgramData.GroupItemsMat.Put(itemCart.itemCode, itemCart)
+				
+			End If
+			
 		Case 2
-			If Name.EqualsIgnoreCase("Code") Then partner.partnerCode = Text
-			If Name.EqualsIgnoreCase("Company") Then partner.CompanyName = Text
-			If Name.EqualsIgnoreCase("Address") Then partner.Address = Text
-			If Name.EqualsIgnoreCase("PriceGroup") Then partner.PriceGroup = Text - 1
-			If Name.EqualsIgnoreCase("Bulstat") Then partner.Bulstat = Text
+			If Name.EqualsIgnoreCase("Code") Then workingobject.storeCode = Text
+			If Name.EqualsIgnoreCase("Name") Then 
+				workingobject.storeName = Text
+				operator.Text = Text
+			End If
+			If Name.EqualsIgnoreCase("Address") Then workingobject.storeAddress = Text
+			If Name.EqualsIgnoreCase("PriceGroup") Then workingobject.PriceGroup = Text - 1
 			If Name.EqualsIgnoreCase("City") Then partner.City = Text
 			If Name.EqualsIgnoreCase("Discount") Then partner.discount = Text
 			If Name.EqualsIgnoreCase("eMail") Then partner.email = Text
 			If Name.EqualsIgnoreCase("MOL") Then partner.mol = Text
 			If Name.EqualsIgnoreCase("Type") Then partner.PartnerType = Text
 			If Name.EqualsIgnoreCase("Phone") Then partner.phone = Text
-'			If Name.EqualsIgnoreCase("Deleted") Then IsDeleted = Text
 			If Name.EqualsIgnoreCase("CardNumber") Then partner.CardNumber = Text
-	
+			
 			If Name.EqualsIgnoreCase("TaxNo") Then
 				If Text.ToString = "" Then  Text.Append("0")
 				partner.taxNo = Text
@@ -362,6 +372,10 @@ Private Sub xml_EndElement (Uri As String, Name As String, Text As StringBuilder
 			
 			If Name.EqualsIgnoreCase("Partner") Then
 					Private partner As Partner
+					Private objectStorer As StoreObject
+
+					objectStorer = CopyWorkingToLocalObject
+
 					partner.Initialize
 					partner = Copy_WorkingToLocalObject
 					ProgramData.selectedPartnerID = partner.partnerCode
@@ -369,35 +383,32 @@ Private Sub xml_EndElement (Uri As String, Name As String, Text As StringBuilder
 					If partner.Bulstat <> "" Then ProgramData.PartnersBulstatMap.Put(partner.Bulstat,partner.id)
 					If partner.CardNumber <> "" Then ProgramData.PartnersCardNumberMap.Put(partner.CardNumber,partner.id)
 					If partner.phone <> "" Then ProgramData.PartnersPhoneNumberMap.Put(partner.phone,partner.id)
+					
+					ProgramData.selectedObjectID = objectStorer.storeCode
+
+					ProgramData.ObjectsMap.Put(objectStorer.storeCode,objectStorer)
+
 			End If
+			
 		Case 3
 			If Name.EqualsIgnoreCase("Code") Then  ProgramData.selectedPartnerID = Text
 			If Name.EqualsIgnoreCase("Name") Then  workingUser.Name = Text
 			If Name.EqualsIgnoreCase("Group") Then  workingUser.GroupName = Text
-			
-			If Name.EqualsIgnoreCase("Operator") Then
-				ProgramData.CurrentUser = UserCopyWorkingToLocalUser
+			If Name.EqualsIgnoreCase("Phone") Then  workingUser.phone = Text
+			If Name.EqualsIgnoreCase("eMail") Then  workingUser.email = Text
+			If Name.EqualsIgnoreCase("Address") Then  ProgramData.CurrentCompany.Address = Text
+			If Name.EqualsIgnoreCase("MOL") Then  ProgramData.CurrentCompany.ContactPerson = Text
+			If Name.EqualsIgnoreCase("VATID") Then  ProgramData.CurrentCompany.TaxNo = Text
+			If Name.EqualsIgnoreCase("TAXID") Then  ProgramData.CurrentCompany.INN = Text
+			If Name.EqualsIgnoreCase("City") Then  ProgramData.CurrentCompany.City = Text
+
+			If Name.EqualsIgnoreCase("Owner") Then
+			ProgramData.CurrentUser = UserCopyWorkingToLocalUser
 			End If			
-		Case 4
-			If Name.EqualsIgnoreCase("Code") Then workingobject.storeCode = Text
-			If Name.EqualsIgnoreCase("Name") Then workingobject.storeName = Text
-
-			If Name.EqualsIgnoreCase("Location") Then
-				Private objectStorer As StoreObject
-
-				objectStorer = CopyWorkingToLocalObject
-				ProgramData.selectedObjectID = objectStorer.storeCode
-
-				ProgramData.ObjectsMap.Put(objectStorer.storeCode,objectStorer)
-
-			End If
 
 			
 	End Select
 	
-		
-'	If Name.EqualsIgnoreCase("Item") Then
-'	End If
 	If Name.EqualsIgnoreCase("Payment") Then
 		Select Name.EqualsIgnoreCase(paymentMethod)
 			Case paymentMethod.EqualsIgnoreCase("Cash"): payMethod = ProgramData.PAYMENT_CASH
@@ -413,18 +424,33 @@ Private Sub xml_EndElement (Uri As String, Name As String, Text As StringBuilder
 	If Name.EqualsIgnoreCase("Card") Then card = Text
 	If Name.EqualsIgnoreCase("Voucher") Then vaucher = Text
 
+	
+
 End Sub
 #End Region
+
+
+Private Sub CopyWorkingToLocalItem As CartItem
+	Private localitem As CartItem
+	localitem.Initialize
+
+	localitem.itemCode = itCart.itemCode
+	localitem.ItemName = itCart.ItemName
+	localitem.itemPrice = itCart.itemPrice
+	localitem.qtty = itCart.qtty
+	localitem.VATIndex = itCart.VATIndex
+	localitem.VATPercent = itCart.VATPercent
+	localitem.VATPercent = itCart.VATPercent
+
+	Return localitem
+End Sub
 
 Private Sub CopyWorkingToLocalObject As StoreObject
 	Private localitem As StoreObject
 	localitem.Initialize
-'	localitem.CompanyID = workingobject.CompanyID
-'	localitem.ID = workingobject.ID
 	localitem.storeCode = workingobject.storeCode
 	localitem.storeName = workingobject.storeName
-'	localitem.storeAddress = workingobject.storeAddress
-'	localitem.PriceGroup = workingobject.PriceGroup
+	localitem.storeAddress = workingobject.storeAddress
 	Return localitem
 End Sub
 
@@ -451,8 +477,7 @@ End Sub
 
 Private Sub UserCopyWorkingToLocalUser As CurrentUser
 	Private localitem As CurrentUser
-'	localitem.id = workingUser.id
-	localitem.CompanyId = workingUser.CompanyId
+'	localitem.CompanyId = workingUser.CompanyId
 	localitem.Name = workingUser.Name
 	localitem.email = workingUser.email
 	localitem.phone = workingUser.phone
@@ -762,7 +787,7 @@ public Sub genereteSettingView(setting As Int, value As String)
 		Case Main.PS_IPAddress
 			'Build EditText
 			LabelBoudOrIp.Text = Main.translate.GetString("lblIPadd")
-			
+			IPport.Enabled = True
 			IPaddress.Visible = True
 			IPaddress.Enabled = True
 			Boud.Visible = False
