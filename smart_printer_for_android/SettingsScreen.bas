@@ -606,7 +606,7 @@ End Sub
 Sub languageSpinner_ItemClick (Position As Int, Value As Object)
 	intLanguageIndex = Position
 	Main.SelectedLanguage = Value
-	Main.translate.SetLanguage(Value)
+	Main.translate.SetLanguage(Main.SelectedLanguage)
 	InitialSetSignsRefresh
 	readinfo.language = Value
 End Sub
@@ -621,9 +621,6 @@ Public Sub InitialSetSignsRefresh
 	LabelOperator.Text = Main.translate.GetString("lblOpertor")
 	LabelPassword.Text = Main.translate.GetString("lblPassword")
 	saveSettings.Text = Main.translate.GetString("lblSave")
-'	InitialSetAddOrientations
-'	InitialSetAddCountries
-'	InitialSetAddLanguages
 	CallSub(Main,"Login_SignsRefresh")	' Когато опресним надписите тук, ще се опресняват и надписите в другите модули
 End Sub
 
@@ -777,9 +774,6 @@ public Sub genereteSettingView(setting As Int, value As String)
 					Boud.SelectedIndex = i
 				End If
 			Next
-'			Dim valueIndex As Int = Boud.IndexOf(value)
-'			If valueIndex = - 1 Then valueIndex = 3
-'			Boud.SelectedIndex = valueIndex
 '			
 			'Put Control in map
 			controlsMap.Put(setting,Boud)

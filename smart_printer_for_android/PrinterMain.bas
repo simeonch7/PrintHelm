@@ -281,7 +281,6 @@ Public Sub DoJobs
 	Next
 	
 	CallSubDelayed(callBack, "Print_Finished")
-'	CallSub(callBack, "Print_Finished")
 	
 	Jobs.Clear
 End Sub

@@ -33,13 +33,13 @@ Public Sub Initialize
 	Else
 		ToastMessageShow("Connect to Internet", False)
 	End If
+	
+	
 End Sub
 
 ' Построяване на екрана / Builds the UI of the screen
 Public Sub build_Screen
 	loginPanel_Configurations
-'	start_up
-	
 	Private edtWidth,edtHeight As Int
 	Private btnWidth,btnHeight As Int
 	Private Padding,left As Int
@@ -62,7 +62,7 @@ Public Sub build_Screen
 	loginPanel.AddView(btnloginPanel, lblConnection.Left + lblConnection.Width + Padding, lblConnection.Top, btnWidth / 2, btnHeight)
 
 
-
+isConnect_Click
 	
 '	btnloginPanel.Enabled=True
 End Sub
@@ -88,6 +88,7 @@ Private Sub loginPanel_Configurations
 	Else
 		PrinterIP.Text = ssocket.GetMyWifiIP
 		PrinterPort.Text =  SPAservice.port
+		PrinterPort.Enabled = False
 	End If
 
 
@@ -96,22 +97,13 @@ Private Sub loginPanel_Configurations
 	PrinterPort.SingleLine = True
 	PrinterPort.Hint = Main.translate.GetString("hintPort")
 	PrinterPort.HintColor = Colors.Gray
-
+	
 	btnloginPanel.Gravity = Gravity.CENTER
 	btnloginPanel.Background = settingsBG
 	
 	lblConnection.TextSize = 14
 	lblConnection.Gravity = Gravity.CENTER
-
-	If checkNet Then
-		lblConnection.Text = Main.translate.GetString("lblConnection")
-		lblConnection.TextColor = Colors.Green
-
-	Else
-		lblConnection.Text = Main.translate.GetString("lblNoconnection")
-		lblConnection.TextColor = Colors.Red
-	End If
-
+	checkNet
 End Sub
 
 'Метод прехвърлящ фокус между полетата / Changes focus between input fields
@@ -121,31 +113,12 @@ Private Sub PrinterPort_FocusChanged (HasFocus As Boolean)
 	End If
 End Sub
 
-'Записва в RAF файл текущия потребител / Writes the current PrinterIP 
-'Private Sub write_Usrs
-'	raf.Initialize(File.DirDefaultExternal, "PrinterIPs.config", False)
-'	raf.WriteEncryptedObject(usrString, ProgramData.rafEncPass, raf.CurrentPosition)
-'	raf.WriteEncryptedObject(PrinterPortString, ProgramData.rafEncPass, raf.CurrentPosition)
-'	raf.Close
-'End Sub
-
-'Чете от RAF файл текущия потребител
-Private Sub Read_SavedUsrs
-	raf.Initialize(File.DirDefaultExternal, "PrinterIPs.config", False)
-	usrString = raf.ReadEncryptedObject(ProgramData.rafEncPass, raf.CurrentPosition)
-	PrinterPortString = raf.ReadEncryptedObject(ProgramData.rafEncPass, raf.CurrentPosition)
-	
-	ProgramData.strPrinterIP = usrString
-	ProgramData.strPrinterPort = PrinterPortString
-	raf.Close
-End Sub
-
 'Метода, който вкарва потребителя в системата / Method for log in 
 Private Sub ButtonloginPanel_Click
 	CallSub(Main, "changePanels")	
 End Sub
-	
-Private Sub isConnect
+
+Public Sub isConnect_Click
 	If checkNet Then
 		lblConnection.Text = Main.translate.GetString("lblConnection")
 		lblConnection.TextColor = Colors.Green
@@ -169,6 +142,16 @@ Public Sub checkNet As Boolean
 	Log(Error)
 	Log("======================")
 
+	Dim ssocket As ServerSocket
+	Log("Ip address: " & ssocket.GetMyWifiIP)
+	If ssocket.GetMyWifiIP = "127.0.0.1" Then
+		PrinterIP.Text = Main.translate.GetString("NolocalNet")  '"Device not connected to local network"
+	Else
+		PrinterIP.Text = ssocket.GetMyWifiIP
+		PrinterPort.Text =  SPAservice.port
+	End If
+
+
 	If Error.ToString="" Then
 		Return True
        
@@ -178,10 +161,9 @@ Public Sub checkNet As Boolean
 End Sub
 
 Public Sub refreshLogin_Labels
-	isConnect
+	isConnect_Click
 	appTitle.Text = Main.translate.GetString("title")
 	PrinterPort.Hint = Main.translate.GetString("hintPort")
-
 End Sub
 
 

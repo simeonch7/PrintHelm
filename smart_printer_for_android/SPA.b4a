@@ -33,7 +33,7 @@ Library8=felusbserial
 Library9=serial
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="5" android:targetSdkVersion="26"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~'End of default text.~\n~~\n~AddPermission(android.hardware.usb.action.USB_DEVICE_DETACHED)~\n~CreateResource(xml, device_filter.xml,~\n~<resources>		~\n~    <usb-device />	~\n~</resources>~\n~)~\n~AddApplicationText(~\n~<activity android:name=".main" >~\n~   <intent-filter>~\n~    <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />~\n~   </intent-filter>  ~\n~    <meta-data android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" android:resource="@xml/device_filter" />   ~\n~ </activity>~\n~)
 Module1=SettingsScreen
-Module10=SPAservice
+Module10=ImageResources
 Module11=PrinterPOS
 Module12=HelperFunctions
 Module13=Utilities
@@ -43,23 +43,22 @@ Module16=Device
 Module17=OperationFunctions
 Module18=PrinterConstants
 Module19=Version
-Module2=ScriptMaster
+Module2=IPscreen
 Module20=ButtonWithNotifications
 Module21=Countries
 Module22=Constants
 Module23=UISizes
-Module24=Settings
-Module25=B4XEval
-Module3=PrinterMain
+Module24=B4XEval
+Module3=DataTypes
 Module4=ProgramData
-Module5=DataTypes
-Module6=PriceMathFunctions
-Module7=IPscreen
-Module8=Translator
-Module9=ImageResources
+Module5=SPAservice
+Module6=Translator
+Module7=ScriptMaster
+Module8=PrinterMain
+Module9=PriceMathFunctions
 NumberOfFiles=6
 NumberOfLibraries=18
-NumberOfModules=25
+NumberOfModules=24
 Version=8
 @EndOfDesignText@
 #Region  Project Attributes 
@@ -139,10 +138,10 @@ Sub Activity_Create(FirstTime As Boolean)
 	loginScr.build_Screen
 	settingsScr.Initialize
 	Activity.AddView(settingsScr.asView, 0, 0, 100%x, 100%y)
-	
-	settingsScr.settingsFill
 	Load_Language
-
+	settingsScr.settingsFill
+	Login_SignsRefresh
+	settingsScr.InitialSetSignsRefresh
 End Sub
 
 Sub Activity_Resume
@@ -204,6 +203,7 @@ Sub Activity_KeyPress (KeyCode As Int) As Boolean
 			settingsScr.asView.Visible = False
 			loginScr.asView.Visible = True
 			loginScr.asview.Enabled = True
+			loginScr.isConnect_Click
 			ext = ext + 1
 		End If
 		
@@ -214,8 +214,8 @@ Sub Activity_KeyPress (KeyCode As Int) As Boolean
 			Private result As Int
 			result = Msgbox2("Are you sure?", "Exit!", "Yes", "Cancel", "No", Null)
 			If result = DialogResponse.POSITIVE Then
-				ExitApplication
 				StopService(SPAservice)
+				ExitApplication
 			End If
 
 		End If
