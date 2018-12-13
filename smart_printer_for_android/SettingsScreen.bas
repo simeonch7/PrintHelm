@@ -21,7 +21,7 @@ Sub Class_Globals
 	Dim raf As RandomAccessFile
 	Dim readinfo As information
 	Private controlsMap As Map								'Hold all the settings controls
-	Private saveSettings As Button
+	Private saveSettings, btnTest As Button
 	Private tempList As List
 	Private background, settingsOpen, settingsClose As BitmapDrawable
 	Private saveSettings, advancedSettingsOpen, advancedSettingsClose As Button
@@ -95,6 +95,9 @@ Public Sub Initialize
 	LabelOperator.Initialize("opertorLabel")
 	LabelPassword.Initialize("passwordLabel")
 	saveSettings.Initialize("Save")
+'	btnTest.Initialize("Test")
+
+	
 	Countries.Initialize
 	
 	BoudRatesList.Initialize
@@ -132,6 +135,7 @@ Public Sub Initialize
 	deviceprinterFill
 	
 	HelperFunctions.Apply_ViewStyle(saveSettings, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
+'	HelperFunctions.Apply_ViewStyle(btnTest, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 	HelperFunctions.Apply_ViewStyle(country, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 	HelperFunctions.Apply_ViewStyle(language, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 	HelperFunctions.Apply_ViewStyle(printer, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
@@ -215,7 +219,10 @@ Sub SettingsUI
 		settingsPanel.AddView(LabelPassword,LabelIPport.Left, operator.Top+operator.Height, LabelOperator.Width, 5%y)
 		settingsPanel.AddView(password, LabelIPport.Left, LabelPassword.Top+LabelPassword.Height, LabelOperator.Width, 15%y)
 	End If
+'	settingsPanel.AddView(btnTest, 25%x, 90%y, 25%x, 5%y)
+'	settingsPanel.AddView(saveSettings, btnTest.Left + btnTest.Width + 2%x, 90%y, 25%x, 5%y)
 	settingsPanel.AddView(saveSettings, 33.33%x, 85%y, 33.33%x, 10%y)
+
 	advancedSettingsOpen.Height = 70dip
 	advancedSettingsOpen.width = 70dip
 	settingsPanel.AddView(advancedSettingsOpen, LabelCountry.Left, saveSettings.Top+saveSettings.Height-advancedSettingsOpen.Height, 70dip, 70dip)
@@ -509,7 +516,42 @@ Sub ColorPickerAndLabelTexts
 	saveSettings.Text = Main.translate.GetString("lblSave")
 	saveSettings.Color= Colors.DarkGray
 	saveSettings.TextColor = Colors.LightGray
+'	
+'	btnTest.Text = Main.translate.GetString("lblTest")
+'	btnTest.Color= Colors.DarkGray
+'	btnTest.TextColor = Colors.LightGray
 End Sub
+
+'Private Sub Test_Click
+'	'Функцията за тест я има направена в POS модула и е кръстена PrinterTest
+'	Dim ConnectionParams As TConnectionParameters = getConnectionParams
+'	
+'	Dim pScripts As PrinterScripts = getScripts
+'	
+'	If Not(checkConnectionParams) Then Return
+'	
+'	Dim printerInfo As Printer = masterP.getInitialPrinterByName(selectedPrinterName)
+'	
+'	Dim testPrinter As TActivePrinter
+'	testPrinter.Initialize
+'	testPrinter.name = selectedPrinterName
+'	testPrinter.connectionParams = ConnectionParams
+'	testPrinter.ScriptsTemplate = pScripts
+'	testPrinter.id = printerInfo.id
+'	testPrinter.driver = CallSub(printerInfo.ref, "getPrinter_Instance")
+'	
+'	CallSub2(testPrinter.driver ,"setSelected_Printer", testPrinter.id)
+'	CallSub2(testPrinter.driver ,"SetConnection_Parameters", testPrinter.connectionParams)
+'	Dim fiscal As Boolean = CallSub(testPrinter.driver ,"getFiscal_MemoryMode")
+'	
+''	'set the driver scripts
+''	CallSub2(testPrinter.driver,"Assign_Scripts", testPrinter.ScriptsTemplate)
+''	
+''	Dim DummySVItem As PrinterStatusSVItem
+''	DummySVItem.Initialize(Null,testPrinter,fiscal,True)
+'	
+'	masterP.SendPrinterTestJobs(1,testPrinter)
+'End Sub
 
 Sub Save_click
 	
@@ -621,6 +663,7 @@ Public Sub InitialSetSignsRefresh
 	LabelOperator.Text = Main.translate.GetString("lblOpertor")
 	LabelPassword.Text = Main.translate.GetString("lblPassword")
 	saveSettings.Text = Main.translate.GetString("lblSave")
+'	btnTest.Text = Main.translate.GetString("lblTest")
 	CallSub(Main,"Login_SignsRefresh")	' Когато опресним надписите тук, ще се опресняват и надписите в другите модули
 End Sub
 

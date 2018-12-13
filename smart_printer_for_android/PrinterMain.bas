@@ -339,7 +339,7 @@ Private Sub ReadPrinters
 				End If
 				
 				'Add to Active Printers
-'				addToActivePrinter(PrinterToAdd)
+				addToActivePrinter(PrinterToAdd)
 				
 			Next
 		
@@ -354,7 +354,7 @@ Private Sub ReadPrinters
 			aprinter.ScriptsTemplate.Details.Initialize
 			aprinter.ScriptsTemplate.Totals.Initialize
 			aprinter.ScriptsTemplate.Footers.Initialize
-'			addToActivePrinter(aprinter)
+			addToActivePrinter(aprinter)
 		End If
 	Catch
 		Log(LastException)
