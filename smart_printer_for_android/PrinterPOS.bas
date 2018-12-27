@@ -695,13 +695,13 @@ Private Sub RemoteDevice_Connected(Successful As Boolean)
 			Utilities.FileLog("No connection to the printer")
 			
 '			handleUserAction(PrinterConstants.ERR_NoCommunication)
-			Wait For UserAction_Click(action As Int)
-			
-			Select action
-				Case PrinterConstants.Action_Retry: 	doJobs
-				Case PrinterConstants.Action_Ignore: 	doJobs
-				Case PrinterConstants.Action_Abort:		Jobs.Clear
-			End Select
+'			Wait For UserAction_Click(action As Int)
+'			
+'			Select action
+'				Case PrinterConstants.Action_Retry: 	doJobs
+'				Case PrinterConstants.Action_Ignore: 	doJobs
+'				Case PrinterConstants.Action_Abort:		Jobs.Clear
+'			End Select
 		End If
 	End If
 End Sub

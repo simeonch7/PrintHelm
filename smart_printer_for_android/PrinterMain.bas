@@ -63,53 +63,53 @@ End Sub
 'Init all printer drivers and add their names in mapPrinters
 Private Sub initAllPrinterDrivers
 	
-'	Dim printDaisyRO As PrinterDaisyRO
-'	printDaisyRO.Initialize(Me, IDPrefix)
-'	addToPrintersMap(printDaisyRO.getPrintersMap, printDaisyRO)
-'
-'	Dim printDatecsNew As PrinterDatecsNew
-'	printDatecsNew.Initialize(Me, IDPrefix)
-'	addToPrintersMap(printDatecsNew.getPrintersMap, printDatecsNew)
-'	
-'	Dim printDatecsOld As PrinterDatecsOld
-'	printDatecsOld.Initialize(Me, IDPrefix)
-'	addToPrintersMap(printDatecsOld.getPrintersMap, printDatecsOld)
-'
-'	Dim printDatecsRO As PrinterDatecsRO
-'	printDatecsRO.Initialize(Me, IDPrefix)
-'	addToPrintersMap(printDatecsRO.getPrintersMap, printDatecsRO)
-'
-'	Dim printExcellio As PrinterExcellio
-'	printExcellio.Initialize(Me, IDPrefix)
-'	addToPrintersMap(printExcellio.getPrintersMap, printExcellio)
-'
-'	Dim printMercury As PrinterMercury
-'	printMercury.Initialize(Me, IDPrefix)
-'	addToPrintersMap(printMercury.getPrintersMap, printMercury)
-'
-'	Dim printMSPOS As PrinterMSPOS
-'	printMSPOS.Initialize(Me, IDPrefix)
-'	addToPrintersMap(printMSPOS.getPrintersMap, printMSPOS)
-'	
-'	Dim printPortENVD As PrinterPortENVD
-'	printPortENVD.Initialize(Me, IDPrefix)
-'	addToPrintersMap(printPortENVD.getPrintersMap, printPortENVD)
-'	
-'	Dim printPortKZ As PrinterPortKZ
-'	printPortKZ.Initialize(Me, IDPrefix)
-'	addToPrintersMap(printPortKZ.getPrintersMap, printPortKZ)
-'	
-'	Dim printPortRU As PrinterPortRU
-'	printPortRU.Initialize(Me, IDPrefix)
-'	addToPrintersMap(printPortRU.getPrintersMap, printPortRU)
+	Dim printDaisyRO As PrinterDaisyRO
+	printDaisyRO.Initialize(Me, IDPrefix)
+	addToPrintersMap(printDaisyRO.getPrintersMap, printDaisyRO)
+
+	Dim printDatecsNew As PrinterDatecsNew
+	printDatecsNew.Initialize(Me, IDPrefix)
+	addToPrintersMap(printDatecsNew.getPrintersMap, printDatecsNew)
+	
+	Dim printDatecsOld As PrinterDatecsOld
+	printDatecsOld.Initialize(Me, IDPrefix)
+	addToPrintersMap(printDatecsOld.getPrintersMap, printDatecsOld)
+
+	Dim printDatecsRO As PrinterDatecsRO
+	printDatecsRO.Initialize(Me, IDPrefix)
+	addToPrintersMap(printDatecsRO.getPrintersMap, printDatecsRO)
+
+	Dim printExcellio As PrinterExcellio
+	printExcellio.Initialize(Me, IDPrefix)
+	addToPrintersMap(printExcellio.getPrintersMap, printExcellio)
+
+	Dim printMercury As PrinterMercury
+	printMercury.Initialize(Me, IDPrefix)
+	addToPrintersMap(printMercury.getPrintersMap, printMercury)
+
+	Dim printMSPOS As PrinterMSPOS
+	printMSPOS.Initialize(Me, IDPrefix)
+	addToPrintersMap(printMSPOS.getPrintersMap, printMSPOS)
+	
+	Dim printPortENVD As PrinterPortENVD
+	printPortENVD.Initialize(Me, IDPrefix)
+	addToPrintersMap(printPortENVD.getPrintersMap, printPortENVD)
+	
+	Dim printPortKZ As PrinterPortKZ
+	printPortKZ.Initialize(Me, IDPrefix)
+	addToPrintersMap(printPortKZ.getPrintersMap, printPortKZ)
+	
+	Dim printPortRU As PrinterPortRU
+	printPortRU.Initialize(Me, IDPrefix)
+	addToPrintersMap(printPortRU.getPrintersMap, printPortRU)
 	
 	Dim printPOS As PrinterPOS
 	printPOS.Initialize(Me, IDPrefix)
 	addToPrintersMap(printPOS.getPrintersMap, printPOS)
 		
-'	Dim printTremol As PrinterTremol
-'	printTremol.Initialize(Me, IDPrefix)
-'	addToPrintersMap(printTremol.getPrintersMap, printTremol)
+	Dim printTremol As PrinterTremol
+	printTremol.Initialize(Me, IDPrefix)
+	addToPrintersMap(printTremol.getPrintersMap, printTremol)
 '	
 '	Dim printVirtual As PrinterVirtual
 '	printVirtual.Initialize(Me, IDPrefix)
@@ -152,6 +152,7 @@ Public Sub addToActivePrinter(printer As TActivePrinter)
 	
 	'Add to Active Printers
 	ActivePrinters.Add(printer)
+	
 End Sub
 
 Public Sub removeFromActivePrinter(index As Int)

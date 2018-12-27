@@ -6,9 +6,9 @@ Version=8.3
 @EndOfDesignText@
 Sub Class_Globals
 	Private settingsPanel As Panel
-	Private country, language, printer, spnPrinter, Boud As Spinner
-	Private IPport, IPaddress, operator, password As EditText
-	Private LabelCountry, LabelLanguage, LabelPrinter, LabelIPport, LabelBoudOrIp, LabelOperator, LabelPassword, LabelAcPrinter As Label
+	Private country, language, printer, spnPrinter, Boud, spnMac As Spinner
+	Private IPport, IPaddress, operator, password, headerOne  As EditText
+	Private LabelCountry, LabelLanguage, LabelPrinter, LabelIPport, LabelBoudOrIp, LabelOperator, LabelPassword, LabelAcPrinter, LabelMac, HeaderOneLabel  As Label
 	Private BoudRatesList As List
 	Private PrinterList As List
 	Private masterP As PrinterMain
@@ -18,7 +18,7 @@ Sub Class_Globals
 	Private inn As InputStream
 	Private getConnectionParamsFailed As Boolean = False	'Show if theres and error in the input of controls in ControlsMap
 	Private selectedPrinterName As String = ""				'Hold Name of the selected printer
-	Dim raf As RandomAccessFile
+	Dim raf As RandomAccessFile						
 	Dim readinfo As information
 	Private controlsMap As Map								'Hold all the settings controls
 	Private saveSettings As Button
@@ -45,7 +45,7 @@ Sub Class_Globals
 	Private background As BitmapDrawable
 	
 	
-	Private intLanguageIndex As Int
+	Private intLanguageIndex As Int 'ignore
 	
 	
 	Private itCart As CartItem
@@ -104,6 +104,8 @@ Public Sub Initialize
 '	btnTest.Initialize("Test")
 	spnActivePrinter.Initialize("PrinterChoose")
 	btnPrinterRemove.Initialize("removePrinter")
+	spnMac.Initialize("")
+	LabelMac.Initialize("")
 	Countries.Initialize
 	
 	BoudRatesList.Initialize
@@ -115,7 +117,11 @@ Public Sub Initialize
 	language.SelectedIndex = language.IndexOf(Main.SelectedLanguage)
 	
 	BTmap.Initialize
-
+	
+	
+	HeaderOneLabel.Initialize("HeaderOneLabel")	
+	headerOne.Initialize("headerone")
+	headersPanel.Color = Colors.ARGB(100, 49, 78, 124)
 	ColorPickerAndLabelTexts
 	
 	SettingsUI
@@ -152,22 +158,70 @@ Public Sub Initialize
 	HelperFunctions.Apply_ViewStyle(operator, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 	HelperFunctions.Apply_ViewStyle(password, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 	HelperFunctions.Apply_ViewStyle(btnPrinterRemove, Colors.White, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.BUTTON_ROUNDING + ButtonsRounding)
-	
+	HelperFunctions.Apply_ViewStyle(spnMac, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
+	HelperFunctions.Apply_ViewStyle(headerOne, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
+	HelperFunctions.Apply_ViewStyle(spnActivePrinter, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 End Sub
 
 Sub advancedSettingsOpen_Click
-	advancedSettingsClose.Enabled = True
 	advancedSettingsClose.visible = True
+	advancedSettingsClose.enabled= True
+	
 	advancedSettingsOpen.enabled = False
 	advancedSettingsOpen.visible = False
+	
+	headersPanel.SetLayoutAnimated(250, 0%x, 0%y, 75%x, 100%y)
+	country.Enabled = False
+	language.Enabled = False
+	printer.Enabled = False
+	Boud.Enabled = False
+	operator.Enabled = False
+	password.Enabled = False
+	IPport.Enabled = False
+	IPaddress.Enabled = False
+	spnMac.Enabled = False
+	spnActivePrinter.Enabled = False
+	saveSettings.Enabled = False
+	saveSettings.Visible = False
+	
+	LabelCountry.Visible = False
+	LabelLanguage.Visible = False
+	LabelPrinter.Visible = False
+	btnPrinterRemove.Enabled = False
 End Sub
 
-Sub advancedSettingsClose_Click
-	advancedSettingsClose.Enabled = False
-	advancedSettingsClose.visible = False
-	advancedSettingsOpen.enabled = True
-	advancedSettingsOpen.visible = True
-End Sub
+ Sub advancedSettingsClose_Click
+ 	advancedSettingsClose.visible = False
+ 	advancedSettingsClose.enabled = False
+	
+ 	advancedSettingsOpen.enabled = True
+ 	advancedSettingsOpen.visible = True
+	
+	headersPanel.SetLayoutAnimated(250, -75%x, 0%y, 75%x, 100%y)
+	settingsPanel.Enabled = True
+	country.Enabled = True
+	language.Enabled = True
+	printer.Enabled = True
+	Boud.Enabled = True
+	operator.Enabled = True
+	password.Enabled = True
+	If IPport.Text <> "0" Then
+	IPport.Enabled = True
+	End If
+	IPaddress.enabled = True
+	saveSettings.Enabled = True
+	saveSettings.Visible = True
+	spnActivePrinter.Enabled = True
+	spnMac.Enabled = True
+	
+	btnPrinterRemove.Enabled = True
+	
+	
+	LabelCountry.Visible = True
+	LabelLanguage.Visible = True
+	LabelPrinter.Visible = True
+ End Sub
+ 
 
 Sub printerSpinnerFill
 	'Log(Countries.getCountries)
@@ -215,19 +269,9 @@ Sub SettingsUI
 	settingsPanel.AddView(IPaddress, LabelIPport.Left, LabelBoudOrIp.Top + LabelBoudOrIp.Height, 35%x, 8%y)
 	IPaddress.Visible = False
 	IPaddress.Enabled = False
-	If GetDeviceLayoutValues.Width < GetDeviceLayoutValues.Height Then
-		settingsPanel.AddView(LabelOperator, LabelIPport.Left, Boud.Top + Boud.Height + 5%y, 35%x, 5%y)
-		settingsPanel.AddView(operator, LabelIPport.Left, LabelOperator.Top+LabelOperator.Height, LabelOperator.Width, 7%y)
-		settingsPanel.AddView(LabelPassword,LabelIPport.Left, operator.Top+operator.Height, LabelOperator.Width, 5%y)
-		settingsPanel.AddView(password, LabelIPport.Left, LabelPassword.Top+LabelPassword.Height, LabelOperator.Width, 7%y)
-	Else
-		settingsPanel.AddView(LabelOperator, LabelIPport.Left, Boud.Top + Boud.Height + 5%y, 35%x, 5%y)
-		settingsPanel.AddView(operator, LabelIPport.Left, LabelOperator.Top+LabelOperator.Height, LabelOperator.Width, 15%y)
-		settingsPanel.AddView(LabelPassword,LabelIPport.Left, operator.Top+operator.Height, LabelOperator.Width, 5%y)
-		settingsPanel.AddView(password, LabelIPport.Left, LabelPassword.Top+LabelPassword.Height, LabelOperator.Width, 15%y)
-	End If
-'	settingsPanel.AddView(btnTest, 25%x, 90%y, 25%x, 5%y)
-'	settingsPanel.AddView(saveSettings, btnTest.Left + btnTest.Width + 2%x, 90%y, 25%x, 5%y)
+	settingsPanel.AddView(LabelMac, LabelIPport.Left, Boud.Top + Boud.Height + 5%y, 35%x, 5%y)
+	settingsPanel.AddView(spnMac, LabelIPport.Left, LabelMac.Top+LabelMac.Height, LabelMac.Width, 7%y)
+	
 	settingsPanel.AddView(saveSettings, 33.33%x, 85%y, 33.33%x, 10%y)
 
 	advancedSettingsOpen.Height = 70dip
@@ -238,6 +282,14 @@ Sub SettingsUI
 	settingsPanel.AddView(spnActivePrinter, 2%x, LabelAcPrinter.Top + LabelAcPrinter.Height + UISizes.DefaultPadding, 35%x, 5%y)
 	settingsPanel.AddView(btnPrinterRemove, spnActivePrinter.Left + spnActivePrinter.Width + UISizes.DefaultPadding, spnActivePrinter.top, 5%x, 5%y)
 
+	settingsPanel.AddView(LabelOperator, LabelCountry.Left, spnActivePrinter.Top + spnActivePrinter.Height + 5%y, 35%x, 5%y)
+	settingsPanel.AddView(operator, LabelCountry.Left, LabelOperator.Top+LabelOperator.Height, LabelOperator.Width, 7%y)
+
+	settingsPanel.AddView(LabelPassword,LabelIPport.Left, LabelOperator.Top, LabelMac.Width, 5%y)
+	settingsPanel.AddView(password, LabelIPport.Left, LabelPassword.Top+LabelPassword.Height, LabelMac.Width, 7%y)
+	settingsPanel.AddView(headersPanel, -75%x, 0%y, 75%x, 100%y)
+	headersPanel.AddView(HeaderOneLabel, 2%x, 5%y, 30%x, 5%y)
+	headersPanel.AddView(headerOne,2%x, HeaderOneLabel.Top + HeaderOneLabel.Height, 40%x, 8%y)
 End Sub
 
 
@@ -516,6 +568,7 @@ Sub ColorPickerAndLabelTexts
 	LabelBoudOrIp.TextColor = Colors.LightGray
 	LabelOperator.TextColor = Colors.LightGray
 	LabelPassword.TextColor = Colors.LightGray
+	LabelMac.TextColor = Colors.LightGray
 	
 	LabelCountry.Text = Main.translate.GetString("lblCountry")
 	LabelLanguage.Text = Main.translate.GetString("lblLanguage")
@@ -525,7 +578,8 @@ Sub ColorPickerAndLabelTexts
 	LabelBoudOrIp.Text = Main.translate.GetString("lblBoud")
 	LabelOperator.Text = Main.translate.GetString("lblOpertor")
 	LabelPassword.Text = Main.translate.GetString("lblPassword")
-		
+	LabelMac.Text = Main.translate.GetString("lblMac")
+	HeaderOneLabel.Text = "Header One"
 	saveSettings.Text = Main.translate.GetString("lblSave")
 	saveSettings.Color= Colors.DarkGray
 	saveSettings.TextColor = Colors.LightGray
@@ -539,6 +593,15 @@ Sub ColorPickerAndLabelTexts
 '	btnTest.Text = Main.translate.GetString("lblTest")
 '	btnTest.Color= Colors.DarkGray
 '	btnTest.TextColor = Colors.LightGray
+End Sub
+
+Private Sub removePrinter_Click
+	If spnPrinter.SelectedIndex <> - 1 Then
+'		Main.ActivePrinters.RemoveAt(spnPrinter.SelectedIndex)
+		masterP.removeFromActivePrinter(spnActivePrinter.SelectedIndex)
+		spnActivePrinter.RemoveAt(spnActivePrinter.SelectedIndex)
+	End If
+
 End Sub
 
 'Private Sub Test_Click
@@ -649,6 +712,7 @@ Private Sub setSettings
 		If Not(checkConnectionParams) Then Return
 		
 		masterP.addToActivePrinter(ActivePrinter)
+		spnActivePrinter.Add(ActivePrinter.name)
 		refillSpPrinters
 	Catch
 		Log(LastException)
@@ -681,8 +745,10 @@ Public Sub InitialSetSignsRefresh
 	LabelIPport.Text = Main.translate.GetString("lblPort")
 	LabelBoudOrIp.Text = Main.translate.GetString("lblBoud")
 	LabelOperator.Text = Main.translate.GetString("lblOpertor")
-	LabelPassword.Text = Main.translate.GetString("lblPassword")
+	LabelPassword.Text = Main.translate.GetString("lblPassword")	
 	saveSettings.Text = Main.translate.GetString("lblSave")
+	LabelMac.Text = Main.translate.GetString("lblMac")
+
 '	btnTest.Text = Main.translate.GetString("lblTest")
 	CallSub(Main,"Login_SignsRefresh")	' Когато опресним надписите тук, ще се опресняват и надписите в другите модули
 End Sub
@@ -698,9 +764,13 @@ Sub deviceSpinner_ItemClick (Position As Int, Value As Object)
 	fillSettings
 End Sub
 
+Sub PrinterChoose_ItemClick (Position As Int, Value As Object)
+	selectedPrinterName = Value
+End Sub
+
 public Sub fillSettings
 	Dim printerInfo As Printer = masterP.getInitialPrinterByName(selectedPrinterName)
-	CallSub2(printerInfo.ref,"setSelected_Printer", printerInfo.id)
+	CallSub2(printerInfo.ref,"setSelected_Printer", printerInfo.id)	
 	Dim m As Map = CallSub(printerInfo.ref,"getDevice_SettingsRequirements")
 	
 	Dim fiscalMode As Boolean = CallSub(printerInfo.ref, "getFiscal_MemoryMode")
@@ -793,10 +863,9 @@ Private Sub getConnectionParams As TConnectionParameters
 				Dim cTable As Map = control
 				
 				If cTable.Size = 0 Then :	getConnectionParamsFailed = True
-				Else
+				Else 
 					connectionParams.DeviceMAC = cTable.GetValueAt(0)
 				End If
-						
 		End Select
 	Next
 	
@@ -837,6 +906,8 @@ public Sub genereteSettingView(setting As Int, value As String)
 			IPaddress.Enabled = False
 			Boud.Visible = True
 			Boud.Enabled = True
+			spnMac.Enabled = False
+
 			Boud.Tag = setting
 			BoudprinterFill
 			'Set spinner selected index
@@ -858,6 +929,8 @@ public Sub genereteSettingView(setting As Int, value As String)
 			IPaddress.Enabled = True
 			Boud.Visible = False
 			Boud.Enabled = False
+			spnMac.Enabled = False
+
 			IPaddress.Text = value
 			IPaddress.TextColor = Colors.Black
 			IPaddress.Tag = setting
@@ -891,11 +964,17 @@ public Sub genereteSettingView(setting As Int, value As String)
 			
 		Case Main.PS_DeviceMAC
 			'Init BTPort
+			IPport.Enabled = False
+			IPaddress.Enabled = False
+			Boud.Enabled = False
+			spnMac.Enabled = True
 			Dim btPort As Serial
 			btPort.Initialize("BTPort")
 				For Each name As String In btPort.GetPairedDevices.Keys
-			
+				
 					BTmap.Put(name, btPort.GetPairedDevices.Get(name))
+					spnMac.Add( btPort.GetPairedDevices.Get(name))
+
 				Next
 							
 			controlsMap.Put(setting,BTmap)

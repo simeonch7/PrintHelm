@@ -7,8 +7,7 @@ Version=7.3
 Private Sub Process_Globals
 	'User action
 	Public Const Action_Retry As Int = 1
-	Public Const Action_Ignore As Int = 2
-	Public Const Action_Abort As Int = 3
+	Public Const Action_Abort As Int = 2
 	
 	Public Const Printing As Int = -1
 	Public Const ERR_NoError As Int = 0
