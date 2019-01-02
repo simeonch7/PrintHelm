@@ -233,7 +233,7 @@ Private Sub Update_ExistingLanguage(key As String, data As String)
 	End If
 End Sub
 
-'Връща езиците / Returns the langugages
+'Връща езиците / Returns the languages
 Public Sub Get_LanguageList() As List
 	Return workingProduct.languageList
 End Sub

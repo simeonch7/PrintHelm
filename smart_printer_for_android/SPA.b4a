@@ -83,7 +83,7 @@ Module9=PrinterConstants
 NumberOfFiles=7
 NumberOfLibraries=24
 NumberOfModules=40
-Version=8.3
+Version=8.5
 @EndOfDesignText@
 #Region  Project Attributes 
 	#ApplicationLabel: Smart Printer for Android

@@ -111,7 +111,6 @@ Public Sub Initialize
 	BoudRatesList.Initialize
 	
 	controlsMap.Initialize
-	raf.Initialize(File.DirInternal, "initialSetting.config", False)
 	readinfo.Initialize
 	tempList.Initialize
 	language.SelectedIndex = language.IndexOf(Main.SelectedLanguage)
@@ -641,7 +640,9 @@ Sub Save_click
 	readinfo.port = IPport.Text
 	readinfo.operator = operator.Text
 	readinfo.password = password.Text
+	raf.Initialize(File.DirInternal, "initialSetting.config", False)
 	raf.WriteEncryptedObject(readinfo, ProgramData.rafEncPass,0)
+	raf.Close
 	ToastMessageShow(Main.translate.GetString("ToastSave"), False)
 
 End Sub
@@ -987,7 +988,9 @@ End Sub
 
 Sub settingsFill
 	If File.Exists(File.DirInternal, "initialSetting.config") = True And File.Size(File.DirInternal, "initialSetting.config") > 0 Then
+		raf.Initialize(File.DirInternal, "initialSetting.config", False)	
 		readinfo = raf.ReadEncryptedObject(ProgramData.rafEncPass,0)
+		raf.close
 		IPaddress.Text = readinfo.IPaddress
 		IPport.Text = readinfo.port
 		operator.Text = readinfo.operator
