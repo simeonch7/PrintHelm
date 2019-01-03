@@ -20,7 +20,7 @@ End Sub
 'Loads images
 Public Sub LoadImages
 '	BMP_Warning.Initialize(File.DirAssets, "warn_icon.png")
-'	BMP_SpinnerBack.Initialize(File.DirAssets, "spinner_background.png")
+	BMP_SpinnerBack.Initialize(File.DirAssets, "spinner_background.png")
 '	BMP_InternetConnected.Initialize(File.DirAssets, "internet_connected_icon.png")
 '	BMP_InternetDisconnected.Initialize(File.DirAssets, "internet_disconnected_icon.png")
 '	BMP_Options.Initialize(File.DirAssets, "options_icon.png")

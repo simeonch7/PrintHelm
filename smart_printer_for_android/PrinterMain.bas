@@ -87,9 +87,9 @@ Private Sub initAllPrinterDrivers
 	printMercury.Initialize(Me, IDPrefix)
 	addToPrintersMap(printMercury.getPrintersMap, printMercury)
 
-	Dim printMSPOS As PrinterMSPOS
-	printMSPOS.Initialize(Me, IDPrefix)
-	addToPrintersMap(printMSPOS.getPrintersMap, printMSPOS)
+'	Dim printMSPOS As PrinterMSPOS
+'	printMSPOS.Initialize(Me, IDPrefix)
+'	addToPrintersMap(printMSPOS.getPrintersMap, printMSPOS)
 	
 	Dim printPortENVD As PrinterPortENVD
 	printPortENVD.Initialize(Me, IDPrefix)

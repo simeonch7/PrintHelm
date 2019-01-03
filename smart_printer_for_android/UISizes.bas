@@ -17,7 +17,6 @@ Public Sub Initialize
 	DefaultFont = Main.localDefaultFontSize	
 	animPagerHeight = 10dip
 	
-	If Main.ScreenOrientation = Main.orientationPortrait Then
 		initSettingsWidth = 70%x
 		keyboardWidth = 100%x
 		HeaderHeight = 8%y
@@ -35,18 +34,6 @@ Public Sub Initialize
 		LeftPart = 100%x
 		settingsWidth = 80%x
 		extrafunctionsWidth = 60%x
-	Else
-		HeaderHeight = 10%y
-		FooterHeight = 14%y
-		itemHolderFooterHeight = 7%y
-		GroupScroller = 10%x
-		DefaultPadding = 1%y
-		LeftPart = 36%x
-		keyboardWidth = 36%x			'в landscape - leftpart = keyboardWidth
-		initSettingsWidth = 36%x 
-		settingsWidth = 50%x
-		extrafunctionsWidth = 40%x
-	End If
 	
 	GroupButtonHeight = 64dip
 	GroupColor_Normal = 0xFF19ABFF
