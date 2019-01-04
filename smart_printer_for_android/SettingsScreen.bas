@@ -5,7 +5,7 @@ Type=Class
 Version=8.3
 @EndOfDesignText@
   Sub Class_Globals
-	Private settingsPanel, configPanel, setPanel As Panel
+	Private settingsPanel, countourPanel, configPanel, setPanel As Panel
 	Private country, language, printer, Boud, spnMac As Spinner
 	Private IPport, IPaddress, operator, password As EditText
 	Private LabelCountry, LabelLanguage, LabelPrinter, LabelIPport, LabelBoud, LabelIP, LabelOperator, LabelPassword, LabelAcPrinter, LabelMac, lblEditPrinter As Label
@@ -63,6 +63,7 @@ End Sub
 Public Sub Initialize
 	settingsPanel.Initialize("settingsPanel")
 	configPanel.Initialize("configPanel")
+	countourPanel.Initialize("countourPanel")
 	setPanel.Initialize("setPanel")
 	
 	advancedSettingsOpen.Initialize("advancedSettingsOpen")
@@ -150,13 +151,14 @@ Public Sub Initialize
 	
 	settingsPanel.Enabled = False
 	settingsPanel.Visible = False
-'	configPanel.Visible = False
+	countourPanel.Enabled = False
 	printerSpinnerFill
 	languageprinterFill
 	BoudprinterFill
 	deviceprinterFill
 	
 	configPanel.Color = Colors.White
+	countourPanel.Color = ProgramData.COLOR_BUTTON_NORMAL
 	setPanel.Color = Colors.Transparent
 	HelperFunctions.Apply_ViewStyle(saveSettings, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 	HelperFunctions.Apply_ViewStyle(exitSettings, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
@@ -224,7 +226,8 @@ End Sub
 Sub SettingsUI
 	intLanguageIndex = 0							'Български език / Language is Bulgarian
 
-	settingsPanel.AddView(configPanel, -100%x, 50%y, 100%x, 50%y)
+	settingsPanel.AddView(countourPanel, -60%x, 50%y, 60%x, 50%y)
+	countourPanel.AddView(configPanel, 5dip, 5dip, 60%x - 10dip, 50%y - 10dip)
 	
 	settingsPanel.AddView(LabelCountry, 2%x, 5%y, 30%x, 5%y)
 	settingsPanel.AddView(country, 2%x, LabelCountry.Top + LabelCountry.Height, 40%x, 5%y)
@@ -249,7 +252,7 @@ Sub SettingsUI
 	configPanel.AddView(saveSettings, lblEditPrinter.Left, configPanel.Height - 10%y, 20%x, 5%y)
 	configPanel.AddView(exitSettings, saveSettings.Left + saveSettings.Width + 2%x, configPanel.Height - 10%y, 20%x, 5%y)
 
-	configPanel.AddView(setPanel, 0, printer.Top + printer.Height + 2%y, configPanel.Width / 2, configPanel.Height)
+	configPanel.AddView(setPanel, 0, printer.Top + printer.Height + 2%y, configPanel.Width, configPanel.Height)
 
 
 End Sub
@@ -647,7 +650,7 @@ Sub Save_click
 End Sub
 
 Private Sub AddbtnPrinter_Click
-	If configPanel.Visible Then
+	If countourPanel.Visible Then
 		hideScreen
 	End If
 	mode = mode_add
@@ -656,20 +659,20 @@ Private Sub AddbtnPrinter_Click
 	setVisible(True)
 	configPanel.Color = Colors.White
 
-	configPanel.SetLayoutAnimated(100, 0, 50%y, 100%x, 50%y)
+	countourPanel.SetLayoutAnimated(100, 0, 50%y, 60%x, 50%y)
 	
 '	fillSettings
 End Sub
 
 Private Sub EditPrinter_Click
-	If configPanel.Visible Then
+	If countourPanel.Visible Then
 		hideScreen
 	End If
 	mode = mode_edit
 	setVisible(True)
 	fillEditSettings(selectedEditPrinterIndex)
 	
-	configPanel.SetLayoutAnimated(100, 0, 50%y, 100%x, 50%y)
+	countourPanel.SetLayoutAnimated(100, 0, 50%y, 60%x, 50%y)
 	configPanel.Color = Colors.White
 	
 End Sub
@@ -682,12 +685,12 @@ Public Sub hideScreen()
 	printer.SelectedIndex = 0
 	controlsMap.Clear
 	setPanel.RemoveAllViews
-	configPanel.SetLayoutAnimated(100, -100%x, 50%y, 100%x, 50%y)
+	countourPanel.SetLayoutAnimated(100, -60%x, 50%y, 60%x, 50%y)
 	setVisible(False)
 End Sub
 
 Public Sub setVisible(isVisible As Boolean)
-	configPanel.SetVisibleAnimated(100,isVisible)
+	countourPanel.SetVisibleAnimated(100,isVisible)
 End Sub
 
 
