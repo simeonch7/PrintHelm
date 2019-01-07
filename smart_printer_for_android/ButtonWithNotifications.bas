@@ -36,10 +36,10 @@ Public Sub BuildButtonNotifications(parent As Panel)
 	
 	Dim controlSide As Int = mBase.Width * 0.3
 '	bitmapPrinting1.Initialize(File.DirAssets, "printer_1_icon.png")
-'	bitmapPrinting2.Initialize(File.DirAssets, "printer_2_icon.png")
+	bitmapPrinting2.Initialize(File.DirAssets, "printer_2_icon.png")
 '	bitmapPrinting3.Initialize(File.DirAssets, "printer_3_icon.png")
 '	
-	mBase.SetBackgroundImage(bitmapPrinting1)
+	mBase.SetBackgroundImage(bitmapPrinting2)
 	
 	notifyError.TextSize = ProgramData.TextSize_Small
 	notifyError.Gravity = Gravity.CENTER

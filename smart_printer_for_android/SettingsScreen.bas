@@ -5,10 +5,10 @@ Type=Class
 Version=8.3
 @EndOfDesignText@
   Sub Class_Globals
-	Private settingsPanel, countourPanel, configPanel, setPanel, countourPanel1, scriptsPanel As Panel
+	Private settingsPanel, countourPanel, configPanel, setPanel, countourPanel1, scriptsPanel, statusBtn As Panel
 	Private country, language, printer, Boud, spnMac As Spinner
 	Private IPport, IPaddress, operator, password As EditText
-	Private LabelCountry, LabelLanguage, LabelPrinter, LabelIPport, LabelBoud, LabelIP, LabelOperator, LabelPassword, LabelAcPrinter, LabelMac, lblEditPrinter As Label
+	Private LabelCountry, LabelLanguage, LabelPrinter, LabelOperator, LabelPassword, LabelAcPrinter, lblEditPrinter As Label
 	Private BoudRatesList As List
 	Private PrinterList As List
 	Private masterP As PrinterMain
@@ -21,7 +21,6 @@ Version=8.3
 	Dim raf As RandomAccessFile						
 	Dim readinfo As information
 	Private controlsMap As Map								'Hold all the settings controls
-'	Private saveSettings As Button
 	Private spnActivePrinter As Spinner
 	Private btnPrinterRemove, btnPrinterAdd, btnPrinterEdt As Button
 	Private Const ButtonsRounding As Int = 5
@@ -29,7 +28,7 @@ Version=8.3
 
 	Private tempList As List
 	Private background, scriptsImage As BitmapDrawable
-	Private saveSettings, exitSettings, scriptsOpen, saveSettings1, exitSettings1 As Button
+	Private saveSettings, exitSettings, scriptsOpen, saveSettings1, exitSettings1  As Button
 	
 	Private headersPanel As Panel
 		
@@ -100,9 +99,6 @@ Public Sub Initialize
 	LabelCountry.Initialize("countryLabel")
 	LabelLanguage.Initialize("languageLabel")
 	LabelPrinter.Initialize("deviceLabel")
-	LabelIPport.Initialize("IPportLabel")
-	LabelBoud.Initialize("BoudLabel")
-	LabelIP.Initialize("IPLabel")
 	LabelOperator.Initialize("opertorLabel")
 	LabelPassword.Initialize("passwordLabel")
 	LabelAcPrinter.Initialize("AcPrnLabel")
@@ -110,14 +106,15 @@ Public Sub Initialize
 	exitSettings.Initialize("exit")
 	saveSettings1.Initialize("Save1")
 	exitSettings1.Initialize("exit1")
+	statusBtn.Initialize("")
 '	btnTest.Initialize("Test")
 	spnActivePrinter.Initialize("PrinterChoose")
 	btnPrinterRemove.Initialize("removePrinter")
 	btnPrinterEdt.Initialize("EditPrinter")
 	btnPrinterAdd.Initialize("AddbtnPrinter")
 	spnMac.Initialize("")
-	LabelMac.Initialize("")
 	Countries.Initialize
+	
 	
 	BoudRatesList.Initialize
 	
@@ -130,13 +127,13 @@ Public Sub Initialize
 	BTmap.Initialize
 
 	ColorPickerAndLabelTexts
-	
-	SettingsUI
-	PrinterList.Initialize
-'	addData
-	templates.Initialize
 	masterP.Initialize(Me)
-'	"1200", "2400", "4800", "9600", "14400", "19200", "38400", "57600", "115200")
+	
+	settingsPanel.Visible = False
+	settingsPanel.Enabled = False
+
+	PrinterList.Initialize
+	templates.Initialize
 	BoudRatesList.Add(1200)
 	BoudRatesList.Add(2400)
 	BoudRatesList.Add(4800)
@@ -147,10 +144,7 @@ Public Sub Initialize
 	BoudRatesList.Add(57600)
 	BoudRatesList.Add(115200)
 	
-	settingsPanel.Enabled = False
-	settingsPanel.Visible = False
-	countourPanel.Enabled = False
-	countourPanel1.Enabled = False
+
 	printerSpinnerFill
 	languageprinterFill
 	BoudprinterFill
@@ -165,13 +159,11 @@ Public Sub Initialize
 	HelperFunctions.Apply_ViewStyle(saveSettings1, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 	HelperFunctions.Apply_ViewStyle(exitSettings, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 	HelperFunctions.Apply_ViewStyle(exitSettings1, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
+	HelperFunctions.Apply_ViewStyle(statusBtn, Colors.White, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.BUTTON_ROUNDING + ButtonsRounding)
 '	HelperFunctions.Apply_ViewStyle(btnTest, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 '	HelperFunctions.Apply_ViewStyle(country, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 '	HelperFunctions.Apply_ViewStyle(language, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 	HelperFunctions.Apply_ViewStyle(printer, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
-	HelperFunctions.Apply_ViewStyle(Boud, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
-	HelperFunctions.Apply_ViewStyle(IPport, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
-	HelperFunctions.Apply_ViewStyle(IPaddress, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 	HelperFunctions.Apply_ViewStyle(operator, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 	HelperFunctions.Apply_ViewStyle(password, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 	HelperFunctions.Apply_ViewStyle(btnPrinterRemove, Colors.White, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.BUTTON_ROUNDING + ButtonsRounding)
@@ -237,8 +229,8 @@ Sub SettingsUI
 	settingsPanel.AddView(btnPrinterAdd, spnActivePrinter.Left + spnActivePrinter.Width + UISizes.DefaultPadding, spnActivePrinter.top, 5%x, 5%y)
 	settingsPanel.AddView(btnPrinterRemove, btnPrinterAdd.Left + btnPrinterAdd.Width + UISizes.DefaultPadding, spnActivePrinter.top, 5%x, 5%y)
 	settingsPanel.AddView(btnPrinterEdt, btnPrinterRemove.Left + btnPrinterRemove.Width + UISizes.DefaultPadding, spnActivePrinter.top, 5%x, 5%y)
-
-
+	
+	settingsPanel.AddView(statusBtn, 100%x - 9%x, 2%y, 7%x, 5%y)
 
 	'PrinterSettingsPanel
 	configPanel.AddView(LabelPrinter, 2%x, 2%y, 35%x, 5%y)
@@ -246,15 +238,19 @@ Sub SettingsUI
 	configPanel.AddView(printer, 2%x, LabelPrinter.Top + LabelPrinter.Height, 40%x, 5%y)
 	
 	configPanel.AddView(lblEditPrinter, 2%x, LabelPrinter.Top + LabelPrinter.Height, 40%x, 5%y)
-	configPanel.AddView(saveSettings, lblEditPrinter.Left, configPanel.Height - 10%y, 20%x, 5%y)
+	configPanel.AddView(saveSettings, lblEditPrinter.Left, configPanel.Height - 7%y, 20%x, 5%y)
 	scriptsPanel.AddView(saveSettings1, lblEditPrinter.Left, configPanel.Height - 10%y, 20%x, 5%y)
-	configPanel.AddView(exitSettings, saveSettings.Left + saveSettings.Width + 2%x, configPanel.Height - 10%y, 20%x, 5%y)
+	configPanel.AddView(exitSettings, saveSettings.Left + saveSettings.Width + 2%x, configPanel.Height - 7%y, 20%x, 5%y)
 	scriptsPanel.AddView(exitSettings1, saveSettings.Left + saveSettings1.Width + 2%x, configPanel.Height - 10%y, 20%x, 5%y)
 
 	configPanel.AddView(setPanel, 0, printer.Top + printer.Height + 2%y, configPanel.Width, configPanel.Height)
 
 	scriptsOpen.width = 70dip
 	settingsPanel.AddView(scriptsOpen, 98%x - scriptsOpen.Width, spnActivePrinter.Top+spnActivePrinter.Height + 15dip, 70dip, 70dip)
+	
+	Log(settingsPanel.Width&"/"& settingsPanel.Height)
+	masterP.initPrintingScreen(settingsPanel, statusBtn)
+	
 End Sub
 
 
@@ -528,23 +524,15 @@ Sub ColorPickerAndLabelTexts
 	LabelLanguage.TextColor = Colors.LightGray
 	LabelPrinter.TextColor = Colors.LightGray
 	LabelAcPrinter.TextColor = Colors.LightGray
-	LabelIPport.TextColor = Colors.LightGray
-	LabelIP.TextColor = Colors.LightGray
-	LabelBoud.TextColor = Colors.LightGray
 	LabelOperator.TextColor = Colors.LightGray
 	LabelPassword.TextColor = Colors.LightGray
-	LabelMac.TextColor = Colors.LightGray
 	
 	LabelCountry.Text = Main.translate.GetString("lblCountry")
 	LabelLanguage.Text = Main.translate.GetString("lblLanguage")
 	LabelPrinter.Text = Main.translate.GetString("lblDevice")
 	LabelAcPrinter.Text = Main.translate.GetString("lblACDevice")
-	LabelIPport.Text = Main.translate.GetString("lblPort")
-	LabelIP.Text = Main.translate.GetString("lblIP")
-	LabelBoud.Text = Main.translate.GetString("lblBoud")
 	LabelOperator.Text = Main.translate.GetString("lblOpertor")
 	LabelPassword.Text = Main.translate.GetString("lblPassword")
-	LabelMac.Text = Main.translate.GetString("lblMac")
 		
 	saveSettings.Text = Main.translate.GetString("lblSave")
 	saveSettings1.Text = Main.translate.GetString("lblSave")
@@ -666,6 +654,8 @@ Private Sub AddbtnPrinter_Click
 	configPanel.Color = Colors.White
 
 	countourPanel.BringToFront	
+	country.Enabled = False
+	language.Enabled = False
 	countourPanel.SetLayoutAnimated(100, 0, 0, 100%x, 35%y)
 '	fillSettings
 End Sub
@@ -678,6 +668,8 @@ Private Sub EditPrinter_Click
 	setVisible(True)
 	fillEditSettings(selectedEditPrinterIndex)
 	countourPanel.BringToFront
+	country.Enabled = False
+	language.Enabled = False
 	countourPanel.SetLayoutAnimated(100, 0, 0, 100%x, 35%y)
 	configPanel.Color = Colors.White
 	
@@ -695,6 +687,10 @@ Public Sub hideScreen
 	printer.SelectedIndex = 0
 	controlsMap.Clear
 	setPanel.RemoveAllViews
+	
+	country.Enabled = True
+	language.Enabled = True
+
 	countourPanel.SetLayoutAnimated(100, -100%x, 0, 100%x, 35%y)
 	setVisible(False)
 End Sub
@@ -787,16 +783,12 @@ Public Sub InitialSetSignsRefresh
 	LabelLanguage.Text = Main.translate.GetString("lblLanguage")
 	LabelPrinter.Text = Main.translate.GetString("lblDevice")
 	LabelAcPrinter.Text = Main.translate.GetString("lblACDevice")
-	LabelIPport.Text = Main.translate.GetString("lblPort")
-	LabelIP.Text = Main.translate.GetString("lblIP")
-	LabelBoud.Text = Main.translate.GetString("lblBoud")
 	LabelOperator.Text = Main.translate.GetString("lblOpertor")
 	LabelPassword.Text = Main.translate.GetString("lblPassword")	
 	saveSettings.Text = Main.translate.GetString("lblSave")
 	saveSettings1.Text = Main.translate.GetString("lblSave")
 	exitSettings.Text = Main.translate.GetString("lblExit")
 	exitSettings1.Text = Main.translate.GetString("lblExit")
-	LabelMac.Text = Main.translate.GetString("lblMac")
 
 '	btnTest.Text = Main.translate.GetString("lblTest")
 	CallSub(Main,"Login_SignsRefresh")	' Когато опресним надписите тук, ще се опресняват и надписите в другите модули
@@ -1018,7 +1010,7 @@ public Sub genereteSettingView(Spnl As Panel, top As Int,  setting As Int, value
 			spn.DropdownBackgroundColor = Colors.DarkGray
 			spn.SetBackgroundImage(ImageResources.BMP_SpinnerBack)
 			HelperFunctions.Remove_Padding(spn)
-			hold.AddView(spn, info.Width, cHeight * 0.05, hold.Width - lblWidth, cHeight * 0.9)
+			hold.AddView(spn, info.Width, cHeight * 0.05, hold.Width - lblWidth, cHeight * 0.6)
 			
 			'Set spinner selected index
 			Dim valueIndex As Int = BoudRatesList.IndexOf(value)
@@ -1046,7 +1038,7 @@ public Sub genereteSettingView(Spnl As Panel, top As Int,  setting As Int, value
 			edt.Tag = setting
 			edt.SingleLine = True
 			HelperFunctions.Apply_ViewStyle(edt, Colors.White, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.BUTTON_ROUNDING + 5)
-			hold.AddView(edt, info.Width, cHeight * 0.05, hold.Width - lblWidth, cHeight * 0.9)
+			hold.AddView(edt, info.Width, cHeight * 0.05, hold.Width - lblWidth, cHeight * 0.6)
 			
 			controlsMap.Put(setting,edt)
 			
@@ -1069,7 +1061,7 @@ public Sub genereteSettingView(Spnl As Panel, top As Int,  setting As Int, value
 			edt.SingleLine = True
 			edt.InputType = edt.INPUT_TYPE_NUMBERS
 			HelperFunctions.Apply_ViewStyle(edt, Colors.White, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.BUTTON_ROUNDING + 5)
-			hold.AddView(edt, info.Width, cHeight * 0.05 , hold.Width - lblWidth, cHeight * 0.9)
+			hold.AddView(edt, info.Width, cHeight * 0.05 , hold.Width - lblWidth, cHeight * 0.6)
 			
 			controlsMap.Put(setting,edt)
 			
@@ -1089,7 +1081,7 @@ public Sub genereteSettingView(Spnl As Panel, top As Int,  setting As Int, value
 			edt.TextColor = Colors.White
 			HelperFunctions.Apply_ViewStyle(edt, Colors.White, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.BUTTON_ROUNDING + 5)
 
-			hold.AddView(edt, info.Width, cHeight * 0.05, hold.Width - lblWidth, cHeight * 0.9)
+			hold.AddView(edt, info.Width, cHeight * 0.05, hold.Width - lblWidth, cHeight * 0.6)
 			
 			controlsMap.Put(setting,edt)
 			
@@ -1109,7 +1101,7 @@ public Sub genereteSettingView(Spnl As Panel, top As Int,  setting As Int, value
 			edt.TextColor = Colors.White
 			HelperFunctions.Apply_ViewStyle(edt, Colors.White, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.BUTTON_ROUNDING + 5)
 
-			hold.AddView(edt, info.Width, cHeight * 0.05, hold.Width - lblWidth, cHeight * 0.9)
+			hold.AddView(edt, info.Width, cHeight * 0.05, hold.Width - lblWidth, cHeight * 0.6)
 			
 			controlsMap.Put(setting, edt)
 			
@@ -1131,11 +1123,14 @@ public Sub genereteSettingView(Spnl As Panel, top As Int,  setting As Int, value
 			spn.Tag = setting
 			Dim btPort As Serial
 			btPort.Initialize("BTPort")
-			For Each name As String In btPort.GetPairedDevices.Keys
-				BTmap.Put(name, btPort.GetPairedDevices.Get(name))
-				spn.Add( btPort.GetPairedDevices.Get(name))
-			Next
-		
+			If btPort.GetPairedDevices.Size > 0 Then 
+				For Each name As String In btPort.GetPairedDevices.Keys
+					BTmap.Put(name, btPort.GetPairedDevices.Get(name))
+					spn.Add( btPort.GetPairedDevices.Get(name))
+				Next
+			Else 
+				ToastMessageShow("No paired Devices", False)
+			End If
 			controlsMap.Put(setting,spn)
 		
 	End Select

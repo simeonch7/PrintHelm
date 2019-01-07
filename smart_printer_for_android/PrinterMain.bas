@@ -36,6 +36,9 @@ Private Sub Class_Globals
 	Private Const IDPrefixStep As Int = 500			'Step to Next ID
 	Private callBack As Object						'CallBack = POSScreen
 	
+	Private ScreenProgress As PrinterStatusScreen
+
+	
 	Public ActivePrinters As List
 End Sub
 
@@ -57,7 +60,9 @@ Public Sub Initialize(CB As Object)
 End Sub
 
 Public Sub initPrintingScreen(parent As Panel, buttonHolder As Panel)
-	ReadPrinters	
+	ScreenProgress.Initialize(Me, callBack)
+	ScreenProgress.BuildScreen(parent, buttonHolder)
+	ReadPrinters
 End Sub
 
 'Init all printer drivers and add their names in mapPrinters
@@ -110,14 +115,6 @@ Private Sub initAllPrinterDrivers
 	Dim printTremol As PrinterTremol
 	printTremol.Initialize(Me, IDPrefix)
 	addToPrintersMap(printTremol.getPrintersMap, printTremol)
-'	
-'	Dim printVirtual As PrinterVirtual
-'	printVirtual.Initialize(Me, IDPrefix)
-'	addToPrintersMap(printVirtual.getPrintersMap, printVirtual)
-'	
-'	Dim printSmart As PrinterSmart
-'	printSmart.Initialize(Me, IDPrefix)
-'	addToPrintersMap(printSmart.getPrintersMap, printSmart)
 End Sub
 
 'increment id before initialize next printer dirver
@@ -152,6 +149,7 @@ Public Sub addToActivePrinter(printer As TActivePrinter)
 	
 	'Add to Active Printers
 	ActivePrinters.Add(printer)
+	ScreenProgress.AddPrinter(printer)
 	
 End Sub
 
@@ -214,7 +212,7 @@ End Sub
 'Send Jobs to all Printers in Main.ActivePrinter
 Public Sub DoJobs
 	
-'	ScreenProgress.FloatingButton.ResetCounterButton
+	ScreenProgress.FloatingButton.ResetCounterButton
 	For i = 0 To ActivePrinters.Size - 1
 		Dim APrinter As TActivePrinter = ActivePrinters.Get(i)
 		Dim fiscalMemoryMode As Boolean = CallSub(APrinter.driver, "getFiscal_MemoryMode")

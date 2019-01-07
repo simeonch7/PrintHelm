@@ -30,7 +30,7 @@ Public Sub Initialize
 			itemHolderFooterHeight = 12%x
 		End If
 		
-		DefaultPadding = 1%x
+		DefaultPadding = 0.3%x
 		LeftPart = 100%x
 		settingsWidth = 80%x
 		extrafunctionsWidth = 60%x

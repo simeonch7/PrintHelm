@@ -1,13 +1,26 @@
 ﻿Build1=Default,microinvest.SPA
 File1=6082.jpg
-File2=dictionary.xml
-File3=glossy_3d_blue_arrow_left.png
-File4=glossy_3d_blue_arrow_right.png
-File5=login_background.jpg
-File6=options_icon.png
-File7=scripts.png
-File8=spinner_background.png
+File10=printer_1_icon.png
+File11=printer_2_icon.png
+File12=printer_3_icon.png
+File13=printer_icon_pressed.png
+File14=scripts.png
+File15=spinner_background.png
+File2=desktop.ini
+File3=dictionary.xml
+File4=glossy_3d_blue_arrow_left.png
+File5=glossy_3d_blue_arrow_right.png
+File6=login_background.jpg
+File7=options_icon.png
+File8=print_item_failed_icon.png
+File9=print_item_success_icon.png
 FileGroup1=Default Group
+FileGroup10=Default Group
+FileGroup11=Default Group
+FileGroup12=Default Group
+FileGroup13=Default Group
+FileGroup14=Default Group
+FileGroup15=Default Group
 FileGroup2=Default Group
 FileGroup3=Default Group
 FileGroup4=Default Group
@@ -15,6 +28,7 @@ FileGroup5=Default Group
 FileGroup6=Default Group
 FileGroup7=Default Group
 FileGroup8=Default Group
+FileGroup9=Default Group
 Group=Default Group
 IconFile=
 Library1=core
@@ -43,17 +57,17 @@ Library8=felusbserial
 Library9=serial
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="5" android:targetSdkVersion="26"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~'End of default text.~\n~~\n~AddPermission(android.hardware.usb.action.USB_DEVICE_DETACHED)~\n~CreateResource(xml, device_filter.xml,~\n~<resources>		~\n~    <usb-device />	~\n~</resources>~\n~)~\n~AddApplicationText(~\n~<activity android:name=".main" >~\n~   <intent-filter>~\n~    <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />~\n~   </intent-filter>  ~\n~    <meta-data android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" android:resource="@xml/device_filter" />   ~\n~ </activity>~\n~)
 Module1=SettingsScreen
-Module10=SPAservice
-Module11=PrinterArmax
-Module12=PrinterArmaxParser
-Module13=PrinterConstants
-Module14=PrinterDaisyRO
+Module10=PrinterDatecsNew
+Module11=Translator
+Module12=SPAservice
+Module13=PrinterArmax
+Module14=PrinterArmaxParser
 Module15=PrinterDatecsOld
 Module16=PrinterDatecsRO
 Module17=PrinterEmpty
 Module18=PrinterExcellio
 Module19=PrinterIncotexRO
-Module2=ProgramData
+Module2=PrinterMain
 Module20=PrinterMercury
 Module21=PrinterPortENVD
 Module22=PrinterPortKZ
@@ -64,7 +78,7 @@ Module26=Utilities
 Module27=DataTypes
 Module28=PriceMathFunctions
 Module29=ImageResources
-Module3=IPscreen
+Module3=PrinterDaisyRO
 Module30=PrinterPriceCalculator
 Module31=BytesBuilder
 Module32=Device
@@ -75,16 +89,19 @@ Module36=Countries
 Module37=Constants
 Module38=UISizes
 Module39=B4XEval
-Module4=PrinterPOS
+Module4=PrinterConstants
 Module40=MelodyMaster
-Module5=HelperFunctions
-Module6=PrinterMain
-Module7=PrinterDatecsNew
-Module8=PrinterMSPOS
-Module9=Translator
-NumberOfFiles=8
+Module41=PrinterStatusScreen
+Module42=PrinterStatusSVItem
+Module43=PrinterStatusSVItems
+Module5=PrinterMSPOS
+Module6=HelperFunctions
+Module7=ProgramData
+Module8=IPscreen
+Module9=PrinterPOS
+NumberOfFiles=15
 NumberOfLibraries=24
-NumberOfModules=40
+NumberOfModules=43
 Version=8.3
 @EndOfDesignText@
  #Region  Project Attributes 
@@ -138,12 +155,13 @@ Sub Process_Globals
 	
 	Private req As String
 	
-	
+
 End Sub
 
 Sub Globals
 	Public loginScr As IPscreen
 	Public settingsScr As SettingsScreen
+	Public PrinterStatusReference As PrinterStatusScreen
 
 End Sub
 
@@ -152,20 +170,22 @@ Sub Activity_Create(FirstTime As Boolean)
 	ProgramData.Initialize
 	UISizes.Initialize
 	ImageResources.LoadImages
-	
 	Countries.Initialize
 	Locale.Initialize
 	translate.Initialize
 	languageList = translate.Get_LanguageList
 	
-		
+'	PrinterStatusReference.Initialize(Me, settingsScr)
+
 	loginScr.Initialize
 	Activity.AddView(loginScr.asView, 0, 0, 100%x, 100%y)
 	loginScr.build_Screen
 	settingsScr.Initialize
 	Activity.AddView(settingsScr.asView, 0, 0, 100%x, 100%y)
+	settingsScr.SettingsUI
 	Load_Language
 '	settingsScr.settingsFill
+
 	Login_SignsRefresh
 	settingsScr.InitialSetSignsRefresh
 End Sub
@@ -216,6 +236,10 @@ End Sub
 
 Private Sub Load_Language
 	translate.SetLanguage(SelectedLanguage)
+End Sub
+
+public Sub SetPrinterStatus_Reference (screen As PrinterStatusScreen )
+	PrinterStatusReference = screen
 End Sub
 
 
