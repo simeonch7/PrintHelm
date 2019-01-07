@@ -159,7 +159,7 @@ Public Sub Initialize
 	HelperFunctions.Apply_ViewStyle(saveSettings1, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 	HelperFunctions.Apply_ViewStyle(exitSettings, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 	HelperFunctions.Apply_ViewStyle(exitSettings1, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
-	HelperFunctions.Apply_ViewStyle(statusBtn, Colors.White, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.BUTTON_ROUNDING + ButtonsRounding)
+	HelperFunctions.Apply_ViewStyle(statusBtn, Colors.White, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.BUTTON_ROUNDING + ButtonRounding)
 '	HelperFunctions.Apply_ViewStyle(btnTest, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 '	HelperFunctions.Apply_ViewStyle(country, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 '	HelperFunctions.Apply_ViewStyle(language, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
@@ -230,8 +230,8 @@ Sub SettingsUI
 	settingsPanel.AddView(btnPrinterRemove, btnPrinterAdd.Left + btnPrinterAdd.Width + UISizes.DefaultPadding, spnActivePrinter.top, 5%x, 5%y)
 	settingsPanel.AddView(btnPrinterEdt, btnPrinterRemove.Left + btnPrinterRemove.Width + UISizes.DefaultPadding, spnActivePrinter.top, 5%x, 5%y)
 	
-	settingsPanel.AddView(statusBtn, 100%x - 9%x, 2%y, 7%x, 5%y)
-
+	settingsPanel.AddView(statusBtn, 100%x - 12%x, 2%y, 10%x, 6%y)
+	
 	'PrinterSettingsPanel
 	configPanel.AddView(LabelPrinter, 2%x, 2%y, 35%x, 5%y)
 	LabelPrinter.Gravity = Gravity.CENTER_VERTICAL
@@ -248,7 +248,6 @@ Sub SettingsUI
 	scriptsOpen.width = 70dip
 	settingsPanel.AddView(scriptsOpen, 98%x - scriptsOpen.Width, spnActivePrinter.Top+spnActivePrinter.Height + 15dip, 70dip, 70dip)
 	
-	Log(settingsPanel.Width&"/"& settingsPanel.Height)
 	masterP.initPrintingScreen(settingsPanel, statusBtn)
 	
 End Sub

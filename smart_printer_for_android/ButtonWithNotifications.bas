@@ -11,7 +11,7 @@ Sub Class_Globals
 	Private mBase As Panel
 	Private fakePanel As Panel
 	Private notifyWarnings, notifyError, notifyReady As Label
-	Private bitmapPrinting1, bitmapPrinting2, bitmapPrinting3 As Bitmap
+	Private bitmapPrinting1, bitmapPrinting2, bitmapPrinting3, bitmapPressed As Bitmap
 	Private timerPrinting As Timer
 	Private counter As Int = 0	
 	Private countWarning, countErr, countReady As Int	
@@ -35,11 +35,9 @@ Public Sub BuildButtonNotifications(parent As Panel)
 	parent.AddView(mBase, 0, 0, parent.Width, parent.Height)
 	
 	Dim controlSide As Int = mBase.Width * 0.3
-'	bitmapPrinting1.Initialize(File.DirAssets, "printer_1_icon.png")
-	bitmapPrinting2.Initialize(File.DirAssets, "printer_2_icon.png")
-'	bitmapPrinting3.Initialize(File.DirAssets, "printer_3_icon.png")
-'	
-	mBase.SetBackgroundImage(bitmapPrinting2)
+	bitmapPressed.Initialize(File.DirAssets, "printer_icon_pressed.png")
+	
+	mBase.SetBackgroundImage(bitmapPressed)
 	
 	notifyError.TextSize = ProgramData.TextSize_Small
 	notifyError.Gravity = Gravity.CENTER
