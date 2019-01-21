@@ -1,26 +1,22 @@
 ﻿Build1=Default,microinvest.SPA
 File1=6082.jpg
-File10=printer_1_icon.png
-File11=printer_2_icon.png
-File12=printer_3_icon.png
-File13=printer_icon_pressed.png
-File14=scripts.png
-File15=spinner_background.png
+File10=printer_2_icon.png
+File11=printer_3_icon.png
+File12=printer_icon_pressed.png
+File13=spinner_background.png
 File2=desktop.ini
 File3=dictionary.xml
-File4=glossy_3d_blue_arrow_left.png
-File5=glossy_3d_blue_arrow_right.png
-File6=login_background.jpg
-File7=options_icon.png
-File8=print_item_failed_icon.png
-File9=print_item_success_icon.png
+File4=edit.png
+File5=login_background.jpg
+File6=options_icon.png
+File7=print_item_failed_icon.png
+File8=print_item_success_icon.png
+File9=printer_1_icon.png
 FileGroup1=Default Group
 FileGroup10=Default Group
 FileGroup11=Default Group
 FileGroup12=Default Group
 FileGroup13=Default Group
-FileGroup14=Default Group
-FileGroup15=Default Group
 FileGroup2=Default Group
 FileGroup3=Default Group
 FileGroup4=Default Group
@@ -41,13 +37,8 @@ Library15=oslibrary
 Library16=ahlocale
 Library17=httpserver
 Library18=stringutils
-Library19=scrollview2d
+Library19=okhttputils2
 Library2=xmlsax
-Library20=sql
-Library21=fiscalcore
-Library22=fiscalprinteratol
-Library23=okhttputils2
-Library24=bignumbers
 Library3=randomaccessfile
 Library4=reflection
 Library5=customalertdialog
@@ -57,52 +48,36 @@ Library8=felusbserial
 Library9=serial
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="5" android:targetSdkVersion="26"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~'End of default text.~\n~~\n~AddPermission(android.hardware.usb.action.USB_DEVICE_DETACHED)~\n~CreateResource(xml, device_filter.xml,~\n~<resources>		~\n~    <usb-device />	~\n~</resources>~\n~)~\n~AddApplicationText(~\n~<activity android:name=".main" >~\n~   <intent-filter>~\n~    <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />~\n~   </intent-filter>  ~\n~    <meta-data android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" android:resource="@xml/device_filter" />   ~\n~ </activity>~\n~)
 Module1=SettingsScreen
-Module10=ButtonWithNotifications
-Module11=Translator
-Module12=PrinterConstants
-Module13=HelperFunctions
-Module14=ProgramData
-Module15=IPscreen
-Module16=PrinterDatecsNew
-Module17=SPAservice
-Module18=PrinterArmaxParser
-Module19=PrinterDatecsOld
-Module2=PrinterStatusScreen
-Module20=PrinterDatecsRO
-Module21=PrinterEmpty
-Module22=PrinterExcellio
-Module23=PrinterIncotexRO
-Module24=PrinterMercury
-Module25=PrinterPortENVD
-Module26=PrinterPortKZ
-Module27=PrinterPortRU
-Module28=PrinterTremol
-Module29=ScriptMaster
-Module3=PrinterPOS
-Module30=Utilities
-Module31=DataTypes
-Module32=PriceMathFunctions
-Module33=PrinterPriceCalculator
-Module34=BytesBuilder
-Module35=Device
-Module36=OperationFunctions
-Module37=Version
-Module38=Countries
-Module39=Constants
-Module4=PrinterStatusSVItem
-Module40=UISizes
-Module41=B4XEval
-Module42=MelodyMaster
-Module43=PrinterStatusSVItems
-Module5=ImageResources
-Module6=PrinterDaisyRO
-Module7=PrinterMSPOS
-Module8=PrinterArmax
-Module9=PrinterMain
-NumberOfFiles=15
-NumberOfLibraries=24
-NumberOfModules=43
-Version=8.5
+Module10=PrinterConstants
+Module11=PrinterStatusScreen
+Module12=PrinterStatusSVItem
+Module13=ImageResources
+Module14=ButtonWithNotifications
+Module15=ScriptMaster
+Module16=DataTypes
+Module17=PriceMathFunctions
+Module18=PrinterPriceCalculator
+Module19=BytesBuilder
+Module2=IPscreen
+Module20=Device
+Module21=OperationFunctions
+Module22=Version
+Module23=Countries
+Module24=Constants
+Module25=UISizes
+Module26=B4XEval
+Module27=PrinterStatusSVItems
+Module3=ProgramData
+Module4=PrinterPOS
+Module5=PrinterMain
+Module6=Utilities
+Module7=HelperFunctions
+Module8=Translator
+Module9=SPAservice
+NumberOfFiles=13
+NumberOfLibraries=19
+NumberOfModules=27
+Version=8.8
 @EndOfDesignText@
  #Region  Project Attributes 
 	#ApplicationLabel: Smart Printer for Android
@@ -242,6 +217,14 @@ public Sub SetPrinterStatus_Reference (screen As PrinterStatusScreen )
 	PrinterStatusReference = screen
 End Sub
 
+Public Sub Show_PrinterButtons
+	settingsScr.buttonsShow
+End Sub
+
+Public Sub Hide_PrinterButtons
+	settingsScr.buttonsHide
+
+End Sub
 
 'метод,с който пренаписваме бутонът за връщане назад на у-вото
 Sub Activity_KeyPress (KeyCode As Int) As Boolean

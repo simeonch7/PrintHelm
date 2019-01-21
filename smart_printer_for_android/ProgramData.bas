@@ -51,9 +51,9 @@ Private Sub Process_Globals
 	Public DefaultFont As Int = 14
 	Public Tile_Small As Int
 	Public Tile_Large As Int
-	Public TextSize_ExtraLarge As Int
-	Public TextSize_Large As Int
-	Public TextSize_Small As Int
+	Public TextSize_ExtraLarge As Int = 16
+	Public TextSize_Large As Int = 14
+	Public TextSize_Small As Int = 12
 	Public TextSize_Huge As Int
 
 	Public CurrentCompany As Company

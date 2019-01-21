@@ -37,7 +37,7 @@ Sub Server_HandleRequest (Request As ServletRequest, response As ServletResponse
 		Log("Client: " & Request.RemoteAddress)
 '		Log("-----"&Request.RequestURI) 'handle the request based on the URL
 		
-		urlResponse = su.DecodeUrl(Request.RequestURI, "UTF8").SubString(13)
+		urlResponse = su.DecodeUrl(Request.RequestURI, "UTF8").SubString(12)
 		Log("--->"&urlResponse)
 
 		ProgramData.req = urlResponse

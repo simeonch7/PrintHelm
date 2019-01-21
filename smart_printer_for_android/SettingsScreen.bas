@@ -22,7 +22,7 @@ Version=8.3
 	Dim readinfo As information
 	Private controlsMap As Map								'Hold all the settings controls
 	Private spnActivePrinter As Spinner
-	Private btnPrinterRemove, btnPrinterAdd, btnPrinterEdt As Button
+	Private btnPrinterRemove, btnPrinterAdd, btnPrinterEdt, pnlEditImg As Button
 	Private Const ButtonsRounding As Int = 5
 	Private BTmap As Map
 
@@ -32,8 +32,7 @@ Version=8.3
 
 
 	Private tempList As List
-	Private background, scriptsImage As BitmapDrawable
-	Private saveSettings, exitSettings, scriptsOpen, saveSettings1, exitSettings1  As Button
+	Private saveSettings, exitSettings As Button
 			
 	Private Const COLOR_NormalTop As Int 	  =	0xff4ac2ff	'Light blue
 	Private Const COLOR_NormalBottom As Int   =	0xff149be0	'Darker blue
@@ -44,7 +43,7 @@ Version=8.3
 	Private Const ButtonRounding As Int = 60	'How much rounding is done on the buttons & edit text corners
 '	Private Const COLOR_Dropdown As Int = 		0xFF012136
 
-	Private background As BitmapDrawable
+	Private background, edtbtnBG As BitmapDrawable
 	
 	Public mode As Int
 	Public const mode_add As Int = 1
@@ -67,19 +66,16 @@ Public Sub Initialize
 	configPanel.Initialize("configPanel")
 	countourPanel.Initialize("countourPanel")
 	
-	scriptsOpen.Initialize("scriptsOpen")
 	cFootersList.Initialize
 	cDetailesList.Initialize
 	cHeadersList.Initialize
 	cTotalsList.Initialize
 	
 	background.Initialize(LoadBitmap(File.DirAssets, "6082.jpg"))
-	scriptsImage.Initialize(LoadBitmap(File.DirAssets, "scripts.png"))
+	edtbtnBG.Initialize(LoadBitmap(File.DirAssets, "edit.png"))
 	
 	settingsPanel.Background = background
-	scriptsOpen.Background = scriptsImage
 	
-'	printersAdd.Initialize
 	country.Initialize("countrySpinner")
 	language.Initialize("languageSpinner")
 	
@@ -94,7 +90,6 @@ Public Sub Initialize
 	
 	operator.Initialize("opertorEditText")
 	password.Initialize("passwordEditText")
-'	spnPrinter.Initialize("")
 	LabelCountry.Initialize("countryLabel")
 	LabelLanguage.Initialize("languageLabel")
 	LabelPrinter.Initialize("deviceLabel")
@@ -103,17 +98,17 @@ Public Sub Initialize
 	LabelAcPrinter.Initialize("AcPrnLabel")
 	saveSettings.Initialize("Save")
 	exitSettings.Initialize("exit")
-	saveSettings1.Initialize("Save1")
-	exitSettings1.Initialize("exit1")
 	statusBtn.Initialize("")
 '	btnTest.Initialize("Test")
 	spnActivePrinter.Initialize("PrinterChoose")
 	btnPrinterRemove.Initialize("removePrinter")
+	pnlEditImg.Initialize("editPrinter")
+	edtbtnBG= pnlEditImg.SetBackgroundImage(LoadBitmap(File.DirAssets,"edit.png"))
+	edtbtnBG.Gravity = Gravity.CENTER
 	btnPrinterEdt.Initialize("EditPrinter")
 	btnPrinterAdd.Initialize("AddbtnPrinter")
 	spnMac.Initialize("")
 	Countries.Initialize
-	
 	
 	BoudRatesList.Initialize
 	
@@ -155,8 +150,6 @@ Public Sub Initialize
 	HelperFunctions.Apply_ViewStyle(exitSettings, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 	HelperFunctions.Apply_ViewStyle(statusBtn, Colors.White, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.BUTTON_ROUNDING + ButtonRounding)
 '	HelperFunctions.Apply_ViewStyle(btnTest, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
-'	HelperFunctions.Apply_ViewStyle(country, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
-'	HelperFunctions.Apply_ViewStyle(language, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 	HelperFunctions.Apply_ViewStyle(printer, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 	HelperFunctions.Apply_ViewStyle(operator, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 	HelperFunctions.Apply_ViewStyle(password, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
@@ -164,19 +157,28 @@ Public Sub Initialize
 	HelperFunctions.Apply_ViewStyle(btnPrinterAdd, Colors.White, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.BUTTON_ROUNDING + ButtonsRounding)
 	HelperFunctions.Apply_ViewStyle(btnPrinterEdt, Colors.White, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.BUTTON_ROUNDING + ButtonsRounding)
 	HelperFunctions.Apply_ViewStyle(spnMac, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
-	
+	country.TextColor = Colors.White
+	language.TextColor = Colors.White
 	lblEditPrinter.Visible = False
 	lblEditPrinter.TextColor = Colors.Black
 	lblEditPrinter.Typeface = Typeface.DEFAULT_BOLD
 	lblEditPrinter.Gravity = Gravity.CENTER
+End Sub
 
+Public Sub buttonsHide
+	btnPrinterRemove.Visible = False
+	btnPrinterAdd.Visible = False
+	btnPrinterEdt.Visible = False
+End Sub
+
+Public Sub buttonsShow
+	btnPrinterRemove.Visible = True
+	btnPrinterAdd.Visible = True
+	btnPrinterEdt.Visible = True
 End Sub
 
 Sub printerSpinnerFill
-	'Log(Countries.getCountries)
-
 	For Each m As String In Countries.getCountries.Keys
-'		Log("Country:" & m)
 		country.Add(m)
 	Next
 End Sub
@@ -212,9 +214,6 @@ Sub SettingsUI
 		
 	settingsPanel.AddView(LabelAcPrinter, 2%x, language.Top + language.Height + 10%y, 35%x, 5%y)
 	settingsPanel.AddView(spnActivePrinter, 2%x, LabelAcPrinter.Top + LabelAcPrinter.Height + UISizes.DefaultPadding, 35%x, 5%y)
-	settingsPanel.AddView(btnPrinterAdd, spnActivePrinter.Left + spnActivePrinter.Width + UISizes.DefaultPadding, spnActivePrinter.top, 5%x, 5%y)
-	settingsPanel.AddView(btnPrinterRemove, btnPrinterAdd.Left + btnPrinterAdd.Width + UISizes.DefaultPadding, spnActivePrinter.top, 5%x, 5%y)
-	settingsPanel.AddView(btnPrinterEdt, btnPrinterRemove.Left + btnPrinterRemove.Width + UISizes.DefaultPadding, spnActivePrinter.top, 5%x, 5%y)
 	
 	settingsPanel.AddView(statusBtn, 100%x - 12%x, 2%y, 10%x, 6%y)
 	
@@ -226,12 +225,14 @@ Sub SettingsUI
 	configPanel.AddView(lblEditPrinter, 2%x, LabelPrinter.Top + LabelPrinter.Height, 40%x, 5%y)
 	configPanel.AddView(saveSettings, configPanel.Width -25%x, configPanel.Height - 20%y, 20%x, 5%y)
 	configPanel.AddView(exitSettings, saveSettings.Left, saveSettings.top + saveSettings.Height + 3%y, 20%x, 5%y)
-
-	scriptsOpen.width = 70dip
-	settingsPanel.AddView(scriptsOpen, 98%x - scriptsOpen.Width, spnActivePrinter.Top+spnActivePrinter.Height + 15dip, 70dip, 70dip)
 	
 	masterP.initPrintingScreen(settingsPanel, statusBtn)
 	
+	settingsPanel.AddView(btnPrinterAdd, spnActivePrinter.Left + spnActivePrinter.Width + UISizes.DefaultPadding, spnActivePrinter.top, 5%x, 5%y)
+	settingsPanel.AddView(btnPrinterRemove, btnPrinterAdd.Left + btnPrinterAdd.Width + UISizes.DefaultPadding, spnActivePrinter.top, 5%x, 5%y)
+	settingsPanel.AddView(btnPrinterEdt, btnPrinterRemove.Left + btnPrinterRemove.Width + UISizes.DefaultPadding, spnActivePrinter.top, 5%x, 5%y)
+	settingsPanel.AddView(pnlEditImg, btnPrinterRemove.Left + btnPrinterRemove.Width + UISizes.DefaultPadding, spnActivePrinter.top, 5%x, 5%y)
+
 	Dim haightSV As Int
 	haightSV = configPanel.Height - LabelPrinter.Height - printer.Height
 	BTSettingsSV.Initialize(haightSV)
@@ -239,7 +240,6 @@ Sub SettingsUI
 	configPanel.AddView(BTSettingsSV, 2%x, printer.Top + printer.Height + 1%y, configPanel.Width * 0.7, haightSV)
 
 End Sub
-
 
 #Region Printing
 Private Sub POS_Print
@@ -522,18 +522,12 @@ Sub ColorPickerAndLabelTexts
 	LabelPassword.Text = Main.translate.GetString("lblPassword")
 		
 	saveSettings.Text = Main.translate.GetString("lblSave")
-	saveSettings1.Text = Main.translate.GetString("lblSave")
 	saveSettings.Color= Colors.DarkGray
-	saveSettings1.Color= Colors.DarkGray
 	saveSettings.TextColor = Colors.LightGray
-	saveSettings1.TextColor = Colors.LightGray
 	
 	exitSettings.Text = Main.translate.GetString("lblExit")
-	exitSettings1.Text = Main.translate.GetString("lblExit")
 	exitSettings.Color= Colors.DarkGray
-	exitSettings1.Color= Colors.DarkGray
 	exitSettings.TextColor = Colors.LightGray
-	exitSettings1.TextColor = Colors.LightGray
 	
 	spnActivePrinter.TextColor = Colors.White
 	spnActivePrinter.DropdownTextColor = Colors.White
@@ -541,7 +535,6 @@ Sub ColorPickerAndLabelTexts
 
 	btnPrinterRemove.Text = "-"
 	btnPrinterAdd.Text = "+"
-'	btnPrinterEdt.
 
 '	btnTest.Text = Main.translate.GetString("lblTest")
 '	btnTest.Color= Colors.DarkGray
@@ -631,8 +624,9 @@ Sub Save_click
 End Sub
 
 Private Sub AddbtnPrinter_Click
-	If countourPanel.Visible Then
+	If countourPanel.left = 0 Then
 		hideScreen
+		Return
 	End If
 	mode = mode_add
 
@@ -643,14 +637,15 @@ Private Sub AddbtnPrinter_Click
 	countourPanel.BringToFront	
 	country.Enabled = False
 	language.Enabled = False
-	countourPanel.SetLayoutAnimated(100, 0, 50%y, 100%x, 50%y)
+	countourPanel.SetLayoutAnimated(500, 0, 50%y, 100%x, 50%y)
 '	fillSettings
 End Sub
 
 Private Sub EditPrinter_Click
 	If spnActivePrinter.Size >= 1 Then 
-		If countourPanel.Visible Then
+		If countourPanel.left = 0 Then
 			hideScreen
+			Return
 		End If
 		mode = mode_edit
 		setVisible(True)
@@ -658,7 +653,7 @@ Private Sub EditPrinter_Click
 		countourPanel.BringToFront
 		country.Enabled = False
 		language.Enabled = False
-		countourPanel.SetLayoutAnimated(100, 0, 50%y, 100%x, 50%y)
+		countourPanel.SetLayoutAnimated(500, 0, 50%y, 100%x, 50%y)
 		configPanel.Color = Colors.White
 	Else
 		ToastMessageShow("No Active Printers", False)
@@ -677,8 +672,8 @@ Public Sub hideScreen
 	country.Enabled = True
 	language.Enabled = True
 
-	countourPanel.SetLayoutAnimated(100, -100%x, 50%y, 100%x, 50%y)
-	setVisible(False)
+	countourPanel.SetLayoutAnimated(500, -100%x, 50%y, 100%x, 50%y)
+'	setVisible(False)
 End Sub
 
 
@@ -767,9 +762,7 @@ Public Sub InitialSetSignsRefresh
 	LabelOperator.Text = Main.translate.GetString("lblOpertor")
 	LabelPassword.Text = Main.translate.GetString("lblPassword")	
 	saveSettings.Text = Main.translate.GetString("lblSave")
-	saveSettings1.Text = Main.translate.GetString("lblSave")
 	exitSettings.Text = Main.translate.GetString("lblExit")
-	exitSettings1.Text = Main.translate.GetString("lblExit")
 
 '	btnTest.Text = Main.translate.GetString("lblTest")
 	CallSub(Main,"Login_SignsRefresh")	' Когато опресним надписите тук, ще се опресняват и надписите в другите модули
@@ -823,8 +816,47 @@ Private Sub fillEditSettings(APrinterIndex As Int)
 	runMap(m,fiscalMode)
 	FillControls(actprinter.connectionParams)
 	
-'	fillScripts(actprinter.ScriptsTemplate, fiscalMode)
+	fillScripts(actprinter.ScriptsTemplate, fiscalMode)
 End Sub
+
+private Sub fillScripts(Scripts As PrinterScripts, fiscalMode As Boolean)
+	If Scripts.Headers.Size > 0 Then
+		For Each H As String In Scripts.Headers
+			addHeader(H)
+		Next
+	Else
+		addHeader("")
+	End If
+	
+	If Not(fiscalMode) Then
+		If Scripts.Details.Size > 0 Then
+			For Each H As String In Scripts.Details
+				addDetail(H)
+			Next
+		Else
+			addDetail("")
+		End If
+	End If
+	
+	If Not(fiscalMode) Then
+		If Scripts.Totals.Size > 0 Then
+			For Each H As String In Scripts.Totals
+				addTotals(H)
+			Next
+		Else
+			addTotals("")
+		End If
+	End If
+	
+	If Scripts.Footers.Size > 0 Then
+		For Each H As String In Scripts.Footers
+			addFooter(H)
+		Next
+	Else
+		addFooter("")
+	End If
+End Sub
+
 
 private Sub FillControls(connectionParams As TConnectionParameters)
 	For Each key As Int In controlsMap.Keys
@@ -976,11 +1008,10 @@ Private Sub getConnectionParams As TConnectionParameters
 				End If
 				
 			Case Main.PS_DeviceMAC
-				Dim cTable As Map = control
+				Dim cTable As Spinner = control
 				
 				If cTable.Size = 0 Then :	getConnectionParamsFailed = True
-				Else 
-					connectionParams.DeviceMAC = cTable.GetValueAt(0)
+				Else : connectionParams.DeviceMAC = cTable.GetItem(0)
 				End If
 		End Select
 	Next
@@ -1160,6 +1191,8 @@ public Sub genereteSettingView(Spnl As ScrollView, top As Int,  setting As Int, 
 			Else
 				ToastMessageShow("No paired Devices", False)
 			End If
+			hold.AddView(spn, info.Width, cHeight * 0.05, hold.Width - lblWidth, cHeight * 0.6)
+
 			controlsMap.Put(setting,spn)
 		
 	End Select
@@ -1185,7 +1218,7 @@ private Sub GenerateHeader(SV As ScrollView,top As Int) As Int 'ignore
 	title.Initialize("")
 	title.Text = Main.translate.GetString("lblHeaders")
 	title.TextSize = ProgramData.TextSize_ExtraLarge
-	title.TextColor = Colors.Black
+	title.TextColor = Colors.Gray
 	title.Gravity = Gravity.CENTER_VERTICAL + Gravity.LEFT
 	HelperFunctions.Remove_Padding(title)
 	outHeaderHolder.AddView(title,0,0,outHeaderHolder.Width - cHeight - UISizes.DefaultPadding,cHeight)
@@ -1262,7 +1295,7 @@ private Sub GenerateDetails(SV As ScrollView,top As Int) As Int 'ignore
 	title.Initialize("")
 	title.Text = Main.translate.GetString("lblDetails")
 	title.TextSize = ProgramData.TextSize_ExtraLarge
-	title.TextColor = Colors.Black
+	title.TextColor = Colors.Gray
 	title.Gravity = Gravity.CENTER_VERTICAL + Gravity.LEFT
 	HelperFunctions.Remove_Padding(title)
 	outDetailesHolder.AddView(title,0,0,outDetailesHolder.Width - cHeight - UISizes.DefaultPadding,cHeight)
@@ -1334,7 +1367,7 @@ private Sub GenerateTotals(SV As ScrollView,top As Int) As Int 'ignore
 	title.Initialize("")
 	title.Text = Main.translate.GetString("lblTotals")
 	title.TextSize = ProgramData.TextSize_ExtraLarge
-	title.TextColor = Colors.Black
+	title.TextColor = Colors.Gray
 	title.Gravity = Gravity.CENTER_VERTICAL + Gravity.LEFT
 	HelperFunctions.Remove_Padding(title)
 	outTotalsHolder.AddView(title,0,0,outTotalsHolder.Width - cHeight - UISizes.DefaultPadding,cHeight)
@@ -1402,7 +1435,7 @@ private Sub GenerateFooter(SV As ScrollView,top As Int) As Int 'ignore
 	title.Initialize("")
 	title.Text = Main.translate.GetString("lblFooters")
 	title.TextSize = ProgramData.TextSize_ExtraLarge
-	title.TextColor = Colors.Black
+	title.TextColor = Colors.Gray
 	title.Gravity = Gravity.CENTER_VERTICAL + Gravity.LEFT
 	HelperFunctions.Remove_Padding(title)
 	outFooterHolder.AddView(title,0,0,outFooterHolder.Width - cHeight - UISizes.DefaultPadding,cHeight)

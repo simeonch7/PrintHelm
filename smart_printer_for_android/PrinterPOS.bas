@@ -1,14 +1,14 @@
 ﻿B4A=true
-Group=Default Group
+Group=Printers\PrintersDrivers
 ModulesStructureVersion=1
 Type=Class
 Version=7.3
 @EndOfDesignText@
- Sub Class_Globals
+Sub Class_Globals
 	'General
 	Private masterPrinter As PrinterMain				'Ignore (the variable is actually used, the ide is buggy)
-	Private statusItem As PrinterStatusSVItem	'Ignore. Reference to item in StatusScreen
-	Private userAction As ResumableSub			'Ignore. Used to get action when error interupt printing.
+	Private statusItem As PrinterStatusSVItem	'Reference to item in StatusScreen
+	Private userAction As ResumableSub			'Used to get action when error interupt printing.
 	
 	Private selectedCmdSet As Int 
 	
@@ -81,6 +81,9 @@ Version=7.3
 	Private ArabicSerial40 As Int
 	Private ArabicSerial48 As Int
 	
+	Private TestPOSPrinter1 As Int
+	Private TestPOSPrinter2 As Int
+	
 	Private Const Conn_BT As Int = 1				'Комуникация чрез Bluetooth
 	Private Const Conn_LAN As Int = 2				'Комуникация чрез LAN
 	Private Const Conn_COM As Int = 3				'Комуникация чрез Serial Port
@@ -146,6 +149,9 @@ Private Sub fillMap
 	ArabicSerial32 = 	AddPrinter("Arabic ESC/POS Serial 32", Countries.Universe)
 	ArabicSerial40 = 	AddPrinter("Arabic ESC/POS Serial 40", Countries.Universe)
 	ArabicSerial48 = 	AddPrinter("Arabic ESC/POS Serial 48", Countries.Universe)
+
+	TestPOSPrinter1 = 	AddPrinter("Test Printer 1", Countries.Universe)
+	TestPOSPrinter2 = 	AddPrinter("Test Printer 2", Countries.Universe)
 End Sub
 
 'Set the parameter correct to work with the give printer.
@@ -460,7 +466,7 @@ Public Sub setSelected_Printer(id As Int)
 			PrinterCutterString = ESC & "i"
 			NumberEmptyLines = 3
 			DeviceSettingsRequirements.Clear
-			DeviceSettingsRequirements.Put(Main.PS_IPAddress, "192.168.63.140")
+			DeviceSettingsRequirements.Put(Main.PS_IPAddress, "192.168.63.170")
 			DeviceSettingsRequirements.Put(Main.PS_IPPort, "9100")
 			DeviceConnection = Conn_LAN
 			selectedCmdSet = PrinterConstants.ESC_POS_1
@@ -528,7 +534,37 @@ Public Sub setSelected_Printer(id As Int)
 			DeviceConnection = Conn_LAN
 			selectedCmdSet = PrinterConstants.ESC_POS_1
 
+		Case TestPOSPrinter1
+			setDeviceParams(44, 44)
+			fiscalMemoryMode = False
+			PrinterCodePage = Utilities.SelectCodepage("ISO-8859-6")
+			PrinterInitString = ESC & "t" & Chr(22)
+			PrinterInitString = ESC & "t" & Chr(40) & "40"
+			PrinterCutterString = ESC & "i"
+			NumberEmptyLines = 3
+			DeviceSettingsRequirements.Clear
+			DeviceSettingsRequirements.Put(Main.PS_IPAddress, "192.168.63.100")
+			DeviceSettingsRequirements.Put(Main.PS_IPPort, "9100")
+			DeviceConnection = Conn_LAN
+			selectedCmdSet = PrinterConstants.ESC_POS_1
+
+		Case TestPOSPrinter2
+			setDeviceParams(48, 48)
+			fiscalMemoryMode = False
+			PrinterCodePage = Utilities.SelectCodepage("x-IBM720")
+			PrinterCodePage = Utilities.SelectCodepage("windows-1256")
+			PrinterInitString = ESC & "t" & Chr(93)
+			PrinterInitString = ESC & "t" & Chr(34) & "34"
+			PrinterCutterString = ESC & "i"
+			NumberEmptyLines = 3
+			DeviceSettingsRequirements.Clear
+			DeviceSettingsRequirements.Put(Main.PS_IPAddress, "192.168.63.100")
+			DeviceSettingsRequirements.Put(Main.PS_IPPort, "9100")
+			DeviceConnection = Conn_LAN
+			selectedCmdSet = PrinterConstants.ESC_POS_1
+
 	End Select
+				
 End Sub
 
 #Region Common subs
@@ -575,7 +611,6 @@ Public Sub setStatus_Item(item As PrinterStatusSVItem)
 	statusItem = item
 End Sub
 
-
 'Set Connection parameters
 Public Sub SetConnection_Parameters(connectionParams As TConnectionParameters)
 	ConnectionParameters = connectionParams
@@ -603,7 +638,9 @@ End Sub
 
 'Execute all jobs
 #Region Connection
-Public Sub doJobs	
+Public Sub doJobs
+	statusItem.changeStatus(PrinterConstants.Printing)
+	
 	Select Case DeviceConnection
 		Case Conn_BT
 			If Not(BTAdmin.IsInitialized) Then BTAdmin.Initialize("BluetoothAdmin")
@@ -625,7 +662,7 @@ Public Sub doJobs
 				If Not(USBAdmin.HasPermission(MyDevice)) Then
 					ToastMessageShow(Main.translate.GetString("msgAllowUsbConnection"), True)
 					USBAdmin.RequestPermission(MyDevice)
-ConnectionError
+					ConnectionError
 				Else
 					USBSerial.Initialize("USBSerial", MyDevice, -1)
 					USBSerial.BaudRate = ConnectionParameters.BaudRate
@@ -659,7 +696,7 @@ Private Sub ConnectionError
 		Case PrinterConstants.Action_Retry
 			statusItem.changeStatus(PrinterConstants.Printing)
 			doJobs
-		
+				
 		Case PrinterConstants.Action_Abort
 			statusItem.changeStatus(PrinterConstants.ERR_NoError)
 			Jobs.Clear
@@ -760,7 +797,7 @@ Private Sub FiscalOpen(job As TPrnJobFiscalOpen)
 	
 	Send(PrinterInitString)
 	
-	AddHeader
+	AddHeader	
 End Sub
 
 Private Sub FiscalSellItem(job As TPrnJobFiscalSellItem)
@@ -783,8 +820,6 @@ Private Sub FiscalPayment(job As TPrnJobFiscalPayment)
 End Sub
 
 Private Sub FiscalClose(job As TPrnJobFiscalClose)
-	CallSub(Main, "getRequest")
-
 	AddFooter
 	AddEmptyLines
 	CutPaper
@@ -802,7 +837,6 @@ Private Sub NonFiscalPrintText(job As TPrnJobNonFiscalPrintText)
 End Sub
 
 Private Sub NonFiscalClose(job As TPrnJobNonFiscalClose)
-	CallSub(Main, "getRequest")
 	AddFooter
 	AddEmptyLines
 	CutPaper	
@@ -849,11 +883,12 @@ Private Sub USBSerial_DataAvailable (Buffer() As Byte)
 End Sub
 #End Region
 
+'Процедура за подаване на съобщението и обработка на резултата от действието на потребителя (Retry, Ignore, Abort)
 Private Sub handleUserAction(error As Int)
 	If statusItem.IsInitialized Then
 		userAction = statusItem.getUserAction(error)
 		Wait For (userAction) Complete (Result As Int)
-		CallSub2(Me, "UserAction_Click", Result)
+		CallSubDelayed2(Me,"UserAction_Click",Result)
 	End If
 End Sub
 
