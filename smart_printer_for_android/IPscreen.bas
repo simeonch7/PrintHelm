@@ -11,7 +11,7 @@ Private Sub Class_Globals
 	Private PrinterIP, PrinterPort As EditText
 	Public btnloginPanel As Button
 	Public CAD As CustomAlertDialog
-	Private usrString, PrinterPortString As String
+'	Private usrString, PrinterPortString As String
 	Private settingsBG As BitmapDrawable
 	Private BMP_Options As Bitmap
 End Sub
