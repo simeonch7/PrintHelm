@@ -1181,6 +1181,11 @@ public Sub genereteSettingView(Spnl As ScrollView, top As Int,  setting As Int, 
 			
 			spn.Initialize("spnSetting")
 			spn.Tag = setting
+			spn.DropdownTextColor = Colors.White
+			spn.DropdownBackgroundColor = Colors.DarkGray
+			spn.SetBackgroundImage(ImageResources.BMP_SpinnerBack)
+			HelperFunctions.Remove_Padding(spn)
+			
 			Dim btPort As Serial
 			btPort.Initialize("BTPort")
 			If btPort.GetPairedDevices.Size > 0 Then 
