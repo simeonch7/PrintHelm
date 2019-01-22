@@ -5,7 +5,6 @@ Type=Class
 Version=7.3
 @EndOfDesignText@
 Private Sub Class_Globals
-	Private raf As RandomAccessFile
 	Private loginPanel As Panel
 	Private appTitle, lblConnection As Label
 	Private PrinterIP, PrinterPort As EditText
