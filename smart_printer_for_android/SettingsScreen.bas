@@ -81,7 +81,7 @@ Public Sub Initialize
 	
 	printer.Initialize("deviceSpinner")
 		
-	Boud.Initialize("BoudSpinner")
+'	Boud.Initialize("BoudSpinner")
 
 	IPport.Initialize("IPport")
 	IPaddress.Initialize("IPaddress")
@@ -128,20 +128,19 @@ Public Sub Initialize
 
 	PrinterList.Initialize
 	templates.Initialize
-	BoudRatesList.Add(1200)
-	BoudRatesList.Add(2400)
-	BoudRatesList.Add(4800)
-	BoudRatesList.Add(9600)
-	BoudRatesList.Add(14400)
-	BoudRatesList.Add(19200)
-	BoudRatesList.Add(38400)
-	BoudRatesList.Add(57600)
-	BoudRatesList.Add(115200)
+	BoudRatesList.Add("1200")
+	BoudRatesList.Add("2400")
+	BoudRatesList.Add("4800")
+	BoudRatesList.Add("9600")
+	BoudRatesList.Add("14400")
+	BoudRatesList.Add("19200")
+	BoudRatesList.Add("38400")
+	BoudRatesList.Add("57600")
+	BoudRatesList.Add("115200")
 	
-
 	printerSpinnerFill
 	languageprinterFill
-	BoudprinterFill
+'	BoudprinterFill
 	deviceprinterFill
 	
 	configPanel.Color = Colors.White
@@ -195,10 +194,10 @@ Private Sub deviceprinterFill
 	printer.AddAll(PrinterList)
 End Sub
 
-Private Sub BoudprinterFill
-	Boud.Clear
-	Boud.AddAll(BoudRatesList)
-End Sub
+'Private Sub BoudprinterFill
+'	Boud.Clear
+'	Boud.AddAll(BoudRatesList)
+'End Sub
 
 Sub SettingsUI
 	intLanguageIndex = 0							'Български език / Language is Bulgarian
@@ -678,7 +677,7 @@ End Sub
 
 
 Public Sub setVisible(isVisible As Boolean)
-	countourPanel.SetVisibleAnimated(100,isVisible)
+	countourPanel.SetVisibleAnimated(500,isVisible)
 End Sub
 
 
@@ -804,7 +803,7 @@ Private Sub fillEditSettings(APrinterIndex As Int)
 	Dim actprinter As TActivePrinter = masterP.ActivePrinters.Get(APrinterIndex)
 	Dim m As Map = CallSub(actprinter.driver,"getDevice_SettingsRequirements")
 	Dim fiscalMode As Boolean = CallSub(actprinter.driver, "getFiscal_MemoryMode")
-'	actprinter.connectionParams = CallSub(actprinter.driver, "getConnection_Parameters")
+	actprinter.connectionParams = CallSub(actprinter.driver, "getConnection_Parameters")
 
 
 	printer.Visible = False
@@ -815,7 +814,6 @@ Private Sub fillEditSettings(APrinterIndex As Int)
 	
 	runMap(m,fiscalMode)
 	FillControls(actprinter.connectionParams)
-	
 	fillScripts(actprinter.ScriptsTemplate, fiscalMode)
 End Sub
 
@@ -861,11 +859,13 @@ End Sub
 private Sub FillControls(connectionParams As TConnectionParameters)
 	For Each key As Int In controlsMap.Keys
 		Dim control As Object = controlsMap.Get(key)
+		Log(control)
 		Select key
-			Case Main.PS_BaudRate
+			Case Main.PS_BaudRate		
 				Dim cSpinner As Spinner = control
-				cSpinner.SelectedIndex = cSpinner.IndexOf(connectionParams.BaudRate)
 				
+				cSpinner.SelectedIndex =  cSpinner.IndexOf(connectionParams.BaudRate)
+'				
 			Case Main.PS_IPAddress
 				Dim cEditText As EditText = control
 				cEditText.Text = connectionParams.IPAddress
@@ -973,8 +973,10 @@ Private Sub getConnectionParams As TConnectionParameters
 		Select key
 			Case Main.PS_BaudRate
 				Dim cSpinner As Spinner = control
+
 				If cSpinner.SelectedIndex = -1 Then : getConnectionParamsFailed = True
-				Else : connectionParams.BaudRate = cSpinner.SelectedItem
+				Else : connectionParams.BaudRate = cSpinner.SelectedItem 
+					Log(connectionParams.baudrate)
 				End If
 				
 			Case Main.PS_IPAddress
@@ -1040,7 +1042,7 @@ Private Sub checkConnectionParams As Boolean
 	End If
 End Sub
 
-public Sub genereteSettingView(Spnl As ScrollView, top As Int,  setting As Int, value As String) As Int
+public Sub genereteSettingView(Spnl As ScrollView, top As Int,  setting As Int, value As Object) As Int
 '	If controlsMap.ContainsKey(setting) Then Return top
 
 	Dim hold As Panel
@@ -1073,7 +1075,8 @@ public Sub genereteSettingView(Spnl As ScrollView, top As Int,  setting As Int, 
 			hold.AddView(spn, info.Width, cHeight * 0.05, hold.Width - lblWidth, cHeight * 0.6)
 			
 			'Set spinner selected index
-			Dim valueIndex As Int = BoudRatesList.IndexOf(value)
+			Dim valuetemp As Int = value
+			Dim valueIndex As Int = BoudRatesList.IndexOf(valuetemp)
 			If valueIndex = - 1 Then valueIndex = 3
 			spn.SelectedIndex = valueIndex
 			

@@ -66,6 +66,19 @@ isConnect_Click
 '	btnloginPanel.Enabled=True
 End Sub
 
+private Sub localNET As Boolean
+	Dim ssocket As ServerSocket
+	Log("Ip address: " & ssocket.GetMyWifiIP)
+	If ssocket.GetMyWifiIP = "127.0.0.1" Then
+		PrinterIP.Text = Main.translate.GetString("NolocalNet")  '"Device not connected to local network"
+		Return False
+	Else
+		PrinterIP.Text = ssocket.GetMyWifiIP
+		PrinterPort.Text =  SPAservice.port
+		Return True
+	End If
+End Sub
+
 'Прилагане на стилове за външния вид на екрана за влизане / Applying visual styles for loginPanel screen
 Private Sub loginPanel_Configurations
 	loginPanel.SetBackgroundImage(LoadBitmap(File.DirAssets,"login_background.jpg"))
@@ -75,20 +88,17 @@ Private Sub loginPanel_Configurations
 	appTitle.Typeface = Typeface.DEFAULT_BOLD
 	appTitle.Gravity = Gravity.CENTER
 	appTitle.TextColor = Colors.White
-		
+	
+	If localNET = False Then
+		PrinterPort.Enabled = False
+	End If
+	
+	
 	HelperFunctions.Apply_ViewStyle(PrinterIP,Colors.Black,Colors.White,Colors.White,Colors.White,Colors.White,Colors.White,Colors.White,60)
 	PrinterIP.Padding = Array As Int(15,0,0,0)
 	PrinterIP.SingleLine = True
 
-	Dim ssocket As ServerSocket
-	Log("Ip address: " & ssocket.GetMyWifiIP)
-	If ssocket.GetMyWifiIP = "127.0.0.1" Then
-		PrinterIP.Text = Main.translate.GetString("NolocalNet")  '"Device not connected to local network"
-	Else
-		PrinterIP.Text = ssocket.GetMyWifiIP
-		PrinterPort.Text =  SPAservice.port
-		PrinterPort.Enabled = False
-	End If
+	
 
 
 	HelperFunctions.Apply_ViewStyle(PrinterPort,Colors.Black,Colors.White,Colors.White,Colors.White,Colors.White,Colors.White,Colors.White,60)
@@ -141,15 +151,7 @@ Public Sub checkNet As Boolean
 	Log(Error)
 	Log("======================")
 
-	Dim ssocket As ServerSocket
-	Log("Ip address: " & ssocket.GetMyWifiIP)
-	If ssocket.GetMyWifiIP = "127.0.0.1" Then
-		PrinterIP.Text = Main.translate.GetString("NolocalNet")  '"Device not connected to local network"
-	Else
-		PrinterIP.Text = ssocket.GetMyWifiIP
-		PrinterPort.Text =  SPAservice.port
-	End If
-
+	localNET
 
 	If Error.ToString="" Then
 		Return True

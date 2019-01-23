@@ -19,10 +19,3 @@ Public Sub LoadImages
 	BMP_PrintItemIconSuccess.Initialize(File.DirAssets, "print_item_success_icon.png")
 	BMP_PrintItemIconPressed.Initialize(File.DirAssets, "printer_icon_pressed.png")
 End Sub
-
-'Recycle single bitmap
-Public Sub RecycleBitmap(bitmap As Bitmap)
-	Dim r As Reflector
-	r.Target = bitmap
-	r.RunMethod("recycle")
-End Sub
