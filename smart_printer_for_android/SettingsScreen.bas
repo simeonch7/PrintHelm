@@ -7,8 +7,8 @@ Version=8.3
   Sub Class_Globals
 	Private settingsPanel, countourPanel, configPanel, statusBtn As Panel
 	Private country, language, printer, spnMac As Spinner
-	Private IPport, IPaddress, operator, password As EditText
-	Private LabelCountry, LabelLanguage, LabelPrinter, LabelOperator, LabelPassword, LabelAcPrinter, lblEditPrinter As Label
+	Private IPport, IPaddress As EditText
+	Private LabelCountry, LabelLanguage, LabelPrinter, LabelAcPrinter, lblEditPrinter As Label
 	Private BoudRatesList As List
 	Private PrinterList As List
 	Private masterP As PrinterMain
@@ -80,21 +80,15 @@ Public Sub Initialize
 	language.Initialize("languageSpinner")
 	
 	printer.Initialize("deviceSpinner")
-		
-'	Boud.Initialize("BoudSpinner")
 
 	IPport.Initialize("IPport")
 	IPaddress.Initialize("IPaddress")
 	lblEditPrinter.Initialize("")
 
 
-	operator.Initialize("opertorEditText")
-	password.Initialize("passwordEditText")
 	LabelCountry.Initialize("countryLabel")
 	LabelLanguage.Initialize("languageLabel")
 	LabelPrinter.Initialize("deviceLabel")
-	LabelOperator.Initialize("opertorLabel")
-	LabelPassword.Initialize("passwordLabel")
 	LabelAcPrinter.Initialize("AcPrnLabel")
 	saveSettings.Initialize("Save")
 	exitSettings.Initialize("exit")
@@ -148,10 +142,7 @@ Public Sub Initialize
 	HelperFunctions.Apply_ViewStyle(saveSettings, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 	HelperFunctions.Apply_ViewStyle(exitSettings, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 	HelperFunctions.Apply_ViewStyle(statusBtn, Colors.White, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.BUTTON_ROUNDING + ButtonRounding)
-'	HelperFunctions.Apply_ViewStyle(btnTest, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 	HelperFunctions.Apply_ViewStyle(printer, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
-	HelperFunctions.Apply_ViewStyle(operator, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
-	HelperFunctions.Apply_ViewStyle(password, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 	HelperFunctions.Apply_ViewStyle(btnPrinterRemove, Colors.White, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.BUTTON_ROUNDING + ButtonsRounding)
 	HelperFunctions.Apply_ViewStyle(btnPrinterAdd, Colors.White, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.BUTTON_ROUNDING + ButtonsRounding)
 	HelperFunctions.Apply_ViewStyle(btnPrinterEdt, Colors.White, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.BUTTON_ROUNDING + ButtonsRounding)
@@ -370,7 +361,6 @@ Private Sub xml_EndElement (Uri As String, Name As String, Text As StringBuilder
 			If Name.EqualsIgnoreCase("Code") Then workingobject.storeCode = Text
 			If Name.EqualsIgnoreCase("Name") Then 
 				workingobject.storeName = Text
-				operator.Text = Text
 			End If
 			If Name.EqualsIgnoreCase("Address") Then workingobject.storeAddress = Text
 			If Name.EqualsIgnoreCase("PriceGroup") Then workingobject.PriceGroup = Text - 1
@@ -510,15 +500,11 @@ Sub ColorPickerAndLabelTexts
 	LabelLanguage.TextColor = Colors.LightGray
 	LabelPrinter.TextColor = Colors.LightGray
 	LabelAcPrinter.TextColor = Colors.LightGray
-	LabelOperator.TextColor = Colors.LightGray
-	LabelPassword.TextColor = Colors.LightGray
 	
 	LabelCountry.Text = Main.translate.GetString("lblCountry")
 	LabelLanguage.Text = Main.translate.GetString("lblLanguage")
 	LabelPrinter.Text = Main.translate.GetString("lblDevice")
 	LabelAcPrinter.Text = Main.translate.GetString("lblACDevice")
-	LabelOperator.Text = Main.translate.GetString("lblOpertor")
-	LabelPassword.Text = Main.translate.GetString("lblPassword")
 		
 	saveSettings.Text = Main.translate.GetString("lblSave")
 	saveSettings.Color= Colors.DarkGray
@@ -535,9 +521,6 @@ Sub ColorPickerAndLabelTexts
 	btnPrinterRemove.Text = "-"
 	btnPrinterAdd.Text = "+"
 
-'	btnTest.Text = Main.translate.GetString("lblTest")
-'	btnTest.Color= Colors.DarkGray
-'	btnTest.TextColor = Colors.LightGray
 End Sub
 
 Private Sub removePrinter_Click
@@ -547,37 +530,6 @@ Private Sub removePrinter_Click
 		spnActivePrinter.RemoveAt(spnActivePrinter.SelectedIndex)
 	End If
 
-End Sub
-
-Private Sub Test_Click
-'	'Функцията за тест я има направена в POS модула и е кръстена PrinterTest
-'	Dim ConnectionParams As TConnectionParameters = getConnectionParams
-'	
-'	Dim pScripts As PrinterScripts = getScripts
-'	
-'	If Not(checkConnectionParams) Then Return
-'	
-'	Dim printerInfo As Printer = masterP.getInitialPrinterByName(selectedPrinterName)
-'	
-'	Dim testPrinter As TActivePrinter
-'	testPrinter.Initialize
-'	testPrinter.name = selectedPrinterName
-'	testPrinter.connectionParams = ConnectionParams
-'	testPrinter.ScriptsTemplate = pScripts
-'	testPrinter.id = printerInfo.id
-'	testPrinter.driver = CallSub(printerInfo.ref, "getPrinter_Instance")
-'	
-'	CallSub2(testPrinter.driver ,"setSelected_Printer", testPrinter.id)
-'	CallSub2(testPrinter.driver ,"SetConnection_Parameters", testPrinter.connectionParams)
-'	Dim fiscal As Boolean = CallSub(testPrinter.driver ,"getFiscal_MemoryMode")
-'	
-''	'set the driver scripts
-''	CallSub2(testPrinter.driver,"Assign_Scripts", testPrinter.ScriptsTemplate)
-''	
-''	Dim DummySVItem As PrinterStatusSVItem
-''	DummySVItem.Initialize(Null,testPrinter,fiscal,True)
-'	
-'	masterP.SendPrinterTestJobs(1,testPrinter)
 End Sub
 
 Sub Save_click
@@ -758,8 +710,6 @@ Public Sub InitialSetSignsRefresh
 	LabelLanguage.Text = Main.translate.GetString("lblLanguage")
 	LabelPrinter.Text = Main.translate.GetString("lblDevice")
 	LabelAcPrinter.Text = Main.translate.GetString("lblACDevice")
-	LabelOperator.Text = Main.translate.GetString("lblOpertor")
-	LabelPassword.Text = Main.translate.GetString("lblPassword")	
 	saveSettings.Text = Main.translate.GetString("lblSave")
 	exitSettings.Text = Main.translate.GetString("lblExit")
 
