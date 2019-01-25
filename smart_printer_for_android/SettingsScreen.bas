@@ -6,7 +6,7 @@ Version=8.3
 @EndOfDesignText@
   Sub Class_Globals
 	Private settingsPanel, countourPanel, configPanel, statusBtn As Panel
-	Private country, language, printer, Boud, spnMac As Spinner
+	Private country, language, printer, spnMac As Spinner
 	Private IPport, IPaddress, operator, password As EditText
 	Private LabelCountry, LabelLanguage, LabelPrinter, LabelOperator, LabelPassword, LabelAcPrinter, lblEditPrinter As Label
 	Private BoudRatesList As List
@@ -87,7 +87,7 @@ Public Sub Initialize
 	IPaddress.Initialize("IPaddress")
 	lblEditPrinter.Initialize("")
 
-	
+
 	operator.Initialize("opertorEditText")
 	password.Initialize("passwordEditText")
 	LabelCountry.Initialize("countryLabel")
