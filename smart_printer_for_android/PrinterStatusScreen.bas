@@ -124,6 +124,8 @@ Private Sub increment_Ready
 End Sub
 
 Private Sub show_Screen
+	lblTitle.Text = Main.translate.GetString("msgPrintingStatusTitle")
+	
 	BG.BringToFront
 	BG.SetVisibleAnimated(500, True)
 	outerHolder.SetLayoutAnimated(500, showLeft,outerHolder.Top, outerHolder.Width, outerHolder.Height)

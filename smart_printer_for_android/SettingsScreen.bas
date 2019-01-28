@@ -19,7 +19,7 @@ Version=8.3
 	Private getConnectionParamsFailed As Boolean = False	'Show if theres and error in the input of controls in ControlsMap
 	Private selectedPrinterName As String = ""				'Hold Name of the selected printer
 	Dim raf As RandomAccessFile						
-	Dim readinfo As information
+	Dim userSettings As information
 	Private controlsMap As Map								'Hold all the settings controls
 	Private spnActivePrinter As Spinner
 	Private btnPrinterRemove, btnPrinterAdd, btnPrinterEdt, pnlEditImg As Button
@@ -93,7 +93,6 @@ Public Sub Initialize
 	saveSettings.Initialize("Save")
 	exitSettings.Initialize("exit")
 	statusBtn.Initialize("")
-'	btnTest.Initialize("Test")
 	spnActivePrinter.Initialize("PrinterChoose")
 	btnPrinterRemove.Initialize("removePrinter")
 	pnlEditImg.Initialize("editPrinter")
@@ -108,7 +107,7 @@ Public Sub Initialize
 	
 	controlsMap.Initialize
 	raf.Initialize(File.DirInternal, "initialSetting.config", False)
-	readinfo.Initialize
+	userSettings.Initialize
 	tempList.Initialize
 	language.SelectedIndex = language.IndexOf(Main.SelectedLanguage)
 
@@ -132,9 +131,8 @@ Public Sub Initialize
 	BoudRatesList.Add("57600")
 	BoudRatesList.Add("115200")
 	
-	printerSpinnerFill
+	CountriesFill
 	languageprinterFill
-'	BoudprinterFill
 	deviceprinterFill
 	
 	configPanel.Color = Colors.White
@@ -167,7 +165,7 @@ Public Sub buttonsShow
 	btnPrinterEdt.Visible = True
 End Sub
 
-Sub printerSpinnerFill
+Sub CountriesFill
 	For Each m As String In Countries.getCountries.Keys
 		country.Add(m)
 	Next
@@ -525,7 +523,6 @@ End Sub
 
 Private Sub removePrinter_Click
 	If spnActivePrinter.SelectedIndex <> - 1 Then
-'		Main.ActivePrinters.RemoveAt(spnPrinter.SelectedIndex)
 		masterP.removeFromActivePrinter(spnActivePrinter.SelectedIndex)
 		spnActivePrinter.RemoveAt(spnActivePrinter.SelectedIndex)
 	End If
@@ -565,13 +562,7 @@ Sub Save_click
 			CallSub2(Acprinter.driver ,"SetConnection_Parameters", Acprinter.connectionParams)
 			hideScreen
 		End Select
-'	readinfo.IPaddress = IPaddress.Text
-'	readinfo.port = IPport.Text
-'	readinfo.operator = operator.Text
-'	readinfo.password = password.Text
-'	raf.WriteEncryptedObject(readinfo, ProgramData.rafEncPass,0)
-'	ToastMessageShow(Main.translate.GetString("ToastSave"), False)
-'	configPanel.SetLayoutAnimated(100, -100%x, 50%y, 100%x, 50%y)
+
 End Sub
 
 Private Sub AddbtnPrinter_Click
@@ -689,11 +680,11 @@ End Sub
 
 
 Sub countrySpinner_ItemClick (Position As Int, Value As Object)
-	readinfo.country = Value
+'	readinfo.country = Value
 End Sub
 
 Sub BoudSpinner_ItemClick (Position As Int, Value As Object)
-	readinfo.speed = Value
+'	readinfo.speed = Value
 End Sub
 
 Sub languageSpinner_ItemClick (Position As Int, Value As Object)
@@ -701,7 +692,7 @@ Sub languageSpinner_ItemClick (Position As Int, Value As Object)
 	Main.SelectedLanguage = Value
 	Main.translate.SetLanguage(Main.SelectedLanguage)
 	InitialSetSignsRefresh
-	readinfo.language = Value
+'	readinfo.language = Value
 End Sub
 
 'Опресняване на надписите в първоначалните настройки / Refreshes signs in Initial settings
@@ -713,18 +704,17 @@ Public Sub InitialSetSignsRefresh
 	saveSettings.Text = Main.translate.GetString("lblSave")
 	exitSettings.Text = Main.translate.GetString("lblExit")
 
-'	btnTest.Text = Main.translate.GetString("lblTest")
 	CallSub(Main,"Login_SignsRefresh")	' Когато опресним надписите тук, ще се опресняват и надписите в другите модули
 End Sub
 
 
 Sub codeTableSpinner_ItemClick (Position As Int, Value As Object)
-	readinfo.codeTable = Value
+'	readinfo.codeTable = Value
 End Sub
 
 Sub deviceSpinner_ItemClick (Position As Int, Value As Object)
 	selectedPrinterName = Value
-	readinfo.Device = Value
+'	readinfo.Device = Value
 	fillSettings
 End Sub
 
@@ -848,7 +838,7 @@ private Sub runMap(m As Map, isFiscal As Boolean)
 	clearSettingSV
 	Dim last As Int = 0
 	For Each setting As Int In m.Keys
-		last = genereteSettingView(BTSettingsSV, last, setting, m.Get(setting))
+		last = generateSettingView(BTSettingsSV, last, setting, m.Get(setting))
 	Next
 	
 	HFHeight = configPanel.Height * 0.25
@@ -992,7 +982,7 @@ Private Sub checkConnectionParams As Boolean
 	End If
 End Sub
 
-public Sub genereteSettingView(Spnl As ScrollView, top As Int,  setting As Int, value As Object) As Int
+public Sub generateSettingView(Spnl As ScrollView, top As Int,  setting As Int, value As Object) As Int
 '	If controlsMap.ContainsKey(setting) Then Return top
 
 	Dim hold As Panel
@@ -1010,7 +1000,7 @@ public Sub genereteSettingView(Spnl As ScrollView, top As Int,  setting As Int, 
 			
 			'Build Label
 			info.Initialize("")
-			info.Text = "Baud Rate: "
+			info.Text = Main.translate.GetString("lblBaud")
 			info.Gravity = Gravity.CENTER
 			info.TextColor = Colors.Black
 			hold.AddView(info, 0, 0, lblWidth, cHeight)
@@ -1039,7 +1029,7 @@ public Sub genereteSettingView(Spnl As ScrollView, top As Int,  setting As Int, 
 			
 			'Build Label
 			info.Initialize("")
-			info.Text = "IP: "
+			info.Text = Main.translate.GetString("lblIPAddress")
 			info.Gravity = Gravity.CENTER
 			info.TextColor = Colors.Black
 			hold.AddView(info, 0, 0, lblWidth, cHeight)
@@ -1061,7 +1051,7 @@ public Sub genereteSettingView(Spnl As ScrollView, top As Int,  setting As Int, 
 			
 			'Build Label
 			info.Initialize("")
-			info.Text = "IP Port: "
+			info.Text = Main.translate.GetString("lblPort")
 			info.Gravity = Gravity.CENTER
 			info.TextColor = Colors.Black
 			hold.AddView(info, 0, 0, lblWidth, cHeight)
@@ -1078,47 +1068,6 @@ public Sub genereteSettingView(Spnl As ScrollView, top As Int,  setting As Int, 
 			
 			controlsMap.Put(setting,edt)
 			
-		Case Main.PS_Password
-			Dim info As Label
-			Dim edt As EditText
-			
-			info.Initialize("")
-			info.Text = "Password: "
-			info.Gravity = Gravity.CENTER
-			info.TextColor = Colors.Black
-			hold.AddView(info, 0, 0, lblWidth, cHeight)
-			
-			edt.Initialize("edtSetting")
-			edt.Text = value
-			edt.SingleLine = True
-			edt.TextColor = Colors.White
-			HelperFunctions.Apply_ViewStyle(edt, Colors.White, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.BUTTON_ROUNDING + 5)
-
-			hold.AddView(edt, info.Width, cHeight * 0.05, hold.Width - lblWidth, cHeight * 0.6)
-			
-			controlsMap.Put(setting,edt)
-			
-		Case Main.PS_UserID
-			Dim info As Label
-			Dim edt As EditText
-			
-			info.Initialize("")
-			info.Text = "Username: "
-			info.Gravity = Gravity.CENTER
-			info.TextColor = Colors.Black
-			hold.AddView(info, 0, 0, lblWidth, cHeight)
-			
-			edt.Initialize("edtSetting")
-			edt.Text = value
-			edt.SingleLine = True
-			edt.TextColor = Colors.White
-			HelperFunctions.Apply_ViewStyle(edt, Colors.White, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.BUTTON_ROUNDING + 5)
-
-			hold.AddView(edt, info.Width, cHeight * 0.05, hold.Width - lblWidth, cHeight * 0.6)
-			
-			controlsMap.Put(setting, edt)
-			
-			
 		Case Main.PS_DeviceMAC
 			'Init BTPort
 						
@@ -1127,7 +1076,7 @@ public Sub genereteSettingView(Spnl As ScrollView, top As Int,  setting As Int, 
 			
 			'Build Label
 			info.Initialize("")
-			info.Text = "MAC Address: "
+			info.Text = Main.translate.GetString("lblMac")
 			info.Gravity = Gravity.CENTER
 			info.TextColor = Colors.Black
 			hold.AddView(info, 0, 0, lblWidth, cHeight)
