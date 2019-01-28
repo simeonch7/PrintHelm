@@ -80,7 +80,7 @@ End Sub
 'Побира контрола (изгледа) в основния скроу панел/Fit views inside Main Scroll panel
 Public Sub FitViewsInScroll(targetScroll As ScrollView)
 	Private viewLast As View = Find_LastView(targetScroll.Panel)
-	If viewLast.IsInitialized Then targetScroll.Panel.Height = (viewLast.Top + viewLast.Height) + UISizes.DefaultPadding	
+	If viewLast.IsInitialized Then targetScroll.Panel.Height = (viewLast.Top + viewLast.Height) + (UISizes.FooterHeight / 2)
 	targetScroll.ScrollPosition = 0
 End Sub
 

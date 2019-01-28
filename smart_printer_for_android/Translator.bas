@@ -66,7 +66,7 @@ Private Sub Open_XML(filePath As String, fileName As String)
 	End If
 End Sub
 
-'Парсира xml фаила и създава речник и списък с езици / Parses the xml file and generates the dictionary 
+'Парсира xml файла и създава речник и списък с езици / Parses the xml file and generates the dictionary 
 'and languageList
 Private Sub Parse_XML(filePath As String, fileName As String)
 	Private xmlText As InputStream
