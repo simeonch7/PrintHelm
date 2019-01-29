@@ -1,20 +1,18 @@
 ﻿Build1=Default,microinvest.SPA
-File1=6082.jpg
-File10=printer_3_icon.png
-File11=printer_icon_pressed.png
-File12=spinner_background.png
-File2=dictionary.xml
-File3=edit.png
-File4=login_background.jpg
-File5=options_icon.png
-File6=print_item_failed_icon.png
-File7=print_item_success_icon.png
-File8=printer_1_icon.png
-File9=printer_2_icon.png
+File1=7944619.png
+File10=printer_icon_pressed.png
+File11=spinner_background.png
+File2=bgportrait.jpg
+File3=dictionary.xml
+File4=edit.png
+File5=print_item_failed_icon.png
+File6=print_item_success_icon.png
+File7=printer_1_icon.png
+File8=printer_2_icon.png
+File9=printer_3_icon.png
 FileGroup1=Default Group
 FileGroup10=Default Group
 FileGroup11=Default Group
-FileGroup12=Default Group
 FileGroup2=Default Group
 FileGroup3=Default Group
 FileGroup4=Default Group
@@ -34,6 +32,7 @@ Library14=ahlocale
 Library15=httpserver
 Library16=stringutils
 Library17=okhttputils2
+Library18=runtimepermissions
 Library2=xmlsax
 Library3=randomaccessfile
 Library4=reflection
@@ -43,35 +42,35 @@ Library7=usb
 Library8=felusbserial
 Library9=serial
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="5" android:targetSdkVersion="26"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~'End of default text.~\n~~\n~AddPermission(android.hardware.usb.action.USB_DEVICE_DETACHED)~\n~CreateResource(xml, device_filter.xml,~\n~<resources>		~\n~    <usb-device />	~\n~</resources>~\n~)~\n~AddApplicationText(~\n~<activity android:name=".main" >~\n~   <intent-filter>~\n~    <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />~\n~   </intent-filter>  ~\n~    <meta-data android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" android:resource="@xml/device_filter" />   ~\n~ </activity>~\n~)
-Module1=SettingsScreen
+Module1=PrinterMain
 Module10=ScriptMaster
-Module11=UISizes
-Module12=B4XEval
-Module13=Version
-Module14=PrinterStatusSVItems
-Module15=ImageResources
-Module16=DataTypes
-Module17=PriceMathFunctions
-Module18=PrinterConstants
-Module19=OperationFunctions
-Module2=IPscreen
-Module20=PrinterStatusScreen
-Module21=PrinterStatusSVItem
-Module22=ButtonWithNotifications
-Module23=PrinterPriceCalculator
-Module24=BytesBuilder
-Module25=Device
-Module26=Countries
+Module11=Countries
+Module12=PrinterConstants
+Module13=PrinterStatusScreen
+Module14=Device
+Module15=Version
+Module16=PrinterStatusSVItem
+Module17=UISizes
+Module18=B4XEval
+Module19=PrinterStatusSVItems
+Module2=SettingsScreen
+Module20=ImageResources
+Module21=DataTypes
+Module22=PriceMathFunctions
+Module23=OperationFunctions
+Module24=ButtonWithNotifications
+Module25=PrinterPriceCalculator
+Module26=BytesBuilder
 Module27=Constants
-Module3=ProgramData
-Module4=PrinterPOS
-Module5=PrinterMain
+Module3=PrinterPOS
+Module4=IPscreen
+Module5=ProgramData
 Module6=Utilities
 Module7=HelperFunctions
 Module8=Translator
 Module9=SPAservice
-NumberOfFiles=12
-NumberOfLibraries=17
+NumberOfFiles=11
+NumberOfLibraries=18
 NumberOfModules=27
 Version=8.8
 @EndOfDesignText@
@@ -119,7 +118,9 @@ Sub Process_Globals
 	
 	Private req As String
 	
-
+	Public rp As RuntimePermissions
+	Public SHAREDFolder As String	'This returns the safe dir now - replaces File.DirDefaultExternal
+	
 End Sub
 
 Sub Globals
@@ -130,6 +131,24 @@ Sub Globals
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
+
+	If (APIVersion >= 23) Then
+		rp.CheckAndRequest(rp.PERMISSION_WRITE_EXTERNAL_STORAGE)
+		Wait For Activity_PermissionResult(Permission As String, Result As Boolean)
+		If Not (Result) Then
+			Msgbox(translate.GetString("lblWritePermission"), translate.GetString("lblWarning"))
+			Activity.Finish
+		End If
+		rp.CheckAndRequest(rp.PERMISSION_CAMERA)
+		Wait For Activity_PermissionResult(Permission As String, Result As Boolean)
+		If Not (Result) Then
+			Msgbox(translate.GetString("lblCameraPermission"), translate.GetString("lblWarning"))
+		End If
+	End If
+
+	SHAREDFolder = rp.GetSafeDirDefaultExternal("")	'This returns the safe dir now - replaces File.DirDefaultExternal
+	
+
 	Math.Initialize(Me, "Math")
 	ProgramData.Initialize
 	UISizes.Initialize
@@ -152,6 +171,14 @@ Sub Activity_Create(FirstTime As Boolean)
 
 	Login_SignsRefresh
 	settingsScr.InitialSetSignsRefresh
+End Sub
+
+
+Public Sub APIVersion As Int
+	Dim r As Reflector
+	Dim Api As Int
+	Api = r.GetStaticField("android.os.Build$VERSION", "SDK_INT")
+	Return Api
 End Sub
 
 Sub Activity_Resume

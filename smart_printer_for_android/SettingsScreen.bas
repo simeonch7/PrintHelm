@@ -17,8 +17,7 @@ Version=8.3
 	Private  payMethod As Int
 	Private inn As InputStream
 	Private getConnectionParamsFailed As Boolean = False	'Show if theres and error in the input of controls in ControlsMap
-	Private selectedPrinterName As String = ""				'Hold Name of the selected printer
-	Dim raf As RandomAccessFile						
+	Private selectedPrinterName As String = ""				'Hold Name of the selected printer				
 	Dim userSettings As information
 	Private controlsMap As Map								'Hold all the settings controls
 	Private spnActivePrinter As Spinner
@@ -29,7 +28,6 @@ Version=8.3
 	Private BTSettingsSV As ScrollView						'SV for all the settings controls
 	Private HFHeight,HFsingleLineHeight As Int
 	Private inFooterHolder, outFooterHolder, outHeaderHolder, inHeaderHolder, outDetailesHolder, inDetailesHolder, outTotalsHolder, inTotalsHolder As Panel
-
 
 	Private tempList As List
 	Private saveSettings, exitSettings As Button
@@ -59,6 +57,8 @@ Version=8.3
 	Private tagUP As Int = 0
 	Private cHeadersList, cFootersList, cDetailesList, cTotalsList As List
 
+
+	Dim PrintersRAF As RandomAccessFile
 End Sub
 
 Public Sub Initialize
@@ -71,7 +71,7 @@ Public Sub Initialize
 	cHeadersList.Initialize
 	cTotalsList.Initialize
 	
-	background.Initialize(LoadBitmap(File.DirAssets, "6082.jpg"))
+	background.Initialize(LoadBitmap(File.DirAssets, "bgportrait.jpg"))
 	edtbtnBG.Initialize(LoadBitmap(File.DirAssets, "edit.png"))
 	
 	settingsPanel.Background = background
@@ -106,7 +106,6 @@ Public Sub Initialize
 	BoudRatesList.Initialize
 	
 	controlsMap.Initialize
-	raf.Initialize(File.DirInternal, "initialSetting.config", False)
 	userSettings.Initialize
 	tempList.Initialize
 	language.SelectedIndex = language.IndexOf(Main.SelectedLanguage)
@@ -138,6 +137,10 @@ Public Sub Initialize
 	configPanel.Color = Colors.White
 	countourPanel.Color = ProgramData.COLOR_BUTTON_NORMAL
 	HelperFunctions.Apply_ViewStyle(saveSettings, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
+	HelperFunctions.Apply_ViewStyle(country, Colors.White, COLOR_NormalBottom, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
+	HelperFunctions.Apply_ViewStyle(language, Colors.White, COLOR_NormalBottom, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
+	HelperFunctions.Apply_ViewStyle(printer, Colors.White, COLOR_NormalBottom, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
+	HelperFunctions.Apply_ViewStyle(spnActivePrinter, Colors.White, COLOR_NormalBottom, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 	HelperFunctions.Apply_ViewStyle(exitSettings, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 	HelperFunctions.Apply_ViewStyle(statusBtn, Colors.White, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.BUTTON_ROUNDING + ButtonRounding)
 	HelperFunctions.Apply_ViewStyle(printer, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
@@ -145,13 +148,19 @@ Public Sub Initialize
 	HelperFunctions.Apply_ViewStyle(btnPrinterAdd, Colors.White, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.BUTTON_ROUNDING + ButtonsRounding)
 	HelperFunctions.Apply_ViewStyle(btnPrinterEdt, Colors.White, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.BUTTON_ROUNDING + ButtonsRounding)
 	HelperFunctions.Apply_ViewStyle(spnMac, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
-	country.TextColor = Colors.White
-	language.TextColor = Colors.White
+	country.SetBackgroundImage(ImageResources.BMP_SpinnerBack)
+	language.SetBackgroundImage(ImageResources.BMP_SpinnerBack)
+	printer.SetBackgroundImage(ImageResources.BMP_SpinnerBack)
+	spnActivePrinter.SetBackgroundImage(ImageResources.BMP_SpinnerBack)
+
+
+
 	lblEditPrinter.Visible = False
 	lblEditPrinter.TextColor = Colors.Black
 	lblEditPrinter.Typeface = Typeface.DEFAULT_BOLD
 	lblEditPrinter.Gravity = Gravity.CENTER
 End Sub
+
 
 Public Sub buttonsHide
 	btnPrinterRemove.Visible = False
@@ -250,11 +259,6 @@ Private Sub POS_Print
 						
 		else if Regex.IsMatch("((359)8[0-9]{8})",phone) Then
 			phone = "+" & phone
-		End If
-		
-	Else if Countries.SelectedCountry = Countries.Romania Then
-		If phone.Contains("VAT:") Then
-'			ToastMessageShow ("Message " & phone, False)
 		End If
 	End If
 	
@@ -514,7 +518,6 @@ Sub ColorPickerAndLabelTexts
 	
 	spnActivePrinter.TextColor = Colors.White
 	spnActivePrinter.DropdownTextColor = Colors.White
-	spnActivePrinter.DropdownBackgroundColor = Colors.DarkGray
 
 	btnPrinterRemove.Text = "-"
 	btnPrinterAdd.Text = "+"
@@ -539,12 +542,12 @@ Sub Save_click
 				ActivePrinter.name = selectedPrinterName
 				ActivePrinter.ScriptsTemplate = getScripts
 		
-				If Not(checkConnectionParams) Then Return
-				
+				If Not(checkConnectionParams) Then Return			
 				masterP.addToActivePrinter(ActivePrinter)
 				spnActivePrinter.Add(ActivePrinter.name)
 				refillSpPrinters
 				hideScreen
+'				fillPrinterRAF(ActivePrinter)
 			Catch
 				Log(LastException)
 				Msgbox(Main.translate.GetString("msgPrinterFailedToAdd"),Main.translate.GetString("lblWarning"))
@@ -556,14 +559,19 @@ Sub Save_click
 			Dim scripts As PrinterScripts = getScripts
 			
 			If Not(checkConnectionParams) Then Return
-			Acprinter.connectionParams = connectionParams
-			Acprinter.ScriptsTemplate = scripts
-			
+					Acprinter.connectionParams = connectionParams
+					Acprinter.ScriptsTemplate = scripts
 			CallSub2(Acprinter.driver ,"SetConnection_Parameters", Acprinter.connectionParams)
 			hideScreen
 		End Select
 
 End Sub
+
+'Sub fillPrinterRAF(PrinterToAdd As TActivePrinter)
+'	PrintersRAF.Initialize(Main.SHAREDFolder, "Printers.config", False)
+'	PrintersRAF.WriteEncryptedObject(PrinterToAdd, ProgramData.rafEncPass, PrintersRAF.CurrentPosition)
+'	PrintersRAF.Close
+'End Sub
 
 Private Sub AddbtnPrinter_Click
 	If countourPanel.left = 0 Then
@@ -1008,15 +1016,15 @@ public Sub generateSettingView(Spnl As ScrollView, top As Int,  setting As Int, 
 			spn.Initialize("spnSetting")
 			spn.Tag = setting
 			spn.AddAll(BoudRatesList)
+			spn.SelectedIndex = value
 			spn.DropdownTextColor = Colors.White
-			spn.DropdownBackgroundColor = Colors.DarkGray
+			spn.DropdownBackgroundColor = 0xFF3577D5
 			spn.SetBackgroundImage(ImageResources.BMP_SpinnerBack)
 			HelperFunctions.Remove_Padding(spn)
 			hold.AddView(spn, info.Width, cHeight * 0.05, hold.Width - lblWidth, cHeight * 0.6)
 			
 			'Set spinner selected index
-			Dim valuetemp As Int = value
-			Dim valueIndex As Int = BoudRatesList.IndexOf(valuetemp)
+			Dim valueIndex As Int = BoudRatesList.IndexOf(value)
 			If valueIndex = - 1 Then valueIndex = 3
 			spn.SelectedIndex = valueIndex
 			
@@ -1083,8 +1091,7 @@ public Sub generateSettingView(Spnl As ScrollView, top As Int,  setting As Int, 
 			
 			spn.Initialize("spnSetting")
 			spn.Tag = setting
-			spn.DropdownTextColor = Colors.White
-			spn.DropdownBackgroundColor = Colors.DarkGray
+			HelperFunctions.Apply_ViewStyle(spn, Colors.White, COLOR_NormalBottom, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 			spn.SetBackgroundImage(ImageResources.BMP_SpinnerBack)
 			HelperFunctions.Remove_Padding(spn)
 			

@@ -12,5 +12,5 @@ End Sub
 
 'Пътека за директория на приложението / Application Path
 Public Sub Path As String
-	Return "/Microinvest/"&ProgramName
+	Return "/SPA/"&ProgramName
 End Sub

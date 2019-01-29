@@ -18,7 +18,7 @@ Sub Process_Globals
 	Public Const PrinterDebugMode As Boolean = True
 	
 	Public Const WatermarkText As String = "*** Smart Printer for Android ***"
-	Public Const WatermarkURL As String = "https://www.microinvest.net"
+	Public Const WatermarkURL As String = "Simeonch"
 End Sub
 
 'Връща устройството като предварително зададена константа, ако не е разпознато устройството, прави проверка от известните до момента устройства

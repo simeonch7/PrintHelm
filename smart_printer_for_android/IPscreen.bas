@@ -13,6 +13,10 @@ Private Sub Class_Globals
 '	Private usrString, PrinterPortString As String
 	Private settingsBG As BitmapDrawable
 	Private BMP_Options As Bitmap
+	
+	
+	Private ETColorPos As Int = 0xFF3BBD41
+	Private ETColorNeg As Int = 0xFFF93232
 End Sub
 
 'Инициализиране на обекта / Initializes the object
@@ -23,7 +27,7 @@ Public Sub Initialize
 	PrinterIP.Initialize("PrinterIPName")
 	PrinterPort.Initialize("PrinterPort")
 	btnloginPanel.Initialize("ButtonloginPanel")
-	BMP_Options.Initialize(File.DirAssets, "options_icon.png")
+	BMP_Options.Initialize(File.DirAssets, "7944619.png")
 
 	settingsBG.Initialize(BMP_Options)
 	btnloginPanel.Background = settingsBG
@@ -58,7 +62,7 @@ Public Sub build_Screen
 		
 	loginPanel.AddView(lblConnection, left + Padding, PrinterPort.Top + edtHeight * 1.5, btnWidth, btnHeight)
 	Padding = 7%x
-	loginPanel.AddView(btnloginPanel, lblConnection.Left + lblConnection.Width + Padding, lblConnection.Top, btnWidth / 2, btnHeight)
+	loginPanel.AddView(btnloginPanel, lblConnection.Left + lblConnection.Width + Padding * 2, lblConnection.Top, btnHeight, btnHeight)
 
 
 isConnect_Click
@@ -81,7 +85,7 @@ End Sub
 
 'Прилагане на стилове за външния вид на екрана за влизане / Applying visual styles for loginPanel screen
 Private Sub loginPanel_Configurations
-	loginPanel.SetBackgroundImage(LoadBitmap(File.DirAssets,"login_background.jpg"))
+	loginPanel.SetBackgroundImage(LoadBitmap(File.DirAssets,"bgportrait.jpg"))
 	
 	appTitle.Text = Main.translate.GetString("title")
 	appTitle.TextSize = 20
@@ -89,19 +93,11 @@ Private Sub loginPanel_Configurations
 	appTitle.Gravity = Gravity.CENTER
 	appTitle.TextColor = Colors.White
 	
-	If localNET = False Then
-		PrinterPort.Enabled = False
-	End If
 	
-	
-	HelperFunctions.Apply_ViewStyle(PrinterIP,Colors.Black,Colors.White,Colors.White,Colors.White,Colors.White,Colors.White,Colors.White,60)
 	PrinterIP.Padding = Array As Int(15,0,0,0)
 	PrinterIP.SingleLine = True
 
 	
-
-
-	HelperFunctions.Apply_ViewStyle(PrinterPort,Colors.Black,Colors.White,Colors.White,Colors.White,Colors.White,Colors.White,Colors.White,60)
 	PrinterPort.Padding = Array As Int(15,0,0,0)
 	PrinterPort.SingleLine = True
 	PrinterPort.Hint = Main.translate.GetString("hintPort")
@@ -134,7 +130,6 @@ Public Sub isConnect_Click
 	Else
 		lblConnection.Text = Main.translate.GetString("lblNoconnection")
 		lblConnection.TextColor = Colors.Red
-		ToastMessageShow("No Internet Connection", False)
 	End If
 End Sub
 
@@ -151,7 +146,15 @@ Public Sub checkNet As Boolean
 	Log(Error)
 	Log("======================")
 
-	localNET
+	If localNET = False Then
+		HelperFunctions.Apply_ViewStyle(PrinterIP,Colors.Black,ETColorNeg,Colors.White,Colors.White,Colors.White,Colors.White,Colors.White,15)
+		HelperFunctions.Apply_ViewStyle(PrinterPort,Colors.Black,Colors.White,ETColorNeg,Colors.White,Colors.White,Colors.White,Colors.White,15)
+		PrinterPort.Text = ""
+	Else
+		HelperFunctions.Apply_ViewStyle(PrinterIP,Colors.Black,ETColorPos,Colors.White,Colors.White,Colors.White,Colors.White,Colors.White,15)
+		HelperFunctions.Apply_ViewStyle(PrinterPort,Colors.Black,Colors.White,ETColorPos,Colors.White,Colors.White,Colors.White,Colors.White,15)
+		PrinterPort.text = SPAservice.port
+	End If
 
 	If Error.ToString="" Then
 		Return True
