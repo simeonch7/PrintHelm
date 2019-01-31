@@ -15,8 +15,7 @@ Private Sub Class_Globals
 	Private BMP_Options As Bitmap
 	
 	
-	Private ETColorPos As Int = 0xFF3BBD41
-	Private ETColorNeg As Int = 0xFFF93232
+	Private ETColorTP As Int = 0xFF87B0EA
 End Sub
 
 'Инициализиране на обекта / Initializes the object
@@ -85,13 +84,13 @@ End Sub
 
 'Прилагане на стилове за външния вид на екрана за влизане / Applying visual styles for loginPanel screen
 Private Sub loginPanel_Configurations
-	loginPanel.SetBackgroundImage(LoadBitmap(File.DirAssets,"bgportrait.jpg"))
+	loginPanel.SetBackgroundImage(LoadBitmap(File.DirAssets,"bgportrait3.jpg"))
 	
 	appTitle.Text = Main.translate.GetString("title")
 	appTitle.TextSize = 20
 	appTitle.Typeface = Typeface.DEFAULT_BOLD
 	appTitle.Gravity = Gravity.CENTER
-	appTitle.TextColor = Colors.White
+	appTitle.TextColor = 0xFF2A96EA
 	
 	
 	PrinterIP.Padding = Array As Int(15,0,0,0)
@@ -147,12 +146,12 @@ Public Sub checkNet As Boolean
 	Log("======================")
 
 	If localNET = False Then
-		HelperFunctions.Apply_ViewStyle(PrinterIP,Colors.Black,ETColorNeg,Colors.White,Colors.White,Colors.White,Colors.White,Colors.White,15)
-		HelperFunctions.Apply_ViewStyle(PrinterPort,Colors.Black,Colors.White,ETColorNeg,Colors.White,Colors.White,Colors.White,Colors.White,15)
+		HelperFunctions.Apply_ViewStyle(PrinterIP,Colors.Black,Colors.Transparent,ETColorTP,Colors.White,Colors.White,Colors.White,Colors.White,10)
+		HelperFunctions.Apply_ViewStyle(PrinterPort,Colors.Black,Colors.Transparent,ETColorTP,Colors.White,Colors.White,Colors.White,Colors.White,10)
 		PrinterPort.Text = ""
 	Else
-		HelperFunctions.Apply_ViewStyle(PrinterIP,Colors.Black,ETColorPos,Colors.White,Colors.White,Colors.White,Colors.White,Colors.White,15)
-		HelperFunctions.Apply_ViewStyle(PrinterPort,Colors.Black,Colors.White,ETColorPos,Colors.White,Colors.White,Colors.White,Colors.White,15)
+		HelperFunctions.Apply_ViewStyle(PrinterIP,Colors.Black,Colors.Transparent,ETColorTP,Colors.White,Colors.White,Colors.White,Colors.White,10)
+		HelperFunctions.Apply_ViewStyle(PrinterPort,Colors.Black,Colors.Transparent,ETColorTP,Colors.White,Colors.White,Colors.White,Colors.White,10)
 		PrinterPort.text = SPAservice.port
 	End If
 

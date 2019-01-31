@@ -2,7 +2,7 @@
 File1=7944619.png
 File10=printer_icon_pressed.png
 File11=spinner_background.png
-File2=bgportrait.jpg
+File2=bgportrait3.jpg
 File3=dictionary.xml
 File4=edit.png
 File5=print_item_failed_icon.png
@@ -42,10 +42,10 @@ Library7=usb
 Library8=felusbserial
 Library9=serial
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="5" android:targetSdkVersion="26"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~'End of default text.~\n~~\n~AddPermission(android.hardware.usb.action.USB_DEVICE_DETACHED)~\n~CreateResource(xml, device_filter.xml,~\n~<resources>		~\n~    <usb-device />	~\n~</resources>~\n~)~\n~AddApplicationText(~\n~<activity android:name=".main" >~\n~   <intent-filter>~\n~    <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />~\n~   </intent-filter>  ~\n~    <meta-data android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" android:resource="@xml/device_filter" />   ~\n~ </activity>~\n~)
-Module1=PrinterMain
-Module10=ScriptMaster
-Module11=Countries
-Module12=PrinterConstants
+Module1=PrinterPOS
+Module10=ProgramData
+Module11=SPAservice
+Module12=ScriptMaster
 Module13=PrinterStatusScreen
 Module14=Device
 Module15=Version
@@ -53,7 +53,7 @@ Module16=PrinterStatusSVItem
 Module17=UISizes
 Module18=B4XEval
 Module19=PrinterStatusSVItems
-Module2=SettingsScreen
+Module2=Utilities
 Module20=ImageResources
 Module21=DataTypes
 Module22=PriceMathFunctions
@@ -62,13 +62,13 @@ Module24=ButtonWithNotifications
 Module25=PrinterPriceCalculator
 Module26=BytesBuilder
 Module27=Constants
-Module3=PrinterPOS
-Module4=IPscreen
-Module5=ProgramData
-Module6=Utilities
-Module7=HelperFunctions
-Module8=Translator
-Module9=SPAservice
+Module3=Translator
+Module4=HelperFunctions
+Module5=Countries
+Module6=IPscreen
+Module7=PrinterConstants
+Module8=PrinterMain
+Module9=SettingsScreen
 NumberOfFiles=11
 NumberOfLibraries=18
 NumberOfModules=27
@@ -207,6 +207,8 @@ Sub changePanels
 		
 		settingsScr.asView.Enabled = True
 		settingsScr.asview.Visible = True
+		settingsScr.refillSpPrinters
+		settingsScr.translateAndSetCountry
 '		settingsScr.fillSettings
 	End If
 End Sub

@@ -246,9 +246,9 @@ End Sub
 'Loads all active printers from "Printers.config"
 private Sub LoadSavedPrinters
 	Try
-		If File.Exists(File.DirDefaultExternal, "Printers.config") Then
+		If File.Exists(Main.SHAREDFolder, "Printers.config") Then
 			Dim RAF As RandomAccessFile
-			RAF.Initialize(File.DirDefaultExternal, "Printers.config", False)
+			RAF.Initialize(Main.SHAREDFolder, "Printers.config", False)
 			Dim readPrinterList As List
 			readPrinterList.Initialize
 			readPrinterList = RAF.ReadEncryptedObject(ProgramData.rafEncPass, RAF.CurrentPosition)

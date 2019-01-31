@@ -18,7 +18,6 @@ Version=8.3
 	Private inn As InputStream
 	Private getConnectionParamsFailed As Boolean = False	'Show if theres and error in the input of controls in ControlsMap
 	Private selectedPrinterName As String = ""				'Hold Name of the selected printer				
-	Dim userSettings As information
 	Private controlsMap As Map								'Hold all the settings controls
 	Private spnActivePrinter As Spinner
 	Private btnPrinterRemove, btnPrinterAdd, btnPrinterEdt, pnlEditImg As Button
@@ -48,7 +47,6 @@ Version=8.3
 	Public const mode_edit As Int = 2
 	Private selectedEditPrinterIndex As Int
 
-	Private intLanguageIndex As Int	'ignore
 	
 	Private itCart As CartItem
 	Private partner As Partner
@@ -56,9 +54,9 @@ Version=8.3
 	Private workingobject As StoreObject
 	Private tagUP As Int = 0
 	Private cHeadersList, cFootersList, cDetailesList, cTotalsList As List
-
-
-	Dim PrintersRAF As RandomAccessFile
+	
+	
+	Dim UConfig As UserConfig
 End Sub
 
 Public Sub Initialize
@@ -71,7 +69,7 @@ Public Sub Initialize
 	cHeadersList.Initialize
 	cTotalsList.Initialize
 	
-	background.Initialize(LoadBitmap(File.DirAssets, "bgportrait.jpg"))
+	background.Initialize(LoadBitmap(File.DirAssets, "bgportrait3.jpg"))
 	edtbtnBG.Initialize(LoadBitmap(File.DirAssets, "edit.png"))
 	
 	settingsPanel.Background = background
@@ -86,6 +84,8 @@ Public Sub Initialize
 	lblEditPrinter.Initialize("")
 
 
+	UConfig.Initialize
+	
 	LabelCountry.Initialize("countryLabel")
 	LabelLanguage.Initialize("languageLabel")
 	LabelPrinter.Initialize("deviceLabel")
@@ -106,7 +106,6 @@ Public Sub Initialize
 	BoudRatesList.Initialize
 	
 	controlsMap.Initialize
-	userSettings.Initialize
 	tempList.Initialize
 	language.SelectedIndex = language.IndexOf(Main.SelectedLanguage)
 
@@ -161,18 +160,21 @@ Public Sub Initialize
 	lblEditPrinter.Gravity = Gravity.CENTER
 End Sub
 
-
+'changeinSPA
 Public Sub buttonsHide
 	btnPrinterRemove.Visible = False
 	btnPrinterAdd.Visible = False
 	btnPrinterEdt.Visible = False
+	spnActivePrinter.Visible = False
 End Sub
 
 Public Sub buttonsShow
 	btnPrinterRemove.Visible = True
 	btnPrinterAdd.Visible = True
 	btnPrinterEdt.Visible = True
+	spnActivePrinter.Visible = True
 End Sub
+
 
 Sub CountriesFill
 	For Each m As String In Countries.getCountries.Keys
@@ -192,25 +194,24 @@ Private Sub deviceprinterFill
 	printer.AddAll(PrinterList)
 End Sub
 
-'Private Sub BoudprinterFill
-'	Boud.Clear
-'	Boud.AddAll(BoudRatesList)
-'End Sub
-
+'changeinSPA
 Sub SettingsUI
-	intLanguageIndex = 0							'Български език / Language is Bulgarian
 
 	settingsPanel.AddView(countourPanel, -100%x, 50%y, 100%x, 50%y)
 	countourPanel.AddView(configPanel, 5dip, 5dip, 100%x - 10dip, 50%y - 10dip)
 		
-	settingsPanel.AddView(LabelCountry, 2%x, 5%y, 30%x, 5%y)
-	settingsPanel.AddView(country, 2%x, LabelCountry.Top + LabelCountry.Height, 40%x, 5%y)
+	settingsPanel.AddView(LabelCountry, 0%x, 8%y, 100%x, 5%y)
+	LabelCountry.Gravity = Gravity.CENTER_HORIZONTAL
+	settingsPanel.AddView(country, 30%x, LabelCountry.Top + LabelCountry.Height, 40%x, 5%y)
 	
-	settingsPanel.AddView(LabelLanguage, 2%x, country.Top + country.Height + 2%y, 40%x, 5%y)
-	settingsPanel.AddView(language, 2%x, LabelLanguage.Top + LabelLanguage.Height , 40%x, 5%y)
+	settingsPanel.AddView(LabelLanguage, 0%x, country.Top + country.Height + 2%y, 100%x, 5%y)
+	LabelLanguage.Gravity = Gravity.CENTER_HORIZONTAL
+	settingsPanel.AddView(language, 30%x, LabelLanguage.Top + LabelLanguage.Height , 40%x, 5%y)
 		
-	settingsPanel.AddView(LabelAcPrinter, 2%x, language.Top + language.Height + 10%y, 35%x, 5%y)
-	settingsPanel.AddView(spnActivePrinter, 2%x, LabelAcPrinter.Top + LabelAcPrinter.Height + UISizes.DefaultPadding, 35%x, 5%y)
+	settingsPanel.AddView(LabelAcPrinter, 0%x, language.Top + language.Height + 5%y, 100%x, 5%y)
+	LabelAcPrinter.Gravity = Gravity.CENTER_HORIZONTAL
+	
+	settingsPanel.AddView(spnActivePrinter, 32.5%x, LabelAcPrinter.Top + LabelAcPrinter.Height + UISizes.DefaultPadding, 35%x, 5%y)
 	
 	settingsPanel.AddView(statusBtn, 100%x - 12%x, 2%y, 10%x, 6%y)
 	
@@ -218,17 +219,17 @@ Sub SettingsUI
 	configPanel.AddView(LabelPrinter, 2%x, 2%y, 35%x, 5%y)
 	LabelPrinter.Gravity = Gravity.CENTER_VERTICAL
 	configPanel.AddView(printer, 2%x, LabelPrinter.Top + LabelPrinter.Height, 40%x, 5%y)
-	
+
 	configPanel.AddView(lblEditPrinter, 2%x, LabelPrinter.Top + LabelPrinter.Height, 40%x, 5%y)
 	configPanel.AddView(saveSettings, configPanel.Width -25%x, configPanel.Height - 20%y, 20%x, 5%y)
 	configPanel.AddView(exitSettings, saveSettings.Left, saveSettings.top + saveSettings.Height + 3%y, 20%x, 5%y)
 	
 	masterP.initPrintingScreen(settingsPanel, statusBtn)
 	
-	settingsPanel.AddView(btnPrinterAdd, spnActivePrinter.Left + spnActivePrinter.Width + UISizes.DefaultPadding, spnActivePrinter.top, 5%x, 5%y)
-	settingsPanel.AddView(btnPrinterRemove, btnPrinterAdd.Left + btnPrinterAdd.Width + UISizes.DefaultPadding, spnActivePrinter.top, 5%x, 5%y)
-	settingsPanel.AddView(btnPrinterEdt, btnPrinterRemove.Left + btnPrinterRemove.Width + UISizes.DefaultPadding, spnActivePrinter.top, 5%x, 5%y)
-	settingsPanel.AddView(pnlEditImg, btnPrinterRemove.Left + btnPrinterRemove.Width + UISizes.DefaultPadding, spnActivePrinter.top, 5%x, 5%y)
+	settingsPanel.AddView(btnPrinterAdd, spnActivePrinter.Left + spnActivePrinter.Width - (15%x + 6 * UISizes.DefaultPadding)* 1.5, spnActivePrinter.top + spnActivePrinter.Height + UISizes.DefaultPadding, 5%x, 5%y)
+	settingsPanel.AddView(btnPrinterRemove, btnPrinterAdd.Left + btnPrinterAdd.Width + UISizes.DefaultPadding, btnPrinterAdd.top, 5%x, 5%y)
+	settingsPanel.AddView(btnPrinterEdt, btnPrinterRemove.Left + btnPrinterRemove.Width + UISizes.DefaultPadding, btnPrinterAdd.top, 5%x, 5%y)
+	settingsPanel.AddView(pnlEditImg, btnPrinterRemove.Left + btnPrinterRemove.Width + UISizes.DefaultPadding, btnPrinterAdd.top, 5%x, 5%y)
 
 	Dim haightSV As Int
 	haightSV = configPanel.Height - LabelPrinter.Height - printer.Height
@@ -498,10 +499,10 @@ Sub asView As Panel
 End Sub
 
 Sub ColorPickerAndLabelTexts
-	LabelCountry.TextColor = Colors.LightGray
-	LabelLanguage.TextColor = Colors.LightGray
-	LabelPrinter.TextColor = Colors.LightGray
-	LabelAcPrinter.TextColor = Colors.LightGray
+	LabelCountry.TextColor = Colors.DarkGray
+	LabelLanguage.TextColor = Colors.DarkGray
+	LabelPrinter.TextColor = Colors.DarkGray
+	LabelAcPrinter.TextColor = Colors.DarkGray
 	
 	LabelCountry.Text = Main.translate.GetString("lblCountry")
 	LabelLanguage.Text = Main.translate.GetString("lblLanguage")
@@ -510,11 +511,11 @@ Sub ColorPickerAndLabelTexts
 		
 	saveSettings.Text = Main.translate.GetString("lblSave")
 	saveSettings.Color= Colors.DarkGray
-	saveSettings.TextColor = Colors.LightGray
+	saveSettings.TextColor = Colors.DarkGray
 	
 	exitSettings.Text = Main.translate.GetString("lblExit")
 	exitSettings.Color= Colors.DarkGray
-	exitSettings.TextColor = Colors.LightGray
+	exitSettings.TextColor = Colors.DarkGray
 	
 	spnActivePrinter.TextColor = Colors.White
 	spnActivePrinter.DropdownTextColor = Colors.White
@@ -529,7 +530,7 @@ Private Sub removePrinter_Click
 		masterP.removeFromActivePrinter(spnActivePrinter.SelectedIndex)
 		spnActivePrinter.RemoveAt(spnActivePrinter.SelectedIndex)
 	End If
-
+	SavePrinters
 End Sub
 
 Sub Save_click
@@ -547,7 +548,6 @@ Sub Save_click
 				spnActivePrinter.Add(ActivePrinter.name)
 				refillSpPrinters
 				hideScreen
-'				fillPrinterRAF(ActivePrinter)
 			Catch
 				Log(LastException)
 				Msgbox(Main.translate.GetString("msgPrinterFailedToAdd"),Main.translate.GetString("lblWarning"))
@@ -564,14 +564,8 @@ Sub Save_click
 			CallSub2(Acprinter.driver ,"SetConnection_Parameters", Acprinter.connectionParams)
 			hideScreen
 		End Select
-
+	SavePrinters
 End Sub
-
-'Sub fillPrinterRAF(PrinterToAdd As TActivePrinter)
-'	PrintersRAF.Initialize(Main.SHAREDFolder, "Printers.config", False)
-'	PrintersRAF.WriteEncryptedObject(PrinterToAdd, ProgramData.rafEncPass, PrintersRAF.CurrentPosition)
-'	PrintersRAF.Close
-'End Sub
 
 Private Sub AddbtnPrinter_Click
 	If countourPanel.left = 0 Then
@@ -688,7 +682,9 @@ End Sub
 
 
 Sub countrySpinner_ItemClick (Position As Int, Value As Object)
-'	readinfo.country = Value
+	UConfig.country = Position
+	WUConfig
+	translateAndSetCountry
 End Sub
 
 Sub BoudSpinner_ItemClick (Position As Int, Value As Object)
@@ -696,11 +692,47 @@ Sub BoudSpinner_ItemClick (Position As Int, Value As Object)
 End Sub
 
 Sub languageSpinner_ItemClick (Position As Int, Value As Object)
-	intLanguageIndex = Position
-	Main.SelectedLanguage = Value
+	UConfig.language = Position
+	WUConfig
+	translateAndSetCountry
+End Sub
+
+Sub translateAndSetCountry
+	LoadSavedUconfig
+	Main.SelectedLanguage = language.GetItem(UConfig.language)
 	Main.translate.SetLanguage(Main.SelectedLanguage)
 	InitialSetSignsRefresh
-'	readinfo.language = Value
+	country.SelectedIndex = UConfig.country
+	language.SelectedIndex = UConfig.language
+	
+End Sub
+
+
+Sub WUConfig
+	Try
+		Dim RAF As RandomAccessFile
+		RAF.Initialize(Main.SHAREDFolder, "LangAndContry.config", False)
+		RAF.WriteEncryptedObject(UConfig, ProgramData.rafEncPass, RAF.CurrentPosition)
+		RAF.Close
+	Catch
+		Log(LastException)
+		Msgbox(Main.translate.GetString("msgFailedToSavePrinters"), Main.translate.GetString("lblWarning"))
+	End Try
+	RAF.Close
+End Sub
+
+private Sub LoadSavedUconfig
+	Try
+		If File.Exists(Main.SHAREDFolder, "LangAndContry.config") Then
+			Dim RAF As RandomAccessFile
+			RAF.Initialize(Main.SHAREDFolder, "LangAndContry.config", True)
+			UConfig = RAF.ReadEncryptedObject(ProgramData.rafEncPass, RAF.CurrentPosition)
+			RAF.Close
+		End If
+	Catch
+		Msgbox("","Warrning")
+		Log(LastException)
+	End Try
 End Sub
 
 'Опресняване на надписите в първоначалните настройки / Refreshes signs in Initial settings
@@ -713,11 +745,6 @@ Public Sub InitialSetSignsRefresh
 	exitSettings.Text = Main.translate.GetString("lblExit")
 
 	CallSub(Main,"Login_SignsRefresh")	' Когато опресним надписите тук, ще се опресняват и надписите в другите модули
-End Sub
-
-
-Sub codeTableSpinner_ItemClick (Position As Int, Value As Object)
-'	readinfo.codeTable = Value
 End Sub
 
 Sub deviceSpinner_ItemClick (Position As Int, Value As Object)
@@ -909,8 +936,8 @@ Public Sub refillSpPrinters
 	
 	For Each printerAc As TActivePrinter In masterP.ActivePrinters
 		spnActivePrinter.Add(printerAc.name)
-
 	Next
+	
 End Sub
 
 Private Sub getConnectionParams As TConnectionParameters
@@ -1399,3 +1426,21 @@ private Sub addFooter(value As String)
 	BTSettingsSV.ScrollPosition = outFooterHolder.Top + outFooterHolder.Height - UISizes.DefaultPadding
 End Sub
 #End Region
+
+Public Sub SavePrinters
+	Try
+		Dim RAF As RandomAccessFile
+		RAF.Initialize(Main.SHAREDFolder, "Printers.config", False)
+		RAF.WriteEncryptedObject(masterP.ActivePrinters, ProgramData.rafEncPass, RAF.CurrentPosition)
+		RAF.Close
+	Catch
+		Log(LastException)
+		Msgbox(Main.translate.GetString("msgFailedToSavePrinters"), Main.translate.GetString("lblWarning"))
+	End Try
+	Dim RAF As RandomAccessFile
+	RAF.Initialize(Main.SHAREDFolder, "Printers.config", False)
+'	Log(RAF.ReadEncryptedObject(ProgramData.rafEncPass, RAF.CurrentPosition))
+	RAF.Close
+
+End Sub
+
