@@ -1,15 +1,15 @@
 ﻿Build1=Default,microinvest.SPA
-File1=7944619.png
-File10=printer_icon_pressed.png
+File1=dictionary.xml
+File10=smartbg.jpg
 File11=spinner_background.png
-File2=bgportrait3.jpg
-File3=dictionary.xml
-File4=edit.png
-File5=print_item_failed_icon.png
-File6=print_item_success_icon.png
-File7=printer_1_icon.png
-File8=printer_2_icon.png
-File9=printer_3_icon.png
+File2=edit.png
+File3=print_item_failed_icon.png
+File4=print_item_success_icon.png
+File5=printer_1_icon.png
+File6=printer_2_icon.png
+File7=printer_3_icon.png
+File8=printer_icon_pressed.png
+File9=settingsicon.png
 FileGroup1=Default Group
 FileGroup10=Default Group
 FileGroup11=Default Group
@@ -138,11 +138,6 @@ Sub Activity_Create(FirstTime As Boolean)
 		If Not (Result) Then
 			Msgbox(translate.GetString("lblWritePermission"), translate.GetString("lblWarning"))
 			Activity.Finish
-		End If
-		rp.CheckAndRequest(rp.PERMISSION_CAMERA)
-		Wait For Activity_PermissionResult(Permission As String, Result As Boolean)
-		If Not (Result) Then
-			Msgbox(translate.GetString("lblCameraPermission"), translate.GetString("lblWarning"))
 		End If
 	End If
 
