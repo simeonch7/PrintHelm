@@ -1,6 +1,10 @@
 ﻿Build1=Default,microinvest.SPA
 File1=dictionary.xml
+<<<<<<< HEAD
 File10=SmartBG.jpg
+=======
+File10=smartbg.jpg
+>>>>>>> af0d638f62fcebfe8b95251c48eb4d80bac0ebe7
 File11=spinner_background.png
 File2=edit.png
 File3=print_item_failed_icon.png
@@ -9,7 +13,11 @@ File5=printer_1_icon.png
 File6=printer_2_icon.png
 File7=printer_3_icon.png
 File8=printer_icon_pressed.png
+<<<<<<< HEAD
 File9=settingsIcon.png
+=======
+File9=settingsicon.png
+>>>>>>> af0d638f62fcebfe8b95251c48eb4d80bac0ebe7
 FileGroup1=Default Group
 FileGroup10=Default Group
 FileGroup11=Default Group
