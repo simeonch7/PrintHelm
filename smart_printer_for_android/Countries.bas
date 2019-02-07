@@ -48,7 +48,7 @@ Public Sub Initialize
 	Moldova 		= addCountry("Moldova")
 	Romania			= addCountry("Romania")
 	Russia			= addCountry("Russia")
-	SaudiArabia		= addCountry("SaudiArabia")
+	SaudiArabia		= addCountry("Saudi Arabia")
 	Spain 			= addCountry("Spain")
 	Tanzania 		= addCountry("Tanzania")
 	Turkey 			= addCountry("Turkey")

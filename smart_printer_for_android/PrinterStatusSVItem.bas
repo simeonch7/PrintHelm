@@ -184,7 +184,7 @@ Public Sub AddWarning(warning As Int)
 	warningContnet.AddView(lblWarning,0,top,warningContnet.Width,lblHeight)
 	warningContnet.Height = warningContnet.Height + lblHeight
 	
-	calculateItemHeight
+	calculateItemHeight 	 	
 End Sub
 
 Public Sub getUserAction(error As Int) As ResumableSub
@@ -192,7 +192,6 @@ Public Sub getUserAction(error As Int) As ResumableSub
 		ToastMessageShow(PrinterConstants.getPrinterStatusMessage(error),False)
 		Return PrinterConstants.Action_Abort
 	End If
-	
 	changeStatus(error)
 
 	Wait For Action_Click
@@ -313,6 +312,7 @@ Public Sub changeStatus(PrinterStatus As Int)
 	If PrinterStatus >= PrinterConstants.ERR_FirstError And PrinterStatus < PrinterConstants.ERR_FirstResumableError  Then	'Error
 		If internalStatus = internalSTATUS_NOERR Then
 			incrementError
+			
 			internalStatus = internalSTATUS_ERR
 		End If
 		icon.Bitmap = ImageResources.BMP_PrintItemIconError
@@ -337,7 +337,7 @@ Public Sub changeStatus(PrinterStatus As Int)
 	Status = PrinterStatus
 	swapFoot(printOK)
 	lblStatus.Text = PrinterConstants.getPrinterStatusMessage(Status)
-	
+	Log("XXX >>> READY STATUS IN : " & Main.SelectedLanguage & " = " & lblStatus.Text)
 	calculateItemHeight
 	content.Height = Height_Content
 End Sub

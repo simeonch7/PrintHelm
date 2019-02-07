@@ -14,19 +14,21 @@ Private Sub Class_Globals
 	Private settingsBG As BitmapDrawable
 	Private BMP_Options As Bitmap
 	
-	
 	Private ETColorTP As Int = 0xFF87B0EA
+	Private SettingsScr As SettingsScreen
 End Sub
 
 'Инициализиране на обекта / Initializes the object
 Public Sub Initialize
+	loginPanel.Initialize("")
+	
 	appTitle.Initialize("")
 	lblConnection.Initialize("isConnect")
-	loginPanel.Initialize("loginPanelPanelsFake")
+
 	PrinterIP.Initialize("PrinterIPName")
 	PrinterPort.Initialize("PrinterPort")
 	btnloginPanel.Initialize("ButtonloginPanel")
-	BMP_Options.Initialize(File.DirAssets, "7944619.png")
+	BMP_Options.Initialize(File.DirAssets, "settingsIcon.png")
 
 	settingsBG.Initialize(BMP_Options)
 	btnloginPanel.Background = settingsBG
@@ -36,11 +38,18 @@ Public Sub Initialize
 		ToastMessageShow("Connect to Internet", False)
 	End If
 	
-	
+End Sub
+
+
+public Sub setPanelToActivity
+	Dim target As Panel
+	target =CallSub(Main, "Get_Activity")
+	target.RemoveAllViews
+	target.AddView(loginPanel, 0, 0, 100%x, 100%y)
 End Sub
 
 ' Построяване на екрана / Builds the UI of the screen
-Public Sub build_Screen
+Public Sub build_Screen	
 	loginPanel_Configurations
 	Private edtWidth,edtHeight As Int
 	Private btnWidth,btnHeight As Int
@@ -63,10 +72,9 @@ Public Sub build_Screen
 	Padding = 7%x
 	loginPanel.AddView(btnloginPanel, lblConnection.Left + lblConnection.Width + Padding * 2, lblConnection.Top, btnHeight, btnHeight)
 
-
-isConnect_Click
+	Log(Main.SelectedLanguage)
+	isConnect_Click
 	
-'	btnloginPanel.Enabled=True
 End Sub
 
 private Sub localNET As Boolean
@@ -84,7 +92,7 @@ End Sub
 
 'Прилагане на стилове за външния вид на екрана за влизане / Applying visual styles for loginPanel screen
 Private Sub loginPanel_Configurations
-	loginPanel.SetBackgroundImage(LoadBitmap(File.DirAssets,"bgportrait3.jpg"))
+	loginPanel.SetBackgroundImage(LoadBitmap(File.DirAssets,"smartBG.jpg"))
 	
 	appTitle.Text = Main.translate.GetString("title")
 	appTitle.TextSize = 20
@@ -92,12 +100,8 @@ Private Sub loginPanel_Configurations
 	appTitle.Gravity = Gravity.CENTER
 	appTitle.TextColor = 0xFF2A96EA
 	
-	
-	PrinterIP.Padding = Array As Int(15,0,0,0)
 	PrinterIP.SingleLine = True
 
-	
-	PrinterPort.Padding = Array As Int(15,0,0,0)
 	PrinterPort.SingleLine = True
 	PrinterPort.Hint = Main.translate.GetString("hintPort")
 	PrinterPort.HintColor = Colors.Gray
@@ -119,7 +123,14 @@ End Sub
 
 'Метода, който вкарва потребителя в системата / Method for log in 
 Private Sub ButtonloginPanel_Click
-	CallSub(Main, "changePanels")	
+	SettingsScr.Initialize	
+
+	Main.SCREEN_ID = Main.SCREEN_SETTINGS
+End Sub
+
+public Sub goBackToLoginScreen
+	Main.SCREEN_ID = Main.SCREEN_LOGIN
+	setPanelToActivity
 End Sub
 
 Public Sub isConnect_Click
@@ -145,17 +156,14 @@ Public Sub checkNet As Boolean
 	Log(Error)
 	Log("======================")
 
-	If localNET = False Then
-		HelperFunctions.Apply_ViewStyle(PrinterIP,Colors.Black,Colors.Transparent,ETColorTP,Colors.White,Colors.White,Colors.White,Colors.White,10)
-		HelperFunctions.Apply_ViewStyle(PrinterPort,Colors.Black,Colors.Transparent,ETColorTP,Colors.White,Colors.White,Colors.White,Colors.White,10)
-		PrinterPort.Text = ""
-	Else
-		HelperFunctions.Apply_ViewStyle(PrinterIP,Colors.Black,Colors.Transparent,ETColorTP,Colors.White,Colors.White,Colors.White,Colors.White,10)
-		HelperFunctions.Apply_ViewStyle(PrinterPort,Colors.Black,Colors.Transparent,ETColorTP,Colors.White,Colors.White,Colors.White,Colors.White,10)
-		PrinterPort.text = SPAservice.port
-	End If
-
-	If Error.ToString="" Then
+	localNET
+	
+	HelperFunctions.Apply_ViewStyle(PrinterIP,Colors.Black,Colors.Transparent,ETColorTP,Colors.White,Colors.White,Colors.White,Colors.White,10)
+	HelperFunctions.Apply_ViewStyle(PrinterPort,Colors.Black,Colors.Transparent,ETColorTP,Colors.White,Colors.White,Colors.White,Colors.White,10)
+	PrinterPort.Padding = Array As Int(30,0,30,0)
+	PrinterIP.Padding = Array As Int(30,0,30,0)
+	
+	If Error.ToString = "" Then
 		Return True
        
 	Else

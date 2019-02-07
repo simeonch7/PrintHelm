@@ -42,7 +42,7 @@ Sub Server_HandleRequest (Request As ServletRequest, response As ServletResponse
 
 		ProgramData.req = urlResponse
 				
-		CallSub(Main, "readytoPrint")
+'		CallSub(Main, "readytoPrint")
 	Catch
 		response.Status = 500
 		Log("Error serving request: " & LastException)

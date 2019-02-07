@@ -55,8 +55,7 @@ Public Sub Initialize(CB As Object)
 	Jobs.Initialize
 	mapPrinters.Initialize
 	
-	initAllPrinterDrivers			'TO-DO Memory Leak
-	
+	initAllPrinterDrivers
 End Sub
 
 Public Sub initPrintingScreen(parent As Panel, buttonHolder As Panel)

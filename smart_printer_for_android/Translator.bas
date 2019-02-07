@@ -290,7 +290,9 @@ End Sub
 'the current language
 Private Sub Get_TranslatedString(key As String, language As Int) As String
 	Try
-		Private strTranslationList As List = dictionary.Get(key)
+		Private strTranslationList As List 
+		strTranslationList.Initialize
+		strTranslationList = dictionary.Get(key)
 		If language < strTranslationList.Size Then
 			Private translatedString As String = strTranslationList.Get(language)
 		End If

@@ -1,15 +1,15 @@
 ﻿Build1=Default,microinvest.SPA
-File1=7944619.png
-File10=printer_icon_pressed.png
+File1=dictionary.xml
+File10=SmartBG.jpg
 File11=spinner_background.png
-File2=bgportrait3.jpg
-File3=dictionary.xml
-File4=edit.png
-File5=print_item_failed_icon.png
-File6=print_item_success_icon.png
-File7=printer_1_icon.png
-File8=printer_2_icon.png
-File9=printer_3_icon.png
+File2=edit.png
+File3=print_item_failed_icon.png
+File4=print_item_success_icon.png
+File5=printer_1_icon.png
+File6=printer_2_icon.png
+File7=printer_3_icon.png
+File8=printer_icon_pressed.png
+File9=settingsIcon.png
 FileGroup1=Default Group
 FileGroup10=Default Group
 FileGroup11=Default Group
@@ -42,36 +42,37 @@ Library7=usb
 Library8=felusbserial
 Library9=serial
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="5" android:targetSdkVersion="26"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~'End of default text.~\n~~\n~AddPermission(android.hardware.usb.action.USB_DEVICE_DETACHED)~\n~CreateResource(xml, device_filter.xml,~\n~<resources>		~\n~    <usb-device />	~\n~</resources>~\n~)~\n~AddApplicationText(~\n~<activity android:name=".main" >~\n~   <intent-filter>~\n~    <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />~\n~   </intent-filter>  ~\n~    <meta-data android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" android:resource="@xml/device_filter" />   ~\n~ </activity>~\n~)
-Module1=PrinterPOS
-Module10=ProgramData
-Module11=SPAservice
+Module1=UConfig
+Module10=Translator
+Module11=PrinterMain
 Module12=ScriptMaster
-Module13=PrinterStatusScreen
-Module14=Device
-Module15=Version
-Module16=PrinterStatusSVItem
-Module17=UISizes
-Module18=B4XEval
-Module19=PrinterStatusSVItems
-Module2=Utilities
-Module20=ImageResources
-Module21=DataTypes
-Module22=PriceMathFunctions
-Module23=OperationFunctions
-Module24=ButtonWithNotifications
-Module25=PrinterPriceCalculator
-Module26=BytesBuilder
-Module27=Constants
-Module3=Translator
-Module4=HelperFunctions
-Module5=Countries
-Module6=IPscreen
-Module7=PrinterConstants
-Module8=PrinterMain
-Module9=SettingsScreen
+Module13=Countries
+Module14=B4XEval
+Module15=ImageResources
+Module16=ProgramData
+Module17=PrinterStatusScreen
+Module18=Version
+Module19=UISizes
+Module2=IPscreen
+Module20=PrinterPriceCalculator
+Module21=BytesBuilder
+Module22=ButtonWithNotifications
+Module23=PrinterStatusSVItems
+Module24=SPAservice
+Module25=Device
+Module26=PriceMathFunctions
+Module27=OperationFunctions
+Module28=Constants
+Module3=SettingsScreen
+Module4=PrinterConstants
+Module5=DataTypes
+Module6=PrinterStatusSVItem
+Module7=PrinterPOS
+Module8=Utilities
+Module9=HelperFunctions
 NumberOfFiles=11
 NumberOfLibraries=18
-NumberOfModules=27
+NumberOfModules=28
 Version=8.8
 @EndOfDesignText@
  #Region  Project Attributes 
@@ -101,7 +102,21 @@ Sub Process_Globals
 	Public Const lng_BG As String = "BG"		'Bulgarian Language Abbreviation
 	Public Const lng_EN As String = "EN"		'English Language Abbreviation
 	Public Const lng_RU As String = "RU"		'Russian Language Abbreviation
+	Public Const lng_RO As String = "RO"		'Romanian Language Abbreviation
+	Public Const lng_ES As String = "ES"		'Spanish Language Abbreviation
+	Public Const lng_KA As String = "KA"		'Georgian Language Abbreviation
+	Public Const lng_DE As String = "DE"		'German Language Abbreviation
+	Public Const lng_KK As String = "KK"		'Kazakh Language Abbreviation
+	Public Const lng_EL As String = "EL"		'Greek Language Abbreviation
+	Public Const lng_Fi As String = "FI"		'Finish Language Abbreviation
 	Public Const lng_UK As String = "UK"		'Ukranian Language Abbreviation
+	Public Const lng_CZ As String = "CZ"		'Czech Language Abbreviation
+	
+	Public  SCREEN_ID As Int = 0	
+	Public Const SCREEN_LOGIN As Int = 1						'Login Screen ID
+	Public Const SCREEN_SETTINGS As Int = 2							'Login Screen ID
+	Public Const SCREEN_STATUSPRINTER As Int = 5						'Login Screen ID
+	
 	
 	Public SelectedLanguage As String = lng_BG
 	Private Locale As AHLocale
@@ -125,13 +140,17 @@ End Sub
 
 Sub Globals
 	Public loginScr As IPscreen
-	Public settingsScr As SettingsScreen
 	Public PrinterStatusReference As PrinterStatusScreen
-
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
-
+	translate.Initialize
+	
+	languageList = translate.Get_LanguageList
+	Countries.Initialize
+	
+	Math.Initialize(Me, "Math")
+	
 	If (APIVersion >= 23) Then
 		rp.CheckAndRequest(rp.PERMISSION_WRITE_EXTERNAL_STORAGE)
 		Wait For Activity_PermissionResult(Permission As String, Result As Boolean)
@@ -139,38 +158,24 @@ Sub Activity_Create(FirstTime As Boolean)
 			Msgbox(translate.GetString("lblWritePermission"), translate.GetString("lblWarning"))
 			Activity.Finish
 		End If
-		rp.CheckAndRequest(rp.PERMISSION_CAMERA)
-		Wait For Activity_PermissionResult(Permission As String, Result As Boolean)
-		If Not (Result) Then
-			Msgbox(translate.GetString("lblCameraPermission"), translate.GetString("lblWarning"))
-		End If
 	End If
 
 	SHAREDFolder = rp.GetSafeDirDefaultExternal("")	'This returns the safe dir now - replaces File.DirDefaultExternal
+	ImageResources.LoadImages
 	
-
-	Math.Initialize(Me, "Math")
+	UConfig.LoadSavedUSConfig
+	
 	ProgramData.Initialize
 	UISizes.Initialize
-	ImageResources.LoadImages
-	Countries.Initialize
 	Locale.Initialize
-	translate.Initialize
-	languageList = translate.Get_LanguageList
 	
-'	PrinterStatusReference.Initialize(Me, settingsScr)
-
+	
 	loginScr.Initialize
-	Activity.AddView(loginScr.asView, 0, 0, 100%x, 100%y)
+	loginScr.setPanelToActivity
 	loginScr.build_Screen
-	settingsScr.Initialize
-	Activity.AddView(settingsScr.asView, 0, 0, 100%x, 100%y)
-	settingsScr.SettingsUI
-	Load_Language
-'	settingsScr.settingsFill
-
+	
 	Login_SignsRefresh
-	settingsScr.InitialSetSignsRefresh
+	SCREEN_ID = SCREEN_LOGIN
 End Sub
 
 
@@ -194,23 +199,13 @@ Public Sub getRequest As String
 	Return req
 End Sub
 
-Public Sub readytoPrint
-	CallSub(settingsScr, "POS_Print")
-End Sub
+'Public Sub readytoPrint
+'	CallSub(settingsScr, "POS_Print")
+'End Sub
 
-Sub changePanels
-	'Бутона Вход се деактивира. Против спам
-	If loginScr.asview.Enabled Then
-		settingsScr.hideScreen
-		loginScr.asview.Enabled = False
-		loginScr.asview.Visible = False
-		
-		settingsScr.asView.Enabled = True
-		settingsScr.asview.Visible = True
-		settingsScr.refillSpPrinters
-		settingsScr.translateAndSetCountry
-'		settingsScr.fillSettings
-	End If
+Public Sub Get_Activity As Activity
+
+	Return Activity 
 End Sub
 
 private Sub sendOperation
@@ -227,54 +222,28 @@ Public Sub Login_SignsRefresh
 	CallSub(loginScr, "refreshLogin_Labels")
 End Sub
 
-Private Sub Load_Language
-	translate.SetLanguage(SelectedLanguage)
-End Sub
-
 public Sub SetPrinterStatus_Reference (screen As PrinterStatusScreen )
 	PrinterStatusReference = screen
 End Sub
 
-Public Sub Show_PrinterButtons
-	settingsScr.buttonsShow
-End Sub
-
-Public Sub Hide_PrinterButtons
-	settingsScr.buttonsHide
-
-End Sub
-
 'метод,с който пренаписваме бутонът за връщане назад на у-вото
 Sub Activity_KeyPress (KeyCode As Int) As Boolean
-	
-	Private ext As Int = 0
 	If KeyCode = KeyCodes.KEYCODE_BACK Then
 	
-		If settingsScr.asView.Visible = True Then
-			settingsScr.asView.Visible = False
-			loginScr.asView.Visible = True
-			loginScr.asview.Enabled = True
-			loginScr.isConnect_Click
-			ext = ext + 1
-		End If
-		
-		ext = ext - 1
-		
-		If loginScr.asView.Visible = True And ext = -1 Then
-			
-			Private result As Int
-			result = Msgbox2("Are you sure?", "Exit!", "Yes", "Cancel", "No", Null)
-			If result = DialogResponse.POSITIVE Then
-				StopService(SPAservice)
-				ExitApplication
-			End If
-
-		End If
-		
-		Return True
-	Else
-
-		Return False
+		Select SCREEN_ID
+			Case SCREEN_LOGIN
+				Private result As Int
+				result = Msgbox2("Are you sure?", "Exit!", "Yes", "Cancel", "No", Null)
+				If result = DialogResponse.POSITIVE Then
+					StopService(SPAservice)
+					ExitApplication
+				End If
+				Exit
+			Case SCREEN_SETTINGS
+				loginScr.goBackToLoginScreen
+				UConfig.writeUSConfig
+				Exit			
+		End Select
 	End If
-	
+	Return True
 End Sub

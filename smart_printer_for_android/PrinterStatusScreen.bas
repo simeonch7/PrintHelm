@@ -127,18 +127,22 @@ Private Sub show_Screen
 	lblTitle.Text = Main.translate.GetString("msgPrintingStatusTitle")
 	
 	BG.BringToFront
+	BG.BringToFront
+	BG.BringToFront
+	BG.BringToFront
 	BG.SetVisibleAnimated(500, True)
 	outerHolder.SetLayoutAnimated(500, showLeft,outerHolder.Top, outerHolder.Width, outerHolder.Height)
+	Log("Open SVSVSVSVSV")
 	BG.BringToFront
 	CallSub2(Main,"SetPrinterStatus_Reference",Me)	'Set main screen reference to this screen
-	CallSub(Main, "Hide_PrinterButtons")
+'	CallSub(Main, "Hide_PrinterButtons")
 	
 End Sub
 
 Public Sub hide_Screen
 	BG.SetVisibleAnimated(500,False)
-	CallSub(Main, "Show_PrinterButtons")
-	
+'	CallSub(Main, "Show_PrinterButtons")
+	Log("close SVSVSVSVSVSVSVSVSV")
 	outerHolder.SetLayoutAnimated(500, hideLeft, outerHolder.Top, outerHolder.Width, outerHolder.Height)
 End Sub
 
