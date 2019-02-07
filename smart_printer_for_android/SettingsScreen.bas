@@ -70,11 +70,7 @@ Public Sub Initialize
 	cHeadersList.Initialize
 	cTotalsList.Initialize
 	
-<<<<<<< HEAD
 	background.Initialize(LoadBitmap(File.DirAssets, "smartBG.jpg"))
-=======
-	background.Initialize(LoadBitmap(File.DirAssets, "smartbg.jpg"))
->>>>>>> af0d638f62fcebfe8b95251c48eb4d80bac0ebe7
 	edtbtnBG.Initialize(LoadBitmap(File.DirAssets, "edit.png"))
 	
 	settingsPanel.Background = background

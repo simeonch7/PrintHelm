@@ -28,11 +28,8 @@ Public Sub Initialize
 	PrinterIP.Initialize("PrinterIPName")
 	PrinterPort.Initialize("PrinterPort")
 	btnloginPanel.Initialize("ButtonloginPanel")
-<<<<<<< HEAD
 	BMP_Options.Initialize(File.DirAssets, "settingsIcon.png")
-=======
-	BMP_Options.Initialize(File.DirAssets, "settingsicon.png")
->>>>>>> af0d638f62fcebfe8b95251c48eb4d80bac0ebe7
+
 
 	settingsBG.Initialize(BMP_Options)
 	btnloginPanel.Background = settingsBG
@@ -96,11 +93,7 @@ End Sub
 
 'Прилагане на стилове за външния вид на екрана за влизане / Applying visual styles for loginPanel screen
 Private Sub loginPanel_Configurations
-<<<<<<< HEAD
 	loginPanel.SetBackgroundImage(LoadBitmap(File.DirAssets,"smartBG.jpg"))
-=======
-	loginPanel.SetBackgroundImage(LoadBitmap(File.DirAssets,"smartbg.jpg"))
->>>>>>> af0d638f62fcebfe8b95251c48eb4d80bac0ebe7
 	
 	appTitle.Text = Main.translate.GetString("title")
 	appTitle.TextSize = 20
