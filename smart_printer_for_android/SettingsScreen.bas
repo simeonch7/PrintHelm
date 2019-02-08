@@ -11,11 +11,10 @@ Version=8.3
 	Private LabelCountry, LabelLanguage, LabelPrinter, LabelAcPrinter, lblEditPrinter As Label
 	Private BoudRatesList As List
 	Private PrinterList As List
-	Private masterP As PrinterMain
-	Private templates As SaxParser
-	Private cash,card,bank,vaucher As Double
-	Private  payMethod As Int
-	Private inn As InputStream
+	
+	
+	
+	
 	Private getConnectionParamsFailed As Boolean = False	'Show if theres and error in the input of controls in ControlsMap
 	Private selectedPrinterName As String = ""				'Hold Name of the selected printer				
 	Private controlsMap As Map								'Hold all the settings controls
@@ -48,11 +47,7 @@ Version=8.3
 	Private selectedEditPrinterIndex As Int
 
 	
-	Private itCart As CartItem
-	Private partner As Partner
-	Private workingUser As CurrentUser	
-	Private workingobject As StoreObject
-	Private tagUP As Int = 0
+	
 	Private cHeadersList, cFootersList, cDetailesList, cTotalsList As List
 	
 	
@@ -60,7 +55,7 @@ End Sub
 
 
 
-Public Sub Initialize
+Public Sub Initialize(target As Panel)
 	settingsPanel.Initialize("fakeHolder")
 	
 	configPanel.Initialize("configPanel")
@@ -114,10 +109,10 @@ Public Sub Initialize
 	BTmap.Initialize
 
 	ColorPickerAndLabelTexts
-	masterP.Initialize(Me)
+	
 	refillSpPrinters
 	PrinterList.Initialize
-	templates.Initialize
+	
 	BoudRatesList.Add("1200")
 	BoudRatesList.Add("2400")
 	BoudRatesList.Add("4800")
@@ -158,16 +153,16 @@ Public Sub Initialize
 	
 	
 	SettingsUI
-	setSettingsScrtoActivity
+'	setSettingsScrtoActivity
 	refillSpPrinters
-	
+	target.AddView(settingsPanel, 0, 0, 100%x, 100%y)
 End Sub
 
 public Sub setSettingsScrtoActivity
-	Dim target As Panel
-	target =CallSub(Main, "Get_Activity")
-	target.RemoveAllViews
-	target.AddView(settingsPanel, 0, 0, 100%x, 100%y)
+'	Dim target As Panel
+'	target =CallSub(Main, "Get_Activity")
+'	target.RemoveAllViews
+'	target.AddView(settingsPanel, 0, 0, 100%x, 100%y)
 End Sub
 
 'Public Sub buttonsHide
@@ -201,7 +196,7 @@ Private Sub languageprinterFill
 End Sub
 
 Private Sub deviceprinterFill
-	PrinterList = masterP.PrintersList
+	PrinterList = SPAservice.masterP.PrintersList
 
 	printer.Clear
 	printer.AddAll(PrinterList)
@@ -236,7 +231,6 @@ Sub SettingsUI
 	configPanel.AddView(saveSettings, configPanel.Width -25%x, configPanel.Height - 20%y, 20%x, 5%y)
 	configPanel.AddView(exitSettings, saveSettings.Left, saveSettings.top + saveSettings.Height + 3%y, 20%x, 5%y)
 	
-	masterP.initPrintingScreen(settingsPanel, statusBtn)
 	
 	settingsPanel.AddView(btnPrinterAdd, spnActivePrinter.Left + spnActivePrinter.Width - (15%x + 6 * UISizes.DefaultPadding)* 1.5, spnActivePrinter.top + spnActivePrinter.Height + UISizes.DefaultPadding, 5%x, 5%y)
 	settingsPanel.AddView(btnPrinterRemove, btnPrinterAdd.Left + btnPrinterAdd.Width + UISizes.DefaultPadding, btnPrinterAdd.top, 5%x, 5%y)
@@ -249,262 +243,11 @@ Sub SettingsUI
 
 	configPanel.AddView(BTSettingsSV, 2%x, printer.Top + printer.Height + 1%y, configPanel.Width * 0.7, heightSV)
 
-End Sub
-
-#Region Printing
-Private Sub POS_Print
-	Dim phone As String = ProgramData.partnerPhone
-	If Countries.SelectedCountry = Countries.Russia Then
-		If Regex.IsMatch("((007)9([0-9]){9})", phone) Then
-			phone = "+7" & phone.SubString(3)
-						
-		else if Regex.IsMatch("((7|8)9([0-9]){9})", phone) Then
-			phone = "+7" & phone.SubString(1)
-					
-		else if Regex.IsMatch("(9([0-9]){9})", phone) Then
-			phone = "+7" & phone
-						
-		End If
-					
-	Else if Countries.SelectedCountry = Countries.Bulgaria Then
-		If Regex.IsMatch("((0)8[0-9]{8})",phone) Then
-			phone = "+359" & phone.SubString(1)
-						
-		else if Regex.IsMatch("((359)8[0-9]{8})",phone) Then
-			phone = "+" & phone
-		End If
-	End If
-	
-	
-	Private PJobOpen As TPrnJobFiscalOpen
-	PJobOpen.Initialize
-	PJobOpen.Phone = phone'\ProgramData.partnerPhone
-	masterP.AddJob(PJobOpen)
-	inn.InitializeFromBytesArray(SPAservice.urlResponse.GetBytes("UTF8"),0,SPAservice.urlResponse.GetBytes("UTF8").Length)
-	Log(inn.BytesAvailable)
-	Try
-		templates.Parse(inn, "xml")
-		
-		
-		For Each itemCart As CartItem In ProgramData.GroupItemsMat.Values
-			Private PJobItem As TPrnJobFiscalSellItem
-			PJobItem.Initialize
-			PJobItem.PLU = itemCart.itemCode
-			PJobItem.ItemName = itemCart.ItemName
-			PJobItem.Quantity = itemCart.qtty
-			PJobItem.Price = itemCart.itemPrice
-			PJobItem.ItemMeasure = itemCart.measureName
-			PJobItem.VatPercent = itemCart.VatPercent
-			PJobItem.VatIndex = itemCart.VatIndex
-			masterP.AddJob(PJobItem)
-		Next
-		
-		Private PJobPayment As TPrnJobFiscalPayment
-		PJobPayment.Initialize
-		PJobPayment.PayType = payMethod
-	
-		Select PJobPayment.PayType
-			Case 1:	PJobPayment.PaySum = cash
-			Case 2:	PJobPayment.PaySum = bank
-			Case 3:	PJobPayment.PaySum = card
-			Case 4:	PJobPayment.PaySum = vaucher
-		End Select
-		
-		masterP.AddJob(PJobPayment)
-		
-		Private PJobFiscalPrintText As TPrnJobFiscalPrintText
-		PJobFiscalPrintText.Initialize
-		PJobFiscalPrintText.Text = Device.WatermarkText
-		masterP.AddJob(PJobFiscalPrintText)
-		
-		Private PJobPrintBarcode As TPrnJobPrintBarcode
-		PJobPrintBarcode.Initialize
-		PJobPrintBarcode.Barcode = Device.WatermarkURL
-		masterP.AddJob(PJobPrintBarcode)
-		
-		Private PJobFinish As TPrnJobFiscalClose
-		PJobFinish.Initialize
-		masterP.AddJob(PJobFinish)
-		masterP.DoJobs
-	Catch
-		Log("Failed")
-	End Try
-End Sub
-
-Private Sub xml_StartElement (Uri As String, Name As String, Attributes As Attributes)
-	If Name.EqualsIgnoreCase("Item") Then 
-		itCart.Initialize
-		tagUP = 1
-	End If
-	If Name.EqualsIgnoreCase("Partner") Then	'обект
-		partner.Initialize
-		tagUP = 2
-	End If
-	If Name.EqualsIgnoreCase("Owner") Then   'партньор
-		workingUser.Initialize
-		tagUP = 3
-	End If
-End Sub
-
-'Построява се обкет номенклатура (Item) или групите във зависимост от инициализацията./ Items or groups are 
-'created depending on the initialization
-Private Sub xml_EndElement (Uri As String, Name As String, Text As StringBuilder)
-	Private paymentMethod As String
-	
-	Select tagUP
-		Case 1
-			If Name.EqualsIgnoreCase("Code") 		Then itCart.itemCode = Text
-			If Name.EqualsIgnoreCase("Name") 		Then itCart.ItemName = Text
-			If Name.EqualsIgnoreCase("Price") 		Then itCart.itemPrice = Text
-			If Name.EqualsIgnoreCase("Quantity") 	Then itCart.qtty = Text
-			If Name.EqualsIgnoreCase("TaxGroup") 	Then itCart.VATIndex = Text
-			If Name.EqualsIgnoreCase("TaxPercent")  Then itCart.VATPercent = Text
-			If Name.EqualsIgnoreCase("Discount") 	Then itCart.VATPercent = Text		
-			
-			If Name.EqualsIgnoreCase("Item") 	Then 
-				ProgramData.CurrentCompany.PricePercision = 2
-				Private itemCart As CartItem
-				
-				itemCart = CopyWorkingToLocalItem
-'				ProgramData.selectedObjectID = objectStorer.storeCode
-'				tempList.Add(itemCart)
-				ProgramData.GroupItemsMat.Put(itemCart.itemCode, itemCart)
-				
-			End If
-			
-		Case 2
-			If Name.EqualsIgnoreCase("Code") Then workingobject.storeCode = Text
-			If Name.EqualsIgnoreCase("Name") Then 
-				workingobject.storeName = Text
-			End If
-			If Name.EqualsIgnoreCase("Address") Then workingobject.storeAddress = Text
-			If Name.EqualsIgnoreCase("PriceGroup") Then workingobject.PriceGroup = Text - 1
-			If Name.EqualsIgnoreCase("City") Then partner.City = Text
-			If Name.EqualsIgnoreCase("Discount") Then partner.discount = Text
-			If Name.EqualsIgnoreCase("eMail") Then partner.email = Text
-			If Name.EqualsIgnoreCase("MOL") Then partner.mol = Text
-			If Name.EqualsIgnoreCase("Type") Then partner.PartnerType = Text
-			If Name.EqualsIgnoreCase("Phone") Then partner.phone = Text
-			If Name.EqualsIgnoreCase("CardNumber") Then partner.CardNumber = Text
-			
-			If Name.EqualsIgnoreCase("TaxNo") Then
-				If Text.ToString = "" Then  Text.Append("0")
-				partner.taxNo = Text
-			End If
-			
-			If Name.EqualsIgnoreCase("Partner") Then
-					Private partner As Partner
-					Private objectStorer As StoreObject
-
-					objectStorer = CopyWorkingToLocalObject
-
-					partner.Initialize
-					partner = Copy_WorkingToLocalObject
-					ProgramData.selectedPartnerID = partner.partnerCode
-					ProgramData.PartnersMap.Put(partner.partnerCode,partner)
-					If partner.Bulstat <> "" Then ProgramData.PartnersBulstatMap.Put(partner.Bulstat,partner.id)
-					If partner.CardNumber <> "" Then ProgramData.PartnersCardNumberMap.Put(partner.CardNumber,partner.id)
-					If partner.phone <> "" Then ProgramData.PartnersPhoneNumberMap.Put(partner.phone,partner.id)
-					
-					ProgramData.selectedObjectID = objectStorer.storeCode
-
-					ProgramData.ObjectsMap.Put(objectStorer.storeCode,objectStorer)
-
-			End If
-			
-		Case 3
-			If Name.EqualsIgnoreCase("Code") Then  ProgramData.selectedPartnerID = Text
-			If Name.EqualsIgnoreCase("Name") Then  workingUser.Name = Text
-			If Name.EqualsIgnoreCase("Group") Then  workingUser.GroupName = Text
-			If Name.EqualsIgnoreCase("Phone") Then  workingUser.phone = Text
-			If Name.EqualsIgnoreCase("eMail") Then  workingUser.email = Text
-			If Name.EqualsIgnoreCase("Address") Then  ProgramData.CurrentCompany.Address = Text
-			If Name.EqualsIgnoreCase("MOL") Then  ProgramData.CurrentCompany.ContactPerson = Text
-			If Name.EqualsIgnoreCase("VATID") Then  ProgramData.CurrentCompany.TaxNo = Text
-			If Name.EqualsIgnoreCase("TAXID") Then  ProgramData.CurrentCompany.INN = Text
-			If Name.EqualsIgnoreCase("City") Then  ProgramData.CurrentCompany.City = Text
-
-			If Name.EqualsIgnoreCase("Owner") Then
-			ProgramData.CurrentUser = UserCopyWorkingToLocalUser
-			End If			
-
-			
-	End Select
-	
-	If Name.EqualsIgnoreCase("Payment") Then
-		Select Name.EqualsIgnoreCase(paymentMethod)
-			Case paymentMethod.EqualsIgnoreCase("Cash"): payMethod = ProgramData.PAYMENT_CASH
-			Case paymentMethod.EqualsIgnoreCase("Account"): payMethod = ProgramData.PAYMENT_BANK
-			Case paymentMethod.EqualsIgnoreCase("Card"): payMethod = ProgramData.PAYMENT_CARD
-			Case paymentMethod.EqualsIgnoreCase("Voucher"): payMethod = ProgramData.PAYMENT_TALN
-		End Select
-	End If
-	
-	
-	If Name.EqualsIgnoreCase("Cash") Then cash = Text
-	If Name.EqualsIgnoreCase("Account") Then bank = Text
-	If Name.EqualsIgnoreCase("Card") Then card = Text
-	If Name.EqualsIgnoreCase("Voucher") Then vaucher = Text
-
-	
+	SPAservice.masterP.initPrintingScreen(settingsPanel, statusBtn)
 
 End Sub
 
-Private Sub CopyWorkingToLocalItem As CartItem
-	Private localitem As CartItem
-	localitem.Initialize
 
-	localitem.itemCode = itCart.itemCode
-	localitem.ItemName = itCart.ItemName
-	localitem.itemPrice = itCart.itemPrice
-	localitem.qtty = itCart.qtty
-	localitem.VATIndex = itCart.VATIndex
-	localitem.VATPercent = itCart.VATPercent
-	localitem.VATPercent = itCart.VATPercent
-
-	Return localitem
-End Sub
-
-Private Sub CopyWorkingToLocalObject As StoreObject
-	Private localitem As StoreObject
-	localitem.Initialize
-	localitem.storeCode = workingobject.storeCode
-	localitem.storeName = workingobject.storeName
-	localitem.storeAddress = workingobject.storeAddress
-	Return localitem
-End Sub
-
-Private Sub Copy_WorkingToLocalObject As Partner
-	Private localitem As Partner
-	localitem.Initialize
-'	localitem.CompanyID = partner.CompanyID
-'	localitem.ID = partner.ID
-	localitem.partnerCode = partner.partnerCode
-	localitem.CompanyName = partner.CompanyName
-	localitem.Address = partner.Address
-	localitem.PriceGroup = partner.PriceGroup
-	localitem.Bulstat = partner.Bulstat
-	localitem.CardNumber = partner.CardNumber
-	localitem.City = partner.City
-	localitem.discount = partner.discount
-	localitem.email = partner.email
-	localitem.mol = partner.mol
-	localitem.PartnerType = partner.PartnerType
-	localitem.phone=partner.phone
-	localitem.taxNo = partner.taxNo
-	Return localitem
-End Sub
-
-Private Sub UserCopyWorkingToLocalUser As CurrentUser
-	Private localitem As CurrentUser
-'	localitem.CompanyId = workingUser.CompanyId
-	localitem.Name = workingUser.Name
-	localitem.email = workingUser.email
-	localitem.phone = workingUser.phone
-	localitem.GroupName = workingUser.GroupName
-	Return localitem
-End Sub
-#End Region
 '
 'Private Sub fakeHolder_Click
 '	
@@ -539,7 +282,7 @@ End Sub
 
 Private Sub removePrinter_Click
 	If spnActivePrinter.SelectedIndex <> - 1 Then
-		masterP.removeFromActivePrinter(spnActivePrinter.SelectedIndex)
+		SPAservice.PrinterMainReference.removeFromActivePrinter(spnActivePrinter.SelectedIndex)
 		spnActivePrinter.RemoveAt(spnActivePrinter.SelectedIndex)
 	End If
 	SavePrinters
@@ -556,7 +299,7 @@ Sub Save_click
 				ActivePrinter.ScriptsTemplate = getScripts
 		
 				If Not(checkConnectionParams) Then Return			
-				masterP.addToActivePrinter(ActivePrinter)
+				SPAservice.PrinterMainReference.addToActivePrinter(ActivePrinter)
 				spnActivePrinter.Add(ActivePrinter.name)
 				refillSpPrinters
 				hideScreen
@@ -566,7 +309,7 @@ Sub Save_click
 			End Try
 			
 		Case mode_edit
-			Dim Acprinter As TActivePrinter = masterP.ActivePrinters.Get(selectedEditPrinterIndex)
+			Dim Acprinter As TActivePrinter = SPAservice.PrinterMainReference.ActivePrinters.Get(selectedEditPrinterIndex)
 			Dim connectionParams As TConnectionParameters = getConnectionParams
 			Dim scripts As PrinterScripts = getScripts
 			
@@ -733,7 +476,7 @@ public Sub fillSettings
 	printer.Visible = True
 	lblEditPrinter.Visible = False
 
-	Dim printerInfo As Printer = masterP.getInitialPrinterByName(selectedPrinterName)
+	Dim printerInfo As Printer = SPAservice.PrinterMainReference.getInitialPrinterByName(selectedPrinterName)
 	CallSub2(printerInfo.ref,"setSelected_Printer", printerInfo.id)	
 	Dim m As Map = CallSub(printerInfo.ref,"getDevice_SettingsRequirements")
 	
@@ -745,7 +488,7 @@ End Sub
 Private Sub fillEditSettings(APrinterIndex As Int)
 	'трябва проверка дали има принтер, който да се едитва
 	
-	Dim actprinter As TActivePrinter = masterP.ActivePrinters.Get(APrinterIndex)
+	Dim actprinter As TActivePrinter = SPAservice.PrinterMainReference.ActivePrinters.Get(APrinterIndex)
 	Dim m As Map = CallSub(actprinter.driver,"getDevice_SettingsRequirements")
 	Dim fiscalMode As Boolean = CallSub(actprinter.driver, "getFiscal_MemoryMode")
 	actprinter.connectionParams = CallSub(actprinter.driver, "getConnection_Parameters")
@@ -904,7 +647,7 @@ End Sub
 Public Sub refillSpPrinters
 	spnActivePrinter.Clear
 	
-	For Each printerAc As TActivePrinter In masterP.ActivePrinters
+	For Each printerAc As TActivePrinter In SPAservice.PrinterMainReference.ActivePrinters
 		spnActivePrinter.Add(printerAc.name)
 	Next
 	
@@ -1401,7 +1144,7 @@ Public Sub SavePrinters
 	Try
 		Dim RAF As RandomAccessFile
 		RAF.Initialize(Main.SHAREDFolder, "Printers.config", False)
-		RAF.WriteEncryptedObject(masterP.ActivePrinters, ProgramData.rafEncPass, RAF.CurrentPosition)
+		RAF.WriteEncryptedObject(SPAservice.masterP.ActivePrinters, ProgramData.rafEncPass, RAF.CurrentPosition)
 		RAF.Close
 	Catch
 		Log(LastException)

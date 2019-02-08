@@ -158,6 +158,7 @@ End Sub
 
 Private Sub Base_Click
 	CallSub(mCallBack, mEventName & "_Click")
+	Log("asd!!")
 End Sub
 
 Private Sub HolderFakeCounterButton_Click	

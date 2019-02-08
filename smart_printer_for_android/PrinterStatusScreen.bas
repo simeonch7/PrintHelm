@@ -48,8 +48,6 @@ End Sub
 Public Sub BuildScreen(Parent As Panel,buttonHolder As Panel)
 	floatingButton.BuildButtonNotifications(buttonHolder)
 	
-	BG.Visible = True
-	
 	Dim padding As Int = 1dip
 	Dim oPadding As Int = 6
 	
@@ -63,12 +61,8 @@ Public Sub BuildScreen(Parent As Panel,buttonHolder As Panel)
 	HelperFunctions.Apply_ViewStyle(outerHolder,Colors.White,ProgramData.COLOR_HEADER,ProgramData.COLOR_HEADER,ProgramData.COLOR_HEADER,ProgramData.COLOR_HEADER,ProgramData.COLOR_HEADER,ProgramData.COLOR_HEADER,6)
 	HelperFunctions.Apply_ViewStyle(holder,Colors.White,Colors.White,Colors.White,Colors.White,Colors.White,Colors.White,Colors.White,6)
 
-	If Main.ScreenOrientation = Main.orientationPortrait Then 'Portrait
-		BG.AddView(outerHolder,0,0,BG.Width,BG.Height*0.5)
-	Else								'landscape
-		BG.AddView(outerHolder,BG.Width*0.5,0,BG.Width*0.5,BG.Height)
-	End If
-	
+	BG.AddView(outerHolder,0,0,BG.Width,BG.Height*0.5)
+
 	showLeft = outerHolder.Left
 	hideLeft = BG.Width
 	
@@ -127,16 +121,12 @@ Private Sub show_Screen
 	lblTitle.Text = Main.translate.GetString("msgPrintingStatusTitle")
 	
 	BG.BringToFront
-	BG.BringToFront
-	BG.BringToFront
-	BG.BringToFront
+	outerHolder.BringToFront
 	BG.SetVisibleAnimated(500, True)
-	outerHolder.SetLayoutAnimated(500, showLeft,outerHolder.Top, outerHolder.Width, outerHolder.Height)
+	outerHolder.SetLayoutAnimated(500, showLeft,outerHolder.Top, 100%x, 50%y)
 	Log("Open SVSVSVSVSV")
-	BG.BringToFront
 	CallSub2(Main,"SetPrinterStatus_Reference",Me)	'Set main screen reference to this screen
-'	CallSub(Main, "Hide_PrinterButtons")
-	
+'	CallSub(Main, "Hide_PrinterButtons")	
 End Sub
 
 Public Sub hide_Screen
