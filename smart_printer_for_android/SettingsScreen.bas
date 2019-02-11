@@ -11,15 +11,16 @@ Version=8.3
 	Private LabelCountry, LabelLanguage, LabelPrinter, LabelAcPrinter, lblEditPrinter As Label
 	Private BoudRatesList As List
 	Private PrinterList As List
-	
-	
-	
-	
+	Private masterP As PrinterMain
+	Private templates As SaxParser
+	Private cash,card,bank,vaucher As Double
+	Private  payMethod As Int
+	Private inn As InputStream
 	Private getConnectionParamsFailed As Boolean = False	'Show if theres and error in the input of controls in ControlsMap
 	Private selectedPrinterName As String = ""				'Hold Name of the selected printer				
 	Private controlsMap As Map								'Hold all the settings controls
 	Private spnActivePrinter As Spinner
-	Private btnPrinterRemove, btnPrinterAdd, btnPrinterEdt, pnlEditImg As Button
+	Private btnPrinterRemove, btnPrinterAdd, btnPrinterEdt, pnlEditImg As Label
 	Private Const ButtonsRounding As Int = 5
 	Private BTmap As Map
 
@@ -47,7 +48,11 @@ Version=8.3
 	Private selectedEditPrinterIndex As Int
 
 	
-	
+	Private itCart As CartItem
+	Private partner As Partner
+	Private workingUser As CurrentUser	
+	Private workingobject As StoreObject
+	Private tagUP As Int = 0
 	Private cHeadersList, cFootersList, cDetailesList, cTotalsList As List
 	
 	
@@ -55,7 +60,7 @@ End Sub
 
 
 
-Public Sub Initialize(target As Panel)
+Public Sub Initialize
 	settingsPanel.Initialize("fakeHolder")
 	
 	configPanel.Initialize("configPanel")
@@ -88,18 +93,21 @@ Public Sub Initialize(target As Panel)
 	LabelLanguage.Initialize("languageLabel")
 	LabelPrinter.Initialize("deviceLabel")
 	LabelAcPrinter.Initialize("AcPrnLabel")
-	saveSettings.Initialize("Save")
-	exitSettings.Initialize("exit")
-	statusBtn.Initialize("")
+	
+	
 	spnActivePrinter.Initialize("PrinterChoose")
+	btnPrinterAdd.Initialize("AddbtnPrinter")
 	btnPrinterRemove.Initialize("removePrinter")
 	pnlEditImg.Initialize("editPrinter")
 	edtbtnBG= pnlEditImg.SetBackgroundImage(LoadBitmap(File.DirAssets,"edit.png"))
 	edtbtnBG.Gravity = Gravity.CENTER
 	btnPrinterEdt.Initialize("EditPrinter")
-	btnPrinterAdd.Initialize("AddbtnPrinter")
-	spnMac.Initialize("")
 	
+	statusBtn.Initialize("")
+	
+	saveSettings.Initialize("Save")
+	exitSettings.Initialize("exit")
+	spnMac.Initialize("")
 	
 	BoudRatesList.Initialize
 	
@@ -109,10 +117,10 @@ Public Sub Initialize(target As Panel)
 	BTmap.Initialize
 
 	ColorPickerAndLabelTexts
-	
+	masterP.Initialize(Me)
 	refillSpPrinters
 	PrinterList.Initialize
-	
+	templates.Initialize
 	BoudRatesList.Add("1200")
 	BoudRatesList.Add("2400")
 	BoudRatesList.Add("4800")
@@ -127,18 +135,17 @@ Public Sub Initialize(target As Panel)
 	
 	configPanel.Color = Colors.White
 	countourPanel.Color = ProgramData.COLOR_BUTTON_NORMAL
-	HelperFunctions.Apply_ViewStyle(saveSettings, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 	HelperFunctions.Apply_ViewStyle(country, Colors.White, COLOR_NormalBottom, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 	HelperFunctions.Apply_ViewStyle(language, Colors.White, COLOR_NormalBottom, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
-	HelperFunctions.Apply_ViewStyle(printer, Colors.White, COLOR_NormalBottom, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 	HelperFunctions.Apply_ViewStyle(spnActivePrinter, Colors.White, COLOR_NormalBottom, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
-	HelperFunctions.Apply_ViewStyle(exitSettings, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
-	HelperFunctions.Apply_ViewStyle(statusBtn, Colors.White, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.BUTTON_ROUNDING + ButtonRounding)
-	HelperFunctions.Apply_ViewStyle(printer, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
-	HelperFunctions.Apply_ViewStyle(btnPrinterRemove, Colors.White, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.BUTTON_ROUNDING + ButtonsRounding)
 	HelperFunctions.Apply_ViewStyle(btnPrinterAdd, Colors.White, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.BUTTON_ROUNDING + ButtonsRounding)
+	HelperFunctions.Apply_ViewStyle(btnPrinterRemove, Colors.White, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.BUTTON_ROUNDING + ButtonsRounding)
 	HelperFunctions.Apply_ViewStyle(btnPrinterEdt, Colors.White, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.BUTTON_ROUNDING + ButtonsRounding)
+	HelperFunctions.Apply_ViewStyle(statusBtn, Colors.White, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.BUTTON_ROUNDING + ButtonRounding)
+	HelperFunctions.Apply_ViewStyle(printer, Colors.White, COLOR_NormalBottom, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 	HelperFunctions.Apply_ViewStyle(spnMac, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
+	HelperFunctions.Apply_ViewStyle(saveSettings, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
+	HelperFunctions.Apply_ViewStyle(exitSettings, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 	country.SetBackgroundImage(ImageResources.BMP_SpinnerBack)
 	language.SetBackgroundImage(ImageResources.BMP_SpinnerBack)
 	printer.SetBackgroundImage(ImageResources.BMP_SpinnerBack)
@@ -152,37 +159,18 @@ Public Sub Initialize(target As Panel)
 	lblEditPrinter.Gravity = Gravity.CENTER
 	
 	
+	setSettingsScrtoActivity
 	SettingsUI
-'	setSettingsScrtoActivity
 	refillSpPrinters
-	target.AddView(settingsPanel, 0, 0, 100%x, 100%y)
+	
 End Sub
 
 public Sub setSettingsScrtoActivity
-'	Dim target As Panel
-'	target =CallSub(Main, "Get_Activity")
-'	target.RemoveAllViews
-'	target.AddView(settingsPanel, 0, 0, 100%x, 100%y)
+	Dim target As Panel
+	target =CallSub(Main, "Get_Activity")
+	target.RemoveAllViews
+	target.AddView(settingsPanel, 0, 0, 100%x, 100%y)
 End Sub
-
-'Public Sub buttonsHide
-'	If btnPrinterRemove.Enabled = True Then	
-'		btnPrinterRemove.Visible = False
-'		btnPrinterAdd.Visible = False
-'		btnPrinterEdt.Visible = False
-'		spnActivePrinter.Visible = False
-'	End If
-'End Sub
-'
-'Public Sub buttonsShow
-'	If btnPrinterRemove.Visible  = False Then
-'		btnPrinterRemove.Visible = True
-'		btnPrinterAdd.Visible = True
-'		btnPrinterEdt.Visible = True
-'		spnActivePrinter.Visible = True
-'	End If
-'End Sub
-
 
 Sub CountriesFill
 	For Each m As String In Countries.getCountries.Keys
@@ -196,7 +184,7 @@ Private Sub languageprinterFill
 End Sub
 
 Private Sub deviceprinterFill
-	PrinterList = SPAservice.masterP.PrintersList
+	PrinterList = masterP.PrintersList
 
 	printer.Clear
 	printer.AddAll(PrinterList)
@@ -206,7 +194,7 @@ Sub SettingsUI
 	
 	settingsPanel.AddView(countourPanel, -100%x, 50%y, 100%x, 50%y)
 	countourPanel.AddView(configPanel, 5dip, 5dip, 100%x - 10dip, 50%y - 10dip)
-		
+
 	settingsPanel.AddView(LabelCountry, 0%x, 8%y, 100%x, 5%y)
 	LabelCountry.Gravity = Gravity.CENTER_HORIZONTAL
 	settingsPanel.AddView(country, 30%x, LabelCountry.Top + LabelCountry.Height, 40%x, 5%y)
@@ -222,6 +210,11 @@ Sub SettingsUI
 	
 	settingsPanel.AddView(statusBtn, 100%x - 12%x, 2%y, 10%x, 6%y)
 	
+	settingsPanel.AddView(btnPrinterAdd, spnActivePrinter.Left + spnActivePrinter.Width - (15%x + 6 * UISizes.DefaultPadding)* 1.5, spnActivePrinter.top + spnActivePrinter.Height + UISizes.DefaultPadding, 5%x, 5%y)
+	settingsPanel.AddView(btnPrinterRemove, btnPrinterAdd.Left + btnPrinterAdd.Width + UISizes.DefaultPadding, btnPrinterAdd.top, 5%x, 5%y)
+	settingsPanel.AddView(btnPrinterEdt, btnPrinterRemove.Left + btnPrinterRemove.Width + UISizes.DefaultPadding, btnPrinterAdd.top, 5%x, 5%y)
+	settingsPanel.AddView(pnlEditImg, btnPrinterRemove.Left + btnPrinterRemove.Width + UISizes.DefaultPadding, btnPrinterAdd.top, 5%x, 5%y)
+	
 	'PrinterSettingsPanel
 	configPanel.AddView(LabelPrinter, 2%x, 2%y, 35%x, 5%y)
 	LabelPrinter.Gravity = Gravity.CENTER_VERTICAL
@@ -231,23 +224,271 @@ Sub SettingsUI
 	configPanel.AddView(saveSettings, configPanel.Width -25%x, configPanel.Height - 20%y, 20%x, 5%y)
 	configPanel.AddView(exitSettings, saveSettings.Left, saveSettings.top + saveSettings.Height + 3%y, 20%x, 5%y)
 	
-	
-	settingsPanel.AddView(btnPrinterAdd, spnActivePrinter.Left + spnActivePrinter.Width - (15%x + 6 * UISizes.DefaultPadding)* 1.5, spnActivePrinter.top + spnActivePrinter.Height + UISizes.DefaultPadding, 5%x, 5%y)
-	settingsPanel.AddView(btnPrinterRemove, btnPrinterAdd.Left + btnPrinterAdd.Width + UISizes.DefaultPadding, btnPrinterAdd.top, 5%x, 5%y)
-	settingsPanel.AddView(btnPrinterEdt, btnPrinterRemove.Left + btnPrinterRemove.Width + UISizes.DefaultPadding, btnPrinterAdd.top, 5%x, 5%y)
-	settingsPanel.AddView(pnlEditImg, btnPrinterRemove.Left + btnPrinterRemove.Width + UISizes.DefaultPadding, btnPrinterAdd.top, 5%x, 5%y)
 
 	Dim heightSV As Int
 	heightSV = configPanel.Height - LabelPrinter.Height - printer.Height
 	BTSettingsSV.Initialize(heightSV)
-
 	configPanel.AddView(BTSettingsSV, 2%x, printer.Top + printer.Height + 1%y, configPanel.Width * 0.7, heightSV)
 
-	SPAservice.masterP.initPrintingScreen(settingsPanel, statusBtn)
+	masterP.initPrintingScreen(settingsPanel, statusBtn)
+End Sub
+
+#Region Printing
+Public Sub POS_Print
+	Dim phone As String = ProgramData.partnerPhone
+	
+	If Countries.SelectedCountry = Countries.Russia Then
+		If Regex.IsMatch("((007)9([0-9]){9})", phone) Then
+			phone = "+7" & phone.SubString(3)
+						
+		else if Regex.IsMatch("((7|8)9([0-9]){9})", phone) Then
+			phone = "+7" & phone.SubString(1)
+					
+		else if Regex.IsMatch("(9([0-9]){9})", phone) Then
+			phone = "+7" & phone
+									
+	End If
+			
+					
+	Else if Countries.SelectedCountry = Countries.Bulgaria Then
+		If Regex.IsMatch("((0)8[0-9]{8})",phone) Then
+			phone = "+359" & phone.SubString(1)
+						
+		else if Regex.IsMatch("((359)8[0-9]{8})",phone) Then
+			phone = "+" & phone
+		End If
+	End If
+	
+	
+	Private PJobOpen As TPrnJobFiscalOpen
+	PJobOpen.Initialize
+	PJobOpen.Phone = phone'\ProgramData.partnerPhone
+	masterP.AddJob(PJobOpen)
+	inn.InitializeFromBytesArray(SPAservice.urlResponse.GetBytes("UTF8"),0,SPAservice.urlResponse.GetBytes("UTF8").Length)
+	Log(inn.BytesAvailable)
+	Try
+		templates.Parse(inn, "xml")
+		
+		
+		For Each itemCart As CartItem In ProgramData.GroupItemsMat.Values
+			Private PJobItem As TPrnJobFiscalSellItem
+			PJobItem.Initialize
+			PJobItem.PLU = itemCart.itemCode
+			PJobItem.ItemName = itemCart.ItemName
+			PJobItem.Quantity = itemCart.qtty
+			PJobItem.Price = itemCart.itemPrice
+			PJobItem.ItemMeasure = itemCart.measureName
+			PJobItem.VatPercent = itemCart.VatPercent
+			PJobItem.VatIndex = itemCart.VatIndex
+			masterP.AddJob(PJobItem)
+		Next
+		
+		Private PJobPayment As TPrnJobFiscalPayment
+		PJobPayment.Initialize
+		PJobPayment.PayType = payMethod
+	
+		Select PJobPayment.PayType
+			Case 1:	PJobPayment.PaySum = cash
+			Case 2:	PJobPayment.PaySum = bank
+			Case 3:	PJobPayment.PaySum = card
+			Case 4:	PJobPayment.PaySum = vaucher
+		End Select
+		
+		masterP.AddJob(PJobPayment)
+		
+		Private PJobFiscalPrintText As TPrnJobFiscalPrintText
+		PJobFiscalPrintText.Initialize
+		PJobFiscalPrintText.Text = Device.WatermarkText
+		masterP.AddJob(PJobFiscalPrintText)
+		
+		Private PJobPrintBarcode As TPrnJobPrintBarcode
+		PJobPrintBarcode.Initialize
+		PJobPrintBarcode.Barcode = Device.WatermarkURL
+		masterP.AddJob(PJobPrintBarcode)
+		
+		Private PJobFinish As TPrnJobFiscalClose
+		PJobFinish.Initialize
+		masterP.AddJob(PJobFinish)
+		masterP.DoJobs
+	Catch
+		Log("Failed")
+	End Try
+End Sub
+
+Private Sub xml_StartElement (Uri As String, Name As String, Attributes As Attributes)
+	If Name.EqualsIgnoreCase("Item") Then 
+		itCart.Initialize
+		tagUP = 1
+	End If
+	If Name.EqualsIgnoreCase("Partner") Then	'обект
+		partner.Initialize
+		tagUP = 2
+	End If
+	If Name.EqualsIgnoreCase("Owner") Then   'партньор
+		workingUser.Initialize
+		tagUP = 3
+	End If
+End Sub
+
+'Построява се обкет номенклатура (Item) или групите във зависимост от инициализацията./ Items or groups are 
+'created depending on the initialization
+Private Sub xml_EndElement (Uri As String, Name As String, Text As StringBuilder)
+	Private paymentMethod As String
+	
+	Select tagUP
+		Case 1
+			If Name.EqualsIgnoreCase("Code") 		Then itCart.itemCode = Text
+			If Name.EqualsIgnoreCase("Name") 		Then itCart.ItemName = Text
+			If Name.EqualsIgnoreCase("Price") 		Then itCart.itemPrice = Text
+			If Name.EqualsIgnoreCase("Quantity") 	Then itCart.qtty = Text
+			If Name.EqualsIgnoreCase("TaxGroup") 	Then itCart.VATIndex = Text
+			If Name.EqualsIgnoreCase("TaxPercent")  Then itCart.VATPercent = Text
+			If Name.EqualsIgnoreCase("Discount") 	Then itCart.VATPercent = Text		
+			
+			If Name.EqualsIgnoreCase("Item") 	Then 
+				ProgramData.CurrentCompany.PricePercision = 2
+				Private itemCart As CartItem
+				
+				itemCart = CopyWorkingToLocalItem
+'				ProgramData.selectedObjectID = objectStorer.storeCode
+'				tempList.Add(itemCart)
+				ProgramData.GroupItemsMat.Put(itemCart.itemCode, itemCart)
+				
+			End If
+			
+		Case 2
+			If Name.EqualsIgnoreCase("Code") Then workingobject.storeCode = Text
+			If Name.EqualsIgnoreCase("Name") Then 
+				workingobject.storeName = Text
+			End If
+			If Name.EqualsIgnoreCase("Address") Then workingobject.storeAddress = Text
+			If Name.EqualsIgnoreCase("PriceGroup") Then workingobject.PriceGroup = Text - 1
+			If Name.EqualsIgnoreCase("City") Then partner.City = Text
+			If Name.EqualsIgnoreCase("Discount") Then partner.discount = Text
+			If Name.EqualsIgnoreCase("eMail") Then partner.email = Text
+			If Name.EqualsIgnoreCase("MOL") Then partner.mol = Text
+			If Name.EqualsIgnoreCase("Type") Then partner.PartnerType = Text
+			If Name.EqualsIgnoreCase("Phone") Then partner.phone = Text
+			If Name.EqualsIgnoreCase("CardNumber") Then partner.CardNumber = Text
+			
+			If Name.EqualsIgnoreCase("TaxNo") Then
+				If Text.ToString = "" Then  Text.Append("0")
+				partner.taxNo = Text
+			End If
+			
+			If Name.EqualsIgnoreCase("Partner") Then
+					Private partner As Partner
+					Private objectStorer As StoreObject
+
+					objectStorer = CopyWorkingToLocalObject
+
+					partner.Initialize
+					partner = Copy_WorkingToLocalObject
+					ProgramData.selectedPartnerID = partner.partnerCode
+					ProgramData.PartnersMap.Put(partner.partnerCode,partner)
+					If partner.Bulstat <> "" Then ProgramData.PartnersBulstatMap.Put(partner.Bulstat,partner.id)
+					If partner.CardNumber <> "" Then ProgramData.PartnersCardNumberMap.Put(partner.CardNumber,partner.id)
+					If partner.phone <> "" Then ProgramData.PartnersPhoneNumberMap.Put(partner.phone,partner.id)
+					
+					ProgramData.selectedObjectID = objectStorer.storeCode
+
+					ProgramData.ObjectsMap.Put(objectStorer.storeCode,objectStorer)
+
+			End If
+			
+		Case 3
+			If Name.EqualsIgnoreCase("Code") Then  ProgramData.selectedPartnerID = Text
+			If Name.EqualsIgnoreCase("Name") Then  workingUser.Name = Text
+			If Name.EqualsIgnoreCase("Group") Then  workingUser.GroupName = Text
+			If Name.EqualsIgnoreCase("Phone") Then  workingUser.phone = Text
+			If Name.EqualsIgnoreCase("eMail") Then  workingUser.email = Text
+			If Name.EqualsIgnoreCase("Address") Then  ProgramData.CurrentCompany.Address = Text
+			If Name.EqualsIgnoreCase("MOL") Then  ProgramData.CurrentCompany.ContactPerson = Text
+			If Name.EqualsIgnoreCase("VATID") Then  ProgramData.CurrentCompany.TaxNo = Text
+			If Name.EqualsIgnoreCase("TAXID") Then  ProgramData.CurrentCompany.INN = Text
+			If Name.EqualsIgnoreCase("City") Then  ProgramData.CurrentCompany.City = Text
+
+			If Name.EqualsIgnoreCase("Owner") Then
+			ProgramData.CurrentUser = UserCopyWorkingToLocalUser
+			End If			
+
+			
+	End Select
+	
+	If Name.EqualsIgnoreCase("Payment") Then
+		Select Name.EqualsIgnoreCase(paymentMethod)
+			Case paymentMethod.EqualsIgnoreCase("Cash"): payMethod = ProgramData.PAYMENT_CASH
+			Case paymentMethod.EqualsIgnoreCase("Account"): payMethod = ProgramData.PAYMENT_BANK
+			Case paymentMethod.EqualsIgnoreCase("Card"): payMethod = ProgramData.PAYMENT_CARD
+			Case paymentMethod.EqualsIgnoreCase("Voucher"): payMethod = ProgramData.PAYMENT_TALN
+		End Select
+	End If
+	
+	
+	If Name.EqualsIgnoreCase("Cash") Then cash = Text
+	If Name.EqualsIgnoreCase("Account") Then bank = Text
+	If Name.EqualsIgnoreCase("Card") Then card = Text
+	If Name.EqualsIgnoreCase("Voucher") Then vaucher = Text
+
+	
 
 End Sub
 
+Private Sub CopyWorkingToLocalItem As CartItem
+	Private localitem As CartItem
+	localitem.Initialize
 
+	localitem.itemCode = itCart.itemCode
+	localitem.ItemName = itCart.ItemName
+	localitem.itemPrice = itCart.itemPrice
+	localitem.qtty = itCart.qtty
+	localitem.VATIndex = itCart.VATIndex
+	localitem.VATPercent = itCart.VATPercent
+	localitem.VATPercent = itCart.VATPercent
+
+	Return localitem
+End Sub
+
+Private Sub CopyWorkingToLocalObject As StoreObject
+	Private localitem As StoreObject
+	localitem.Initialize
+	localitem.storeCode = workingobject.storeCode
+	localitem.storeName = workingobject.storeName
+	localitem.storeAddress = workingobject.storeAddress
+	Return localitem
+End Sub
+
+Private Sub Copy_WorkingToLocalObject As Partner
+	Private localitem As Partner
+	localitem.Initialize
+'	localitem.CompanyID = partner.CompanyID
+'	localitem.ID = partner.ID
+	localitem.partnerCode = partner.partnerCode
+	localitem.CompanyName = partner.CompanyName
+	localitem.Address = partner.Address
+	localitem.PriceGroup = partner.PriceGroup
+	localitem.Bulstat = partner.Bulstat
+	localitem.CardNumber = partner.CardNumber
+	localitem.City = partner.City
+	localitem.discount = partner.discount
+	localitem.email = partner.email
+	localitem.mol = partner.mol
+	localitem.PartnerType = partner.PartnerType
+	localitem.phone=partner.phone
+	localitem.taxNo = partner.taxNo
+	Return localitem
+End Sub
+
+Private Sub UserCopyWorkingToLocalUser As CurrentUser
+	Private localitem As CurrentUser
+'	localitem.CompanyId = workingUser.CompanyId
+	localitem.Name = workingUser.Name
+	localitem.email = workingUser.email
+	localitem.phone = workingUser.phone
+	localitem.GroupName = workingUser.GroupName
+	Return localitem
+End Sub
+#End Region
 '
 'Private Sub fakeHolder_Click
 '	
@@ -276,13 +517,17 @@ Sub ColorPickerAndLabelTexts
 	spnActivePrinter.DropdownTextColor = Colors.White
 
 	btnPrinterRemove.Text = "-"
+	btnPrinterRemove.Gravity = Gravity.CENTER
+	btnPrinterRemove.Textsize = 19
 	btnPrinterAdd.Text = "+"
+	btnPrinterAdd.Gravity = Gravity.CENTER
+	btnPrinterAdd.TextSize = 19
 
 End Sub
 
 Private Sub removePrinter_Click
 	If spnActivePrinter.SelectedIndex <> - 1 Then
-		SPAservice.PrinterMainReference.removeFromActivePrinter(spnActivePrinter.SelectedIndex)
+		masterP.removeFromActivePrinter(spnActivePrinter.SelectedIndex)
 		spnActivePrinter.RemoveAt(spnActivePrinter.SelectedIndex)
 	End If
 	SavePrinters
@@ -299,7 +544,7 @@ Sub Save_click
 				ActivePrinter.ScriptsTemplate = getScripts
 		
 				If Not(checkConnectionParams) Then Return			
-				SPAservice.PrinterMainReference.addToActivePrinter(ActivePrinter)
+				masterP.addToActivePrinter(ActivePrinter)
 				spnActivePrinter.Add(ActivePrinter.name)
 				refillSpPrinters
 				hideScreen
@@ -309,7 +554,8 @@ Sub Save_click
 			End Try
 			
 		Case mode_edit
-			Dim Acprinter As TActivePrinter = SPAservice.PrinterMainReference.ActivePrinters.Get(selectedEditPrinterIndex)
+			If Not (spnActivePrinter.size > 0 )Then Return
+			Dim Acprinter As TActivePrinter = masterP.ActivePrinters.Get(selectedEditPrinterIndex)
 			Dim connectionParams As TConnectionParameters = getConnectionParams
 			Dim scripts As PrinterScripts = getScripts
 			
@@ -476,7 +722,7 @@ public Sub fillSettings
 	printer.Visible = True
 	lblEditPrinter.Visible = False
 
-	Dim printerInfo As Printer = SPAservice.PrinterMainReference.getInitialPrinterByName(selectedPrinterName)
+	Dim printerInfo As Printer = masterP.getInitialPrinterByName(selectedPrinterName)
 	CallSub2(printerInfo.ref,"setSelected_Printer", printerInfo.id)	
 	Dim m As Map = CallSub(printerInfo.ref,"getDevice_SettingsRequirements")
 	
@@ -488,7 +734,7 @@ End Sub
 Private Sub fillEditSettings(APrinterIndex As Int)
 	'трябва проверка дали има принтер, който да се едитва
 	
-	Dim actprinter As TActivePrinter = SPAservice.PrinterMainReference.ActivePrinters.Get(APrinterIndex)
+	Dim actprinter As TActivePrinter = masterP.ActivePrinters.Get(APrinterIndex)
 	Dim m As Map = CallSub(actprinter.driver,"getDevice_SettingsRequirements")
 	Dim fiscalMode As Boolean = CallSub(actprinter.driver, "getFiscal_MemoryMode")
 	actprinter.connectionParams = CallSub(actprinter.driver, "getConnection_Parameters")
@@ -547,7 +793,6 @@ End Sub
 private Sub FillControls(connectionParams As TConnectionParameters)
 	For Each key As Int In controlsMap.Keys
 		Dim control As Object = controlsMap.Get(key)
-		Log(control)
 		Select key
 			Case Main.PS_BaudRate		
 				Dim cSpinner As Spinner = control
@@ -647,7 +892,7 @@ End Sub
 Public Sub refillSpPrinters
 	spnActivePrinter.Clear
 	
-	For Each printerAc As TActivePrinter In SPAservice.PrinterMainReference.ActivePrinters
+	For Each printerAc As TActivePrinter In masterP.ActivePrinters
 		spnActivePrinter.Add(printerAc.name)
 	Next
 	
@@ -664,7 +909,6 @@ Private Sub getConnectionParams As TConnectionParameters
 
 				If cSpinner.SelectedIndex = -1 Then : getConnectionParamsFailed = True
 				Else : connectionParams.BaudRate = cSpinner.SelectedItem 
-					Log(connectionParams.baudrate)
 				End If
 				
 			Case Main.PS_IPAddress
@@ -1029,6 +1273,7 @@ private Sub GenerateTotals(SV As ScrollView,top As Int) As Int 'ignore
 	'Build Add Button
 	btnAdd.Initialize("addTotals")
 	btnAdd.Text = "+"
+
 	HelperFunctions.Apply_ViewStyle(btnAdd, Colors.White, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_DISABLED, ProgramData.COLOR_BUTTON_DISABLED, 3)
 	HelperFunctions.Remove_Padding(btnAdd)
 	outTotalsHolder.AddView(btnAdd,title.Left + title.Width + UISizes.DefaultPadding,0,cHeight,cHeight)
@@ -1144,7 +1389,7 @@ Public Sub SavePrinters
 	Try
 		Dim RAF As RandomAccessFile
 		RAF.Initialize(Main.SHAREDFolder, "Printers.config", False)
-		RAF.WriteEncryptedObject(SPAservice.masterP.ActivePrinters, ProgramData.rafEncPass, RAF.CurrentPosition)
+		RAF.WriteEncryptedObject(masterP.ActivePrinters, ProgramData.rafEncPass, RAF.CurrentPosition)
 		RAF.Close
 	Catch
 		Log(LastException)

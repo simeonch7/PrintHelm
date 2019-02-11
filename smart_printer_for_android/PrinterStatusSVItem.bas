@@ -337,7 +337,6 @@ Public Sub changeStatus(PrinterStatus As Int)
 	Status = PrinterStatus
 	swapFoot(printOK)
 	lblStatus.Text = PrinterConstants.getPrinterStatusMessage(Status)
-	Log("XXX >>> READY STATUS IN : " & Main.SelectedLanguage & " = " & lblStatus.Text)
 	calculateItemHeight
 	content.Height = Height_Content
 End Sub

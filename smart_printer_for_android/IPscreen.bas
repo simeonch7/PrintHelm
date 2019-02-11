@@ -15,7 +15,7 @@ Private Sub Class_Globals
 	Private BMP_Options As Bitmap
 	
 	Private ETColorTP As Int = 0xFF87B0EA
-	Private SettingsScr As SettingsScreen
+	Public SettingsScr As SettingsScreen
 End Sub
 
 'Инициализиране на обекта / Initializes the object
@@ -42,16 +42,15 @@ Public Sub Initialize
 End Sub
 
 
-'public Sub setPanelToActivity
-'	Dim target As Panel
-'	target =CallSub(Main, "Get_Activity")
-'	target.RemoveAllViews
-'	target.AddView(loginPanel, 0, 0, 100%x, 100%y)
-'End Sub
+public Sub setPanelToActivity
+	Dim target As Panel
+	target =CallSub(Main, "Get_Activity")
+	target.RemoveAllViews
+	target.AddView(loginPanel, 0, 0, 100%x, 100%y)
+End Sub
 
 ' Построяване на екрана / Builds the UI of the screen
-Public Sub build_Screen	(target As Panel)
-	target.AddView(loginPanel, 0, 0, 100%x, 100%y)
+Public Sub build_Screen	
 	loginPanel_Configurations
 	Private edtWidth,edtHeight As Int
 	Private btnWidth,btnHeight As Int
@@ -125,13 +124,14 @@ End Sub
 
 'Метода, който вкарва потребителя в системата / Method for log in 
 Private Sub ButtonloginPanel_Click
-	SettingsScr.Initialize(loginPanel)
+	SettingsScr.Initialize
+
 	Main.SCREEN_ID = Main.SCREEN_SETTINGS
 End Sub
 
 public Sub goBackToLoginScreen
 	Main.SCREEN_ID = Main.SCREEN_LOGIN
-'	setPanelToActivity
+	setPanelToActivity
 End Sub
 
 Public Sub isConnect_Click
