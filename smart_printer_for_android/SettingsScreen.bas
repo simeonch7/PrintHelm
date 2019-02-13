@@ -5,32 +5,39 @@ Type=Class
 Version=8.3
 @EndOfDesignText@
   Sub Class_Globals
-	Private settingsPanel, countourPanel, configPanel, statusBtn As Panel
-	Private country, language, printer, spnMac As Spinner
-	Private IPport, IPaddress As EditText
-	Private LabelCountry, LabelLanguage, LabelPrinter, LabelAcPrinter, lblEditPrinter As Label
-	Private BoudRatesList As List
-	Private PrinterList As List
-	Private masterP As PrinterMain
-	Private templates As SaxParser
-	Private cash,card,bank,vaucher As Double
-	Private  payMethod As Int
-	Private inn As InputStream
-	Private getConnectionParamsFailed As Boolean = False	'Show if theres and error in the input of controls in ControlsMap
-	Private selectedPrinterName As String = ""				'Hold Name of the selected printer				
-	Private controlsMap As Map								'Hold all the settings controls
-	Private spnActivePrinter As Spinner
-	Private btnPrinterRemove, btnPrinterAdd, btnPrinterEdt, pnlEditImg As Label
-	Private Const ButtonsRounding As Int = 5
-	Private BTmap As Map
-
-	Private BTSettingsSV As ScrollView						'SV for all the settings controls
-	Private HFHeight,HFsingleLineHeight As Int
+  	
+	Private countourPanel, configPanel, statusBtn As Panel
+	Public settingsPanel As Panel
 	Private inFooterHolder, outFooterHolder, outHeaderHolder, inHeaderHolder, outDetailesHolder, inDetailesHolder, outTotalsHolder, inTotalsHolder As Panel
+	
+	Private country, language, printer, spnActivePrinter, spnMac As Spinner
+	
+	Private IPport, IPaddress As EditText
+	
+	Private LabelCountry, LabelLanguage, LabelPrinter, LabelAcPrinter, lblEditPrinter, btnPrinterRemove, btnPrinterAdd, btnPrinterEdt, pnlEditImg As Label
 
 	Private tempList As List
+	Private PrinterList As List
+	Private BoudRatesList As List	
+
+	Private BTmap As Map
+	Private controlsMap As Map
+
+	Private masterP As PrinterMain
+	
+	Private inn As InputStream
+	Private templates As SaxParser
+	
+	Private getConnectionParamsFailed As Boolean = False	'Show if theres and error in the input of controls in ControlsMap
+	Private selectedPrinterName As String = ""				'Hold Name of the selected printer				
+	
+						'Hold all the settings controls
+
+	Private BTSettingsSV As ScrollView						'SV for all the settings controls
+
 	Private saveSettings, exitSettings As Button
 			
+	'Style 
 	Private Const COLOR_NormalTop As Int 	  =	0xff4ac2ff	'Light blue
 	Private Const COLOR_NormalBottom As Int   =	0xff149be0	'Darker blue
 	Private Const COLOR_PressedTop As Int 	  =	0xff2cb7ff	'Same light blue
@@ -38,15 +45,23 @@ Version=8.3
 	Private Const COLOR_DisabledTop As Int    =	0x66040509	'Semi-transperant black
 	Private Const COLOR_DisabledBottom As Int =	0x66040509	'Semi-transperant black
 	Private Const ButtonRounding As Int = 60	'How much rounding is done on the buttons & edit text corners
-'	Private Const COLOR_Dropdown As Int = 		0xFF012136
-
+	Private Const ButtonsRounding As Int = 5	'for small buttons
+	Private HFHeight,HFsingleLineHeight As Int
+	
+	
 	Private background, edtbtnBG As BitmapDrawable
 	
+	'settings of printer
 	Public mode As Int
 	Public const mode_add As Int = 1
 	Public const mode_edit As Int = 2
+	
+	
 	Private selectedEditPrinterIndex As Int
 
+	
+	Private cash,card,bank,vaucher As Double
+	Private  payMethod As Int
 	
 	Private itCart As CartItem
 	Private partner As Partner
@@ -54,7 +69,6 @@ Version=8.3
 	Private workingobject As StoreObject
 	Private tagUP As Int = 0
 	Private cHeadersList, cFootersList, cDetailesList, cTotalsList As List
-	
 	
 End Sub
 
@@ -65,39 +79,41 @@ Public Sub Initialize
 	
 	configPanel.Initialize("configPanel")
 	countourPanel.Initialize("countourPanel")
-	cFootersList.Initialize
+	
 	cDetailesList.Initialize
 	cHeadersList.Initialize
+	cFootersList.Initialize
 	cTotalsList.Initialize
 	
-	background.Initialize(LoadBitmap(File.DirAssets, "smartBG.jpg"))
-	edtbtnBG.Initialize(LoadBitmap(File.DirAssets, "edit.png"))
+	background.Initialize(LoadBitmap(File.DirAssets, "smartBG.jpg"))	
+	settingsPanel.Color = Colors.Transparent
 	
-	settingsPanel.Background = background
 	
-	country.Initialize("countrySpinner")
 	Countries.Initialize
+	country.Initialize("countrySpinner")
 	CountriesFill
 	country.SelectedIndex = UConfig.USConfig.country
+	
 	language.Initialize("languageSpinner")
 	languageprinterFill
 	language.SelectedIndex = language.IndexOf(Main.SelectedLanguage)
 	
 	printer.Initialize("deviceSpinner")
 
-	IPport.Initialize("IPport")
-	IPaddress.Initialize("IPaddress")
+	IPport.Initialize("")
+	IPaddress.Initialize("")
 	lblEditPrinter.Initialize("")
 	
-	LabelCountry.Initialize("countryLabel")
-	LabelLanguage.Initialize("languageLabel")
-	LabelPrinter.Initialize("deviceLabel")
-	LabelAcPrinter.Initialize("AcPrnLabel")
+	LabelCountry.Initialize("")
+	LabelLanguage.Initialize("")
+	LabelPrinter.Initialize("")
+	LabelAcPrinter.Initialize("")
 	
 	
 	spnActivePrinter.Initialize("PrinterChoose")
 	btnPrinterAdd.Initialize("AddbtnPrinter")
 	btnPrinterRemove.Initialize("removePrinter")
+	edtbtnBG.Initialize(LoadBitmap(File.DirAssets, "edit.png"))
 	pnlEditImg.Initialize("editPrinter")
 	edtbtnBG= pnlEditImg.SetBackgroundImage(LoadBitmap(File.DirAssets,"edit.png"))
 	edtbtnBG.Gravity = Gravity.CENTER
@@ -146,18 +162,13 @@ Public Sub Initialize
 	HelperFunctions.Apply_ViewStyle(spnMac, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 	HelperFunctions.Apply_ViewStyle(saveSettings, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 	HelperFunctions.Apply_ViewStyle(exitSettings, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
-	country.SetBackgroundImage(ImageResources.BMP_SpinnerBack)
-	language.SetBackgroundImage(ImageResources.BMP_SpinnerBack)
-	printer.SetBackgroundImage(ImageResources.BMP_SpinnerBack)
-	spnActivePrinter.SetBackgroundImage(ImageResources.BMP_SpinnerBack)
-
-
-
-	lblEditPrinter.Visible = False
-	lblEditPrinter.TextColor = Colors.Black
-	lblEditPrinter.Typeface = Typeface.DEFAULT_BOLD
-	lblEditPrinter.Gravity = Gravity.CENTER
 	
+	
+	
+	country.SetBackgroundImage(ImageResources.BMP_SpinnerBack)
+	printer.SetBackgroundImage(ImageResources.BMP_SpinnerBack)
+	language.SetBackgroundImage(ImageResources.BMP_SpinnerBack)
+	spnActivePrinter.SetBackgroundImage(ImageResources.BMP_SpinnerBack)	
 	
 	setSettingsScrtoActivity
 	SettingsUI
@@ -169,7 +180,8 @@ public Sub setSettingsScrtoActivity
 	Dim target As Panel
 	target =CallSub(Main, "Get_Activity")
 	target.RemoveAllViews
-	target.AddView(settingsPanel, 0, 0, 100%x, 100%y)
+	target.SetBackgroundImage(LoadBitmap(File.DirAssets, "smartBG.jpg"))
+	target.AddView(settingsPanel, 0, 100%y, 100%x, 100%y)
 End Sub
 
 Sub CountriesFill
@@ -461,8 +473,8 @@ End Sub
 Private Sub Copy_WorkingToLocalObject As Partner
 	Private localitem As Partner
 	localitem.Initialize
-'	localitem.CompanyID = partner.CompanyID
-'	localitem.ID = partner.ID
+	localitem.CompanyID = partner.CompanyID
+	localitem.ID = partner.ID
 	localitem.partnerCode = partner.partnerCode
 	localitem.CompanyName = partner.CompanyName
 	localitem.Address = partner.Address
@@ -495,16 +507,18 @@ End Sub
 'End Sub
 
 Sub ColorPickerAndLabelTexts
+	LabelCountry.Text = Main.translate.GetString("lblCountry")
 	LabelCountry.TextColor = Colors.white
+	
+	LabelLanguage.Text = Main.translate.GetString("lblLanguage")
 	LabelLanguage.TextColor = Colors.white
+	
+	LabelPrinter.Text = Main.translate.GetString("lblDevice")
 	LabelPrinter.TextColor = Colors.white
+	
+	LabelAcPrinter.Text = Main.translate.GetString("lblACDevice")
 	LabelAcPrinter.TextColor = Colors.white
 	
-	LabelCountry.Text = Main.translate.GetString("lblCountry")
-	LabelLanguage.Text = Main.translate.GetString("lblLanguage")
-	LabelPrinter.Text = Main.translate.GetString("lblDevice")
-	LabelAcPrinter.Text = Main.translate.GetString("lblACDevice")
-		
 	saveSettings.Text = Main.translate.GetString("lblSave")
 	saveSettings.Color= Colors.white
 	saveSettings.TextColor = Colors.white
@@ -517,11 +531,18 @@ Sub ColorPickerAndLabelTexts
 	spnActivePrinter.DropdownTextColor = Colors.White
 
 	btnPrinterRemove.Text = "-"
-	btnPrinterRemove.Gravity = Gravity.CENTER
 	btnPrinterRemove.Textsize = 19
+	btnPrinterRemove.Gravity = Gravity.CENTER
+	
 	btnPrinterAdd.Text = "+"
-	btnPrinterAdd.Gravity = Gravity.CENTER
 	btnPrinterAdd.TextSize = 19
+	btnPrinterAdd.Gravity = Gravity.CENTER
+	
+	
+	lblEditPrinter.Visible = False
+	lblEditPrinter.TextColor = Colors.Black
+	lblEditPrinter.Gravity = Gravity.CENTER
+	lblEditPrinter.Typeface = Typeface.DEFAULT_BOLD
 
 End Sub
 

@@ -76,6 +76,7 @@ Public Sub build_Screen
 	Log(Main.SelectedLanguage)
 	isConnect_Click
 	
+	
 End Sub
 
 private Sub localNET As Boolean
@@ -125,12 +126,15 @@ End Sub
 'Метода, който вкарва потребителя в системата / Method for log in 
 Private Sub ButtonloginPanel_Click
 	SettingsScr.Initialize
-
+	
+	SettingsScr.settingsPanel.setlayoutanimated(500, 0, 0, 100%x, 100%y)
 	Main.SCREEN_ID = Main.SCREEN_SETTINGS
 End Sub
 
 public Sub goBackToLoginScreen
 	Main.SCREEN_ID = Main.SCREEN_LOGIN
+	SettingsScr.settingsPanel.setlayoutanimated(500, 0, 100%y, 100%x, 100%y)
+	Sleep(600)
 	setPanelToActivity
 End Sub
 

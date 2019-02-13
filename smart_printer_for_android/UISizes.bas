@@ -7,15 +7,13 @@ Version=7.3
 'This module holds the sizes/masures for all UI elements
 Private Sub Process_Globals	
 	Public HeaderHeight, FooterHeight, LeftPart,GroupScroller, ButtonLeft, settingsWidth, extrafunctionsWidth, initSettingsWidth, _
-	keyboardWidth, GroupButtonHeight, DefaultFont, HeaderLabelHeight, FooterLabelHeight, DefaultPadding, _
-	PressedTextColor, animPagerHeight, itemHolderFooterHeight As Int	
+	keyboardWidth, GroupButtonHeight, HeaderLabelHeight, FooterLabelHeight, DefaultPadding, _
+	PressedTextColor, itemHolderFooterHeight As Int	
 	Public GroupColor_Normal, GroupColor_Pressed As String		
 End Sub
 
 'Инициализиране на обекта / Initializes the object
 Public Sub Initialize
-	DefaultFont = Main.localDefaultFontSize	
-	animPagerHeight = 10dip
 	
 		initSettingsWidth = 70%x
 		keyboardWidth = 100%x

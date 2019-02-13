@@ -12,10 +12,6 @@ Private Sub Process_Globals
 	Public sameUser As Boolean
 
 
-	'Размер на текст
-	Public DefaultFont As Int = 14
-	
-	Public finalScore As Double
 	
 	Public HeaderHeight, FooterHeight, LeftPart,GroupScroller, ButtonLeft, settingsWidth, initSettingsWidth, _
 	keyboardWidth, GroupButtonHeight, DefaultFont, HeaderLabelHeight, FooterLabelHeight, DefaultPadding, _

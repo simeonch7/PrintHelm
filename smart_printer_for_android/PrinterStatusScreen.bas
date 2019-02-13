@@ -10,11 +10,10 @@ Private Sub Class_Globals
 	Private holder As Panel
 	Private lblTitle As Label
 	Private separator1,separator2 As Panel
-	Private posScreenRef,callback As Object 'Ignore callback = printermain
+	Private callback As Object 'Ignore callback = printermain
 	
 	Private fiscalDevices As List
 
-	Private aPrinterMap As Map
 
 	Private SVPrinters As PrinterStatusSVItems
 	
@@ -26,8 +25,6 @@ End Sub
 'Initializes the object. You can add parameters to this method if needed.
 Public Sub Initialize(CB As Object,PosScreen As Object) 'Ignore
 	callback = CB
-	posScreenRef = PosScreen
-	aPrinterMap.Initialize
 	fiscalDevices.Initialize
 	
 	BG.Initialize("BG")
@@ -62,11 +59,7 @@ Public Sub BuildScreen(Parent As Panel,buttonHolder As Panel)
 	HelperFunctions.Apply_ViewStyle(outerHolder,Colors.White,ProgramData.COLOR_HEADER,ProgramData.COLOR_HEADER,ProgramData.COLOR_HEADER,ProgramData.COLOR_HEADER,ProgramData.COLOR_HEADER,ProgramData.COLOR_HEADER,6)
 	HelperFunctions.Apply_ViewStyle(holder,Colors.White,Colors.White,Colors.White,Colors.White,Colors.White,Colors.White,Colors.White,6)
 
-	If Main.ScreenOrientation = Main.orientationPortrait Then 'Portrait
 		BG.AddView(outerHolder,0,0,BG.Width,BG.Height*0.5)
-	Else								'landscape
-		BG.AddView(outerHolder,BG.Width*0.5,0,BG.Width*0.5,BG.Height)
-	End If
 	
 	showLeft = outerHolder.Left
 	hideLeft = BG.Width

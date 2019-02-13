@@ -28,11 +28,10 @@ Library10=network
 Library11=byteconverter
 Library12=micustomviews
 Library13=javaobject
-Library14=ahlocale
-Library15=httpserver
-Library16=stringutils
-Library17=okhttputils2
-Library18=runtimepermissions
+Library14=httpserver
+Library15=stringutils
+Library16=okhttputils2
+Library17=runtimepermissions
 Library2=xmlsax
 Library3=randomaccessfile
 Library4=reflection
@@ -44,16 +43,16 @@ Library9=serial
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="5" android:targetSdkVersion="26"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~'End of default text.~\n~~\n~AddPermission(android.hardware.usb.action.USB_DEVICE_DETACHED)~\n~CreateResource(xml, device_filter.xml,~\n~<resources>		~\n~    <usb-device />	~\n~</resources>~\n~)~\n~AddApplicationText(~\n~<activity android:name=".main" >~\n~   <intent-filter>~\n~    <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />~\n~   </intent-filter>  ~\n~    <meta-data android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" android:resource="@xml/device_filter" />   ~\n~ </activity>~\n~)
 Module1=IPscreen
 Module10=PrinterStatusSVItem
-Module11=HelperFunctions
-Module12=Translator
-Module13=PrinterStatusSVItems
-Module14=PrinterPOS
-Module15=Utilities
-Module16=ScriptMaster
-Module17=Device
-Module18=Version
-Module19=UISizes
-Module2=Countries
+Module11=UISizes
+Module12=HelperFunctions
+Module13=Translator
+Module14=PrinterStatusSVItems
+Module15=PrinterPOS
+Module16=Utilities
+Module17=ScriptMaster
+Module18=Device
+Module19=Version
+Module2=SettingsScreen
 Module20=B4XEval
 Module21=ImageResources
 Module22=DataTypes
@@ -63,15 +62,15 @@ Module25=PrinterPriceCalculator
 Module26=BytesBuilder
 Module27=Constants
 Module28=UConfig
-Module3=PrinterConstants
-Module4=PrinterMain
-Module5=ProgramData
-Module6=SPAservice
-Module7=ButtonWithNotifications
-Module8=PrinterStatusScreen
-Module9=SettingsScreen
+Module3=Countries
+Module4=PrinterConstants
+Module5=PrinterMain
+Module6=ProgramData
+Module7=SPAservice
+Module8=ButtonWithNotifications
+Module9=PrinterStatusScreen
 NumberOfFiles=11
-NumberOfLibraries=18
+NumberOfLibraries=17
 NumberOfModules=28
 Version=8.8
 @EndOfDesignText@
@@ -93,11 +92,6 @@ Version=8.8
 
 Sub Process_Globals
 	Public translate As Translator
-	Public localDefaultFontSize, intWorkMode As Int
-	Public Const orientationLandscape As Int = 0
-	Public Const orientationPortrait As Int = 1
-	Public ScreenOrientation As Int = orientationPortrait		'1 - Portrait; 0 - Landscape
-	Public localDefaultFontSize, intWorkMode As Int
 
 	Public languageList As List
 	Public Const lng_BG As String = "BG"		'Bulgarian Language Abbreviation
@@ -115,12 +109,9 @@ Sub Process_Globals
 	
 	Public  SCREEN_ID As Int = 0
 	Public Const SCREEN_LOGIN As Int = 1						'Login Screen ID
-	Public Const SCREEN_SETTINGS As Int = 2							'Login Screen ID
-	Public Const SCREEN_STATUSPRINTER As Int = 5						'Login Screen ID
-	
+	Public Const SCREEN_SETTINGS As Int = 2							'Setting Screen ID	
 	
 	Public SelectedLanguage As String = lng_BG
-	Private Locale As AHLocale
 
 	Public Math As B4XEval						'Used to calcualte string expressions
 
@@ -141,7 +132,6 @@ End Sub
 
 Sub Globals
 	Public loginScr As IPscreen
-'	Public PrinterStatusReference As PrinterStatusScreen
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -168,8 +158,6 @@ Sub Activity_Create(FirstTime As Boolean)
 	
 	ProgramData.Initialize
 	UISizes.Initialize
-	Locale.Initialize
-	
 	
 	loginScr.Initialize
 	loginScr.setPanelToActivity
