@@ -209,20 +209,20 @@ Sub SettingsUI
 
 	settingsPanel.AddView(LabelCountry, 0%x, 8%y, 100%x, 5%y)
 	LabelCountry.Gravity = Gravity.CENTER_HORIZONTAL
-	settingsPanel.AddView(country, 30%x, LabelCountry.Top + LabelCountry.Height, 40%x, 5%y)
+	settingsPanel.AddView(country, 32.5%x, LabelCountry.Top + LabelCountry.Height, 35%x, 5%y)
 	
 	settingsPanel.AddView(LabelLanguage, 0%x, country.Top + country.Height + 2%y, 100%x, 5%y)
 	LabelLanguage.Gravity = Gravity.CENTER_HORIZONTAL
-	settingsPanel.AddView(language, 30%x, LabelLanguage.Top + LabelLanguage.Height , 40%x, 5%y)
+	settingsPanel.AddView(language, 32.5%x, LabelLanguage.Top + LabelLanguage.Height , 35%x, 5%y)
 		
 	settingsPanel.AddView(LabelAcPrinter, 0%x, language.Top + language.Height + 5%y, 100%x, 5%y)
 	LabelAcPrinter.Gravity = Gravity.CENTER_HORIZONTAL
 	
-	settingsPanel.AddView(spnActivePrinter, 32.5%x, LabelAcPrinter.Top + LabelAcPrinter.Height + UISizes.DefaultPadding, 35%x, 5%y)
+	settingsPanel.AddView(spnActivePrinter, 29%x, LabelAcPrinter.Top + LabelAcPrinter.Height + UISizes.DefaultPadding, 41%x, 5%y)
 	
 	settingsPanel.AddView(statusBtn, 100%x - 12%x, 2%y, 10%x, 6%y)
 	
-	settingsPanel.AddView(btnPrinterAdd, spnActivePrinter.Left + spnActivePrinter.Width - (15%x + 6 * UISizes.DefaultPadding)* 1.5, spnActivePrinter.top + spnActivePrinter.Height + UISizes.DefaultPadding, 5%x, 5%y)
+	settingsPanel.AddView(btnPrinterAdd, 50%x - (15%x + 6 * UISizes.DefaultPadding) / 2, spnActivePrinter.top + spnActivePrinter.Height + UISizes.DefaultPadding, 5%x, 5%y)
 	settingsPanel.AddView(btnPrinterRemove, btnPrinterAdd.Left + btnPrinterAdd.Width + UISizes.DefaultPadding, btnPrinterAdd.top, 5%x, 5%y)
 	settingsPanel.AddView(btnPrinterEdt, btnPrinterRemove.Left + btnPrinterRemove.Width + UISizes.DefaultPadding, btnPrinterAdd.top, 5%x, 5%y)
 	settingsPanel.AddView(pnlEditImg, btnPrinterRemove.Left + btnPrinterRemove.Width + UISizes.DefaultPadding, btnPrinterAdd.top, 5%x, 5%y)
