@@ -15,6 +15,7 @@ Sub Process_Globals
 	Public IDPRef As Int
 	Public urlResponse As String
 	Dim su As StringUtils
+	Public activityIsStarted As Boolean
 End Sub
 
 Sub Service_Create
@@ -37,12 +38,14 @@ Sub Server_HandleRequest (Request As ServletRequest, response As ServletResponse
 		Log("Client: " & Request.RemoteAddress)
 '		Log("-----"&Request.RequestURI) 'handle the request based on the URL
 		
-		urlResponse = su.DecodeUrl(Request.RequestURI, "UTF8").SubString(12)
+		urlResponse = su.DecodeUrl(Request.RequestURI, "UTF8")
+		urlResponse = urlResponse.Replace("/postMessage", "")
 		Log("--->"&urlResponse)
 
 		ProgramData.req = urlResponse
-				
+
 		CallSub(Main, "readytoPrint")
+		
 	Catch
 		response.Status = 500
 		Log("Error serving request: " & LastException)

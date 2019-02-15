@@ -4,7 +4,7 @@ ModulesStructureVersion=1
 Type=Class
 Version=7.3
 @EndOfDesignText@
-#Event: EventName_Click
+'#Event: EventName_Click
 Sub Class_Globals
 	Private mEventName As String
 	Private mCallBack As Object 
@@ -28,7 +28,7 @@ Public Sub Initialize (Callback As Object, EventName As String)
 	notifyWarnings.Initialize("fakeLabel")
 	notifyReady.Initialize("fakeLabel")
 	fakePanel.Initialize("HolderFakeCounterButton")
-	timerPrinting.Initialize("printing",200)
+	timerPrinting.Initialize("printing", 200)
 End Sub
 
 Public Sub BuildButtonNotifications(parent As Panel)
@@ -160,5 +160,8 @@ Private Sub Base_Click
 	CallSub(mCallBack, mEventName & "_Click")
 End Sub
 
-Private Sub HolderFakeCounterButton_Click	
+private Sub HolderFakeCounterButton_Click	
+End Sub
+
+private Sub fakeLabel_Click
 End Sub

@@ -40,7 +40,7 @@ Public Sub Initialize(CB As Object,PosScreen As Object) 'Ignore
 	floatingButton.Initialize(Me,"FloatingButton")
 End Sub
 
-Public Sub BuildScreen(Parent As Panel,buttonHolder As Panel)
+Public Sub BuildScreen(Parent As Panel, buttonHolder As Panel)
 	floatingButton.BuildButtonNotifications(buttonHolder)
 	
 	BG.Visible = False
@@ -56,8 +56,8 @@ Public Sub BuildScreen(Parent As Panel,buttonHolder As Panel)
 	darkBG.Color = Colors.ARGB(190,64,64,64)
 	separator1.Color = ProgramData.COLOR_HEADER
 	separator2.Color = ProgramData.COLOR_HEADER
-	HelperFunctions.Apply_ViewStyle(outerHolder,Colors.White,ProgramData.COLOR_HEADER,ProgramData.COLOR_HEADER,ProgramData.COLOR_HEADER,ProgramData.COLOR_HEADER,ProgramData.COLOR_HEADER,ProgramData.COLOR_HEADER,6)
-	HelperFunctions.Apply_ViewStyle(holder,Colors.White,Colors.White,Colors.White,Colors.White,Colors.White,Colors.White,Colors.White,6)
+	HelperFunctions.Apply_ViewStyle(outerHolder, Colors.White,ProgramData.COLOR_HEADER,ProgramData.COLOR_HEADER,ProgramData.COLOR_HEADER,ProgramData.COLOR_HEADER,ProgramData.COLOR_HEADER,ProgramData.COLOR_HEADER,6)
+	HelperFunctions.Apply_ViewStyle(holder, Colors.White,Colors.White,Colors.White,Colors.White,Colors.White,Colors.White,Colors.White,6)
 
 		BG.AddView(outerHolder,0,0,BG.Width,BG.Height*0.5)
 	

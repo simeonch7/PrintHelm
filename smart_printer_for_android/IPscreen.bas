@@ -42,20 +42,19 @@ Public Sub Initialize
 End Sub
 
 
-public Sub setPanelToActivity
-	Dim target As Panel
-	target =CallSub(Main, "Get_Activity")
-	target.RemoveAllViews
-	target.AddView(loginPanel, 0, 0, 100%x, 100%y)
-End Sub
+'public Sub PanelToActivity
+'	Dim target As Panel  = CallSub(Main, "Reference_Activity")
+'	target.RemoveAllViews
+'	target.AddView(loginPanel, 0, 0, 100%x, 100%y)
+'End Sub
 
 ' Построяване на екрана / Builds the UI of the screen
-Public Sub build_Screen	
+Public Sub build_Screen(target As Panel)
 	loginPanel_Configurations
 	Private edtWidth,edtHeight As Int
 	Private btnWidth,btnHeight As Int
 	Private Padding,left As Int
-	
+	target.AddView(loginPanel, 0, 0, 100%x, 100%y)
 
 		Padding = ProgramData.DefaultPadding
 		edtWidth = loginPanel.Width*0.7
@@ -72,11 +71,17 @@ Public Sub build_Screen
 	loginPanel.AddView(lblConnection, left + Padding, PrinterPort.Top + edtHeight * 1.5, btnWidth, btnHeight)
 	Padding = 7%x
 	loginPanel.AddView(btnloginPanel, lblConnection.Left + lblConnection.Width + Padding * 2, lblConnection.Top, btnHeight, btnHeight)
-
 	Log(Main.SelectedLanguage)
 	isConnect_Click
 	
-	
+End Sub
+
+public Sub Hide
+	loginPanel.Visible = False
+End Sub
+
+public Sub Show
+	loginPanel.Visible = True
 End Sub
 
 private Sub localNET As Boolean
@@ -126,16 +131,16 @@ End Sub
 'Метода, който вкарва потребителя в системата / Method for log in 
 Private Sub ButtonloginPanel_Click
 	SettingsScr.Initialize
-	
+'	Hide
 	SettingsScr.settingsPanel.setlayoutanimated(500, 0, 0, 100%x, 100%y)
 	Main.SCREEN_ID = Main.SCREEN_SETTINGS
 End Sub
 
 public Sub goBackToLoginScreen
 	Main.SCREEN_ID = Main.SCREEN_LOGIN
+'	Show
 	SettingsScr.settingsPanel.setlayoutanimated(500, 0, 100%y, 100%x, 100%y)
-	Sleep(600)
-	setPanelToActivity
+'	Sleep(600)
 End Sub
 
 Public Sub isConnect_Click

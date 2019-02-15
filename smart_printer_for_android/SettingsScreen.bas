@@ -4,37 +4,26 @@ ModulesStructureVersion=1
 Type=Class
 Version=8.3
 @EndOfDesignText@
-  Sub Class_Globals
-  	
+ Sub Class_Globals
 	Private countourPanel, configPanel, statusBtn As Panel
 	Public settingsPanel As Panel
 	Private inFooterHolder, outFooterHolder, outHeaderHolder, inHeaderHolder, outDetailesHolder, inDetailesHolder, outTotalsHolder, inTotalsHolder As Panel
-	
 	Private country, language, printer, spnActivePrinter, spnMac As Spinner
-	
 	Private IPport, IPaddress As EditText
-	
 	Private LabelCountry, LabelLanguage, LabelPrinter, LabelAcPrinter, lblEditPrinter, btnPrinterRemove, btnPrinterAdd, btnPrinterEdt, pnlEditImg As Label
-
 	Private tempList As List
 	Private PrinterList As List
 	Private BoudRatesList As List	
-
 	Private BTmap As Map
 	Private controlsMap As Map
-
 	Private masterP As PrinterMain
-	
 	Private inn As InputStream
 	Private templates As SaxParser
-	
 	Private getConnectionParamsFailed As Boolean = False	'Show if theres and error in the input of controls in ControlsMap
 	Private selectedPrinterName As String = ""				'Hold Name of the selected printer				
 	
-						'Hold all the settings controls
-
+	'Hold all the settings controls
 	Private BTSettingsSV As ScrollView						'SV for all the settings controls
-
 	Private saveSettings, exitSettings As Button
 			
 	'Style 
@@ -47,19 +36,15 @@ Version=8.3
 	Private Const ButtonRounding As Int = 60	'How much rounding is done on the buttons & edit text corners
 	Private Const ButtonsRounding As Int = 5	'for small buttons
 	Private HFHeight,HFsingleLineHeight As Int
-	
-	
-	Private background, edtbtnBG As BitmapDrawable
+	Private edtbtnBG As BitmapDrawable
+	Private background As Bitmap
 	
 	'settings of printer
 	Public mode As Int
 	Public const mode_add As Int = 1
 	Public const mode_edit As Int = 2
 	
-	
 	Private selectedEditPrinterIndex As Int
-
-	
 	Private cash,card,bank,vaucher As Double
 	Private  payMethod As Int
 	
@@ -69,10 +54,7 @@ Version=8.3
 	Private workingobject As StoreObject
 	Private tagUP As Int = 0
 	Private cHeadersList, cFootersList, cDetailesList, cTotalsList As List
-	
 End Sub
-
-
 
 Public Sub Initialize
 	settingsPanel.Initialize("fakeHolder")
@@ -85,9 +67,9 @@ Public Sub Initialize
 	cFootersList.Initialize
 	cTotalsList.Initialize
 	
-	background.Initialize(LoadBitmap(File.DirAssets, "smartBG.jpg"))	
-	settingsPanel.Color = Colors.Transparent
-	
+	background.Initialize(File.DirAssets, "smartBG.jpg")	
+	settingsPanel.SetBackgroundImage(background)
+'	settingsPanel.Color = Colors.Transparent
 	
 	Countries.Initialize
 	country.Initialize("countrySpinner")
@@ -115,7 +97,7 @@ Public Sub Initialize
 	btnPrinterRemove.Initialize("removePrinter")
 	edtbtnBG.Initialize(LoadBitmap(File.DirAssets, "edit.png"))
 	pnlEditImg.Initialize("editPrinter")
-	edtbtnBG= pnlEditImg.SetBackgroundImage(LoadBitmap(File.DirAssets,"edit.png"))
+	edtbtnBG = pnlEditImg.SetBackgroundImage(LoadBitmap(File.DirAssets,"edit.png"))
 	edtbtnBG.Gravity = Gravity.CENTER
 	btnPrinterEdt.Initialize("EditPrinter")
 	
@@ -163,23 +145,19 @@ Public Sub Initialize
 	HelperFunctions.Apply_ViewStyle(saveSettings, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 	HelperFunctions.Apply_ViewStyle(exitSettings, Colors.White, COLOR_NormalTop, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 	
-	
-	
 	country.SetBackgroundImage(ImageResources.BMP_SpinnerBack)
 	printer.SetBackgroundImage(ImageResources.BMP_SpinnerBack)
 	language.SetBackgroundImage(ImageResources.BMP_SpinnerBack)
 	spnActivePrinter.SetBackgroundImage(ImageResources.BMP_SpinnerBack)	
 	
-	setSettingsScrtoActivity
+	SettingsScrtoActivity
 	SettingsUI
 	refillSpPrinters
-	
 End Sub
 
-public Sub setSettingsScrtoActivity
+public Sub SettingsScrtoActivity
 	Dim target As Panel
-	target =CallSub(Main, "Get_Activity")
-	target.RemoveAllViews
+	target = CallSub(Main, "Reference_Activity")
 	target.SetBackgroundImage(LoadBitmap(File.DirAssets, "smartBG.jpg"))
 	target.AddView(settingsPanel, 0, 100%y, 100%x, 100%y)
 End Sub
@@ -502,9 +480,9 @@ Private Sub UserCopyWorkingToLocalUser As CurrentUser
 End Sub
 #End Region
 '
-'Private Sub fakeHolder_Click
-'	
-'End Sub
+Private Sub fakeHolder_Click
+	Return True
+End Sub
 
 Sub ColorPickerAndLabelTexts
 	LabelCountry.Text = Main.translate.GetString("lblCountry")
@@ -514,7 +492,7 @@ Sub ColorPickerAndLabelTexts
 	LabelLanguage.TextColor = Colors.white
 	
 	LabelPrinter.Text = Main.translate.GetString("lblDevice")
-	LabelPrinter.TextColor = Colors.white
+	LabelPrinter.TextColor = Colors.Black
 	
 	LabelAcPrinter.Text = Main.translate.GetString("lblACDevice")
 	LabelAcPrinter.TextColor = Colors.white
@@ -1201,7 +1179,7 @@ Private Sub addHeader(value As String)
 
 End Sub
 
-'Detailes
+'Details
 private Sub GenerateDetails(SV As ScrollView,top As Int) As Int 'ignore
 	Dim btnAdd As Button
 	Dim title As Label

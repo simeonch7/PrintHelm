@@ -71,6 +71,11 @@ Private Sub initAllPrinterDrivers
 	printPOS.Initialize(Me, IDPrefix)
 	addToPrintersMap(printPOS.getPrintersMap, printPOS)
 		
+		
+		
+	Dim printVirtual As PrinterVirtual
+	printVirtual.Initialize(Me, IDPrefix)
+	addToPrintersMap(printVirtual.getPrintersMap, printVirtual)
 End Sub
 
 'increment id before initialize next printer dirver
