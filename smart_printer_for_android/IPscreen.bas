@@ -134,6 +134,7 @@ Private Sub ButtonloginPanel_Click
 '	Hide
 	SettingsScr.settingsPanel.setlayoutanimated(500, 0, 0, 100%x, 100%y)
 	Main.SCREEN_ID = Main.SCREEN_SETTINGS
+	btnloginPanel.Enabled = False
 End Sub
 
 public Sub goBackToLoginScreen
@@ -141,6 +142,7 @@ public Sub goBackToLoginScreen
 '	Show
 	SettingsScr.settingsPanel.setlayoutanimated(500, 0, 100%y, 100%x, 100%y)
 '	Sleep(600)
+	btnloginPanel.Enabled = True
 End Sub
 
 Public Sub isConnect_Click

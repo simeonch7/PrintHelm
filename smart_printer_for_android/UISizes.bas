@@ -22,12 +22,6 @@ Public Sub Initialize
 		itemHolderFooterHeight = 5%y
 		GroupScroller = 15%x
 		
-		If Device.ModelIs(Device.Device_SunmiV1s) Then 
-			GroupScroller = 16%x
-			FooterHeight = 12%x
-			itemHolderFooterHeight = 12%x
-		End If
-		
 		DefaultPadding = 0.35%x
 		LeftPart = 100%x
 		settingsWidth = 80%x

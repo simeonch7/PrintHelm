@@ -304,19 +304,6 @@ Private Sub ReadPrinters
 				addToActivePrinter(PrinterToAdd)
 				
 			Next
-		
-			'If savedPrinters is empty and device is sunmi add MSPOS as printer
-		Else If Device.ModelIs(Device.Device_SunmiV1s) Then
-			Dim aprinter As TActivePrinter
-			aprinter.Initialize
-			aprinter.name = "MSPOS-K"
-			aprinter.connectionParams.Initialize
-			aprinter.ScriptsTemplate.Initialize
-			aprinter.ScriptsTemplate.Headers.Initialize
-			aprinter.ScriptsTemplate.Details.Initialize
-			aprinter.ScriptsTemplate.Totals.Initialize
-			aprinter.ScriptsTemplate.Footers.Initialize
-			addToActivePrinter(aprinter)
 		End If
 	Catch
 		Log(LastException)

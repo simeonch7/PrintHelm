@@ -33,6 +33,7 @@ Library15=stringutils
 Library16=okhttputils2
 Library17=runtimepermissions
 Library18=scrollview2d
+Library19=pdfprinting
 Library2=xmlsax
 Library3=randomaccessfile
 Library4=reflection
@@ -72,7 +73,7 @@ Module7=PrinterMain
 Module8=ProgramData
 Module9=PrinterStatusScreen
 NumberOfFiles=11
-NumberOfLibraries=18
+NumberOfLibraries=19
 NumberOfModules=29
 Version=8.8
 @EndOfDesignText@
@@ -220,6 +221,7 @@ Sub Activity_KeyPress (KeyCode As Int) As Boolean
 			Case SCREEN_SETTINGS
 				loginScr.goBackToLoginScreen
 				UConfig.writeUSConfig
+				
 				Exit
 		End Select
 	End If
