@@ -481,7 +481,6 @@ End Sub
 '
 Private Sub fakeHolder_Click
 	Return True
-	
 End Sub
 
 Sub ColorPickerAndLabelTexts
