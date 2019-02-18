@@ -192,7 +192,6 @@ End Sub
 
 private Sub sendOperation
 	ProgramData.strLastOperation = OperationFunctions.ExportXML(ProgramData.LastOperations)
-
 End Sub
 
 Private Sub Print_Finished
@@ -217,6 +216,7 @@ Sub Activity_KeyPress (KeyCode As Int) As Boolean
 				End If
 				Exit
 			Case SCREEN_SETTINGS
+				
 				loginScr.goBackToLoginScreen
 				UConfig.writeUSConfig
 				

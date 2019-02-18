@@ -683,6 +683,7 @@ End Sub
 
 Sub countrySpinner_ItemClick (Position As Int, Value As Object)
 	UConfig.USConfig.country = Position
+	ToastMessageShow("Click back button to save configurations", False)
 	
 End Sub
 
@@ -691,6 +692,8 @@ Sub languageSpinner_ItemClick (Position As Int, Value As Object)
 	Main.SelectedLanguage = Value
 	Main.translate.SetLanguage(Value)
 	InitialSetSignsRefresh
+	ToastMessageShow("Click back button to save configurations", False)
+	
 End Sub
 
 'Опресняване на надписите в първоначалните настройки / Refreshes signs in Initial settings
@@ -707,7 +710,6 @@ End Sub
 
 Sub deviceSpinner_ItemClick (Position As Int, Value As Object)
 	selectedPrinterName = Value
-'	readinfo.Device = Value
 	fillSettings
 End Sub
 
