@@ -33,7 +33,7 @@ Public Sub Initialize
 
 	settingsBG.Initialize(BMP_Options)
 	btnloginPanel.Background = settingsBG
-	If checkNet Then
+	If localNET Then
 		StartService(SPAservice)
 	Else
 		ToastMessageShow("Connect to Internet", False)
@@ -68,12 +68,17 @@ Public Sub build_Screen(target As Panel)
 	loginPanel.AddView(PrinterIP,left, loginPanel.Height*(0.3),edtWidth, edtHeight)
 	loginPanel.AddView(PrinterPort, left, PrinterIP.Top+PrinterIP.Height*1.5+Padding, edtWidth, edtHeight)
 		
+	HelperFunctions.Apply_ViewStyle(PrinterIP,Colors.Black,Colors.Transparent,ETColorTP,Colors.White,Colors.White,Colors.White,Colors.White,10)
+	HelperFunctions.Apply_ViewStyle(PrinterPort,Colors.Black,Colors.Transparent,ETColorTP,Colors.White,Colors.White,Colors.White,Colors.White,10)
+	PrinterPort.Padding = Array As Int(30,0,30,0)
+	PrinterIP.Padding = Array As Int(30,0,30,0)
+		
 	loginPanel.AddView(lblConnection, left + Padding, PrinterPort.Top + edtHeight * 1.5, btnWidth, btnHeight)
+	
 	Padding = 7%x
 	loginPanel.AddView(btnloginPanel, lblConnection.Left + lblConnection.Width + Padding * 2, lblConnection.Top, btnHeight, btnHeight)
-	Log(Main.SelectedLanguage)
+		
 	isConnect_Click
-	
 End Sub
 
 public Sub Hide
@@ -118,7 +123,6 @@ Private Sub loginPanel_Configurations
 	
 	lblConnection.TextSize = 14
 	lblConnection.Gravity = Gravity.CENTER
-	checkNet
 End Sub
 
 'Метод прехвърлящ фокус между полетата / Changes focus between input fields
@@ -139,14 +143,15 @@ End Sub
 
 public Sub goBackToLoginScreen
 	Main.SCREEN_ID = Main.SCREEN_LOGIN
-'	Show
+
 	SettingsScr.settingsPanel.setlayoutanimated(500, 0, 100%y, 100%x, 100%y)
-'	Sleep(600)
+
 	btnloginPanel.Enabled = True
+	isConnect_Click
 End Sub
 
 Public Sub isConnect_Click
-	If checkNet Then
+	If localNET Then
 		lblConnection.Text = Main.translate.GetString("lblConnection")
 		lblConnection.TextColor = Colors.Green
 	Else
@@ -155,40 +160,11 @@ Public Sub isConnect_Click
 	End If
 End Sub
 
-Public Sub checkNet As Boolean
-	Dim p As Phone
-	Dim Response, Error As StringBuilder
-	Response.Initialize
-	Error.Initialize
-	'Ping Google DNS - if you can't reach this you are in serious trouble!
-	p.Shell("ping -c 1 8.8.8.8",Null,Response,Error)
-	Log("======= Response ========")
-	Log(Response)
-	Log("======= Error ===========")
-	Log(Error)
-	Log("======================")
-
-	localNET
-	
-	HelperFunctions.Apply_ViewStyle(PrinterIP,Colors.Black,Colors.Transparent,ETColorTP,Colors.White,Colors.White,Colors.White,Colors.White,10)
-	HelperFunctions.Apply_ViewStyle(PrinterPort,Colors.Black,Colors.Transparent,ETColorTP,Colors.White,Colors.White,Colors.White,Colors.White,10)
-	PrinterPort.Padding = Array As Int(30,0,30,0)
-	PrinterIP.Padding = Array As Int(30,0,30,0)
-	
-	If Error.ToString = "" Then
-		Return True
-       
-	Else
-		Return False
-	End If
-End Sub
-
 Public Sub refreshLogin_Labels
 	isConnect_Click
 	appTitle.Text = Main.translate.GetString("title")
 	PrinterPort.Hint = Main.translate.GetString("hintPort")
 End Sub
-
 
 Public Sub asView As Panel
 	Return loginPanel
