@@ -216,10 +216,12 @@ Private Sub ReportAction_Click
 	jobReport.ParamTo = ""
 	CallSub2(driverReference, "AddJob", jobReport)
 	CallSubDelayed(driverReference, "doJobs")
+	
 End Sub
 
 Private Sub AditionalActions_Click
 	cadAlertDialog.display_InputList(additionalOptions, True, -1, Main.translate.GetString("strAdditionalPrinterOptions"))
+	
 End Sub
 
 Private Sub InputList_Checked(option As String, optionId As Int)
@@ -270,6 +272,7 @@ Private Sub head_Click
 		CheckStatus(printOK)
 	End If
 	Sleep(0)
+	
 End Sub
 
 Private Sub FoldView
