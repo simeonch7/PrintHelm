@@ -41,13 +41,6 @@ Public Sub Initialize
 	
 End Sub
 
-
-'public Sub PanelToActivity
-'	Dim target As Panel  = CallSub(Main, "Reference_Activity")
-'	target.RemoveAllViews
-'	target.AddView(loginPanel, 0, 0, 100%x, 100%y)
-'End Sub
-
 ' Построяване на екрана / Builds the UI of the screen
 Public Sub build_Screen(target As Panel)
 	loginPanel_Configurations

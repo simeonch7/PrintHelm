@@ -26,7 +26,6 @@ Sub Service_Create
 	n.Icon = "icon"
 	n.SetInfo("Http Server is running", "", Main)
 	Service.StartForeground(1, n)
-'	port = ProgramData.devicePort
 End Sub
 
 Sub Service_Start (StartingIntent As Intent)
@@ -41,10 +40,26 @@ Sub Server_HandleRequest (Request As ServletRequest, response As ServletResponse
 		urlResponse = su.DecodeUrl(Request.RequestURI, "UTF8")
 		urlResponse = urlResponse.Replace("/postMessage", "")
 		Log("--->"&urlResponse)
-
-		ProgramData.req = urlResponse
-
-		CallSub(Main, "readytoPrint")
+		
+		If urlResponse.StartsWith("<") Then
+			
+			ProgramData.req = urlResponse	
+			
+			If IsPaused(Main) Then
+				CallSubDelayed(Main, "readytoprint")
+		
+				StartActivity(Main)	
+			Else
+			
+				CallSub(Main, "readytoprint")
+				
+			End If
+			
+			
+		Else
+			Return					
+		End If
+		Log("Client: " & Request.RemoteAddress)
 		
 	Catch
 		response.Status = 500
@@ -53,9 +68,3 @@ Sub Server_HandleRequest (Request As ServletRequest, response As ServletResponse
 	End Try
 End Sub
 
-'Sub HandleMainPage (response As ServletResponse)
-'
-'	Log("---------------------------"&response)
-'	
-'	response.SetContentType("text/xml")
-'End Sub

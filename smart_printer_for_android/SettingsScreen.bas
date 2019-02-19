@@ -253,7 +253,7 @@ Public Sub POS_Print
 	PJobOpen.Initialize
 	PJobOpen.Phone = phone'\ProgramData.partnerPhone
 	masterP.AddJob(PJobOpen)
-	inn.InitializeFromBytesArray(SPAservice.urlResponse.GetBytes("UTF8"),0,SPAservice.urlResponse.GetBytes("UTF8").Length)
+	inn.InitializeFromBytesArray(ProgramData.req.GetBytes("UTF8"),0,ProgramData.req.GetBytes("UTF8").Length)
 	Log(inn.BytesAvailable)
 	Try
 		templates.Parse(inn, "xml")
@@ -1387,6 +1387,7 @@ End Sub
 #End Region
 
 Public Sub SavePrinters
+	
 	Try
 		Dim RAF As RandomAccessFile
 		RAF.Initialize(Main.SHAREDFolder, "Printers.config", False)
@@ -1396,10 +1397,6 @@ Public Sub SavePrinters
 		Log(LastException)
 		Msgbox(Main.translate.GetString("msgFailedToSavePrinters"), Main.translate.GetString("lblWarning"))
 	End Try
-	Dim RAF As RandomAccessFile
-	RAF.Initialize(Main.SHAREDFolder, "Printers.config", False)
-'	Log(RAF.ReadEncryptedObject(ProgramData.rafEncPass, RAF.CurrentPosition))
-	RAF.Close
 
 End Sub
 

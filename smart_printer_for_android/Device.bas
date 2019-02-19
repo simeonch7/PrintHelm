@@ -14,5 +14,5 @@ Sub Process_Globals
 	Public Const PrinterDebugMode As Boolean = True
 	
 	Public Const WatermarkText As String = "*** Smart Printer for Android ***"
-	Public Const WatermarkURL As String = "instagram.com/Simeonch"
+	Public Const WatermarkURL As String = "https://www.microinvest.net/"
 End Sub
