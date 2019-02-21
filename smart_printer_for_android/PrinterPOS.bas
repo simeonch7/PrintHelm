@@ -80,10 +80,7 @@ Sub Class_Globals
 	Private ArabicSerial32 As Int
 	Private ArabicSerial40 As Int
 	Private ArabicSerial48 As Int
-	
-	Private TestPOSPrinter1 As Int
-	Private TestPOSPrinter2 As Int
-	
+
 	Private Const Conn_BT As Int = 1				'Комуникация чрез Bluetooth
 	Private Const Conn_LAN As Int = 2				'Комуникация чрез LAN
 	Private Const Conn_COM As Int = 3				'Комуникация чрез Serial Port

@@ -34,12 +34,14 @@ Public Sub LoadSavedUSConfig
 			RAF.Close
 			Main.SelectedLanguage = USConfig.language
 			Main.translate.SetLanguage(USConfig.language)
+			Countries.setSelectedCountry(USConfig.country)
 		Else
 			USConfig.Initialize
 			USConfig.country = 1		
 			USConfig.language = "BG"
 			Main.SelectedLanguage = USConfig.language
 			Main.translate.SetLanguage(USConfig.language)
+			Countries.setSelectedCountry(USConfig.country)
 			writeUSConfig
 		End If
 	Catch

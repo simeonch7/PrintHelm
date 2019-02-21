@@ -37,7 +37,7 @@ End Sub
 
 Public Sub Initialize
 	CountriesMap.Initialize
-	counter = 0
+	counter = -1
 	Belarus 		= addCountry("Belarus")
 	Bulgaria 		= addCountry("Bulgaria")
 	Cuba 			= addCountry("Cuba")
@@ -67,8 +67,8 @@ Public Sub getCountries As Map
 	Return CountriesMap
 End Sub
 
-public Sub setSelectedCountry(name As String)
-	SelectedCountry = CountriesMap.Get(name)
+public Sub setSelectedCountry(key As Int)
+	SelectedCountry = CountriesMap.GetValueAt(key)
 End Sub
 
 Public Sub getSelectedCountryName As String
