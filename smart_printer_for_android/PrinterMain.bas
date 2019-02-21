@@ -350,9 +350,6 @@ private Sub generateDefaultScripts
 	defaultScripts.Details.Add("<empty>")
 	defaultScripts.Footers.Add("<Center>Благодарим ви!")
 	defaultScripts.Footers.Add("<Right><Date> <Time>")
-'	defaultScripts.Footers.Add(" ")
-
-	
 	
 End Sub
 

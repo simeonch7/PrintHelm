@@ -149,9 +149,6 @@ Private Sub fillMap
 	ArabicSerial32 = 	AddPrinter("Arabic ESC/POS Serial 32", Countries.Universe)
 	ArabicSerial40 = 	AddPrinter("Arabic ESC/POS Serial 40", Countries.Universe)
 	ArabicSerial48 = 	AddPrinter("Arabic ESC/POS Serial 48", Countries.Universe)
-
-	TestPOSPrinter1 = 	AddPrinter("Test Printer 1", Countries.Universe)
-	TestPOSPrinter2 = 	AddPrinter("Test Printer 2", Countries.Universe)
 End Sub
 
 'Set the parameter correct to work with the give printer.
@@ -526,35 +523,6 @@ Public Sub setSelected_Printer(id As Int)
 			setDeviceParams(48, 48)
 			fiscalMemoryMode = False
 			PrinterCodePage = Utilities.SelectCodepage("windows-1251")
-			PrinterCutterString = ESC & "i"
-			NumberEmptyLines = 3
-			DeviceSettingsRequirements.Clear
-			DeviceSettingsRequirements.Put(Main.PS_IPAddress, "192.168.63.100")
-			DeviceSettingsRequirements.Put(Main.PS_IPPort, "9100")
-			DeviceConnection = Conn_LAN
-			selectedCmdSet = PrinterConstants.ESC_POS_1
-
-		Case TestPOSPrinter1
-			setDeviceParams(44, 44)
-			fiscalMemoryMode = False
-			PrinterCodePage = Utilities.SelectCodepage("ISO-8859-6")
-			PrinterInitString = ESC & "t" & Chr(22)
-			PrinterInitString = ESC & "t" & Chr(40) & "40"
-			PrinterCutterString = ESC & "i"
-			NumberEmptyLines = 3
-			DeviceSettingsRequirements.Clear
-			DeviceSettingsRequirements.Put(Main.PS_IPAddress, "192.168.63.100")
-			DeviceSettingsRequirements.Put(Main.PS_IPPort, "9100")
-			DeviceConnection = Conn_LAN
-			selectedCmdSet = PrinterConstants.ESC_POS_1
-
-		Case TestPOSPrinter2
-			setDeviceParams(48, 48)
-			fiscalMemoryMode = False
-			PrinterCodePage = Utilities.SelectCodepage("x-IBM720")
-			PrinterCodePage = Utilities.SelectCodepage("windows-1256")
-			PrinterInitString = ESC & "t" & Chr(93)
-			PrinterInitString = ESC & "t" & Chr(34) & "34"
 			PrinterCutterString = ESC & "i"
 			NumberEmptyLines = 3
 			DeviceSettingsRequirements.Clear
@@ -967,8 +935,8 @@ Dim Result As String
                     
         Case Else: Result = QRCode
     End Select
-    
+
     Send(Result)
-    
+   
 End Sub
 #End Region

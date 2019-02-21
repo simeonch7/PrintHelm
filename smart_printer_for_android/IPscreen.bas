@@ -84,7 +84,9 @@ End Sub
 
 private Sub localNET As Boolean
 	Dim ssocket As ServerSocket
+	Log("<<<<<<<>>>>>>>")
 	Log("Ip address: " & ssocket.GetMyWifiIP)
+	Log("<<<<<<<>>>>>>>")	
 	If ssocket.GetMyWifiIP = "127.0.0.1" Then
 		PrinterIP.Text = Main.translate.GetString("NolocalNet")  '"Device not connected to local network"
 		Return False

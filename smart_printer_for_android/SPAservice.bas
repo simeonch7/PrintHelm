@@ -34,12 +34,14 @@ End Sub
 
 Sub Server_HandleRequest (Request As ServletRequest, response As ServletResponse)
 	Try
-		Log("Client: " & Request.RemoteAddress)
-'		Log("-----"&Request.RequestURI) 'handle the request based on the URL
 		
 		urlResponse = su.DecodeUrl(Request.RequestURI, "UTF8")
 		urlResponse = urlResponse.Replace("/postMessage", "")
+		
+		Log("<<<<<<<>>>>>>>")
+		Log("Client: " & Request.RemoteAddress)
 		Log("--->"&urlResponse)
+		Log("<<<<<<<>>>>>>>")
 		
 		If urlResponse.StartsWith("<") Then
 			
@@ -54,12 +56,8 @@ Sub Server_HandleRequest (Request As ServletRequest, response As ServletResponse
 				CallSub(Main, "readytoprint")
 				
 			End If
-			
-			
-		Else
-			Return					
+				
 		End If
-		Log("Client: " & Request.RemoteAddress)
 		
 	Catch
 		response.Status = 500
