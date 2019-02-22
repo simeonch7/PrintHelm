@@ -54,10 +54,7 @@ Private Sub Process_Globals
 
 	Public CurrentCompany As Company
 	Public CurrentUser As CurrentUser
-	
 
-	Public LastOperations As Operation
-	
 	Public PartnersMap As Map
 	Public ObjectsMap As Map
 	Public GroupItemsMat As Map

@@ -140,7 +140,6 @@ Private Sub ReplacePreProcScript(line As String, lineChars As Int) As String
 		Case line.Contains( "<discountpercent>") 	: line = line.Replace("<discountpercent>", " ")
 			
 		Case line.Contains( "<totalqtty>") 			: line = line.Replace("<totalqtty>", " ")
-		Case line.Contains( "<document>") 			: line = line.Replace("<document>", ProgramData.LastOperations.ID)
 	
 		Case line.Contains( "<guests>") 			: line = line.Replace("<guests>", " ")
 		Case line.Contains( "<empty>") 				: line = EmptyLine(line, lineChars)	'"Empty line")

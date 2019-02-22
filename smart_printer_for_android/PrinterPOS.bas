@@ -550,10 +550,6 @@ Private Sub AddPrinter(name As String, country As Int) As Int
 	Dim id As Int = IDPrefix + IDcounter
 	IDcounter = IDcounter + 1
 	
-	If (country <> Countries.SelectedCountry) And (country <> Countries.Universe) Then
-		If Not(masterPrinter.SavedPrintersContains(name, id)) Then Return -1
-	End If
-	
 	printersMap.Put(id,name)
 	Return id
 End Sub

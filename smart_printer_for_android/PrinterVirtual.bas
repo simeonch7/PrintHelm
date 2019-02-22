@@ -40,9 +40,6 @@ Sub Class_Globals
 	Private Const Output_Screen As Int = 1		'Outputs to screen
 	Private Const Output_Text As Int = 2		'Saves as TXT file
 	
-	
-	Private Const ReceiptFileName As String = "Sale"	'File name prefix of output receipt
-	Private Const ReceiptFolder As String = "Receipts"	'Folder name where the 'printed' receipts are stored. Created if nessecery
 End Sub
 
 'Initialize the Virtual printer
@@ -111,6 +108,7 @@ Public Sub doJobs
 	Next
 	
 	Wait For JobsFinished
+	Jobs.Clear
 End Sub
 
 Private Sub FiscalOpen(job As TPrnJobFiscalOpen)
@@ -196,10 +194,6 @@ Private Sub AddPrinter(name As String, country As Int) As Int
 	Dim id As Int = IDPrefix + IDcounter
 	IDcounter = IDcounter + 1
 	
-	If (country <> Countries.SelectedCountry) And (country <> Countries.Universe) Then
-		If Not(masterPrinter.SavedPrintersContains(name, id)) Then Return -1
-	End If
-	
 	printersMap.Put(id,name)
 	Return id
 End Sub
@@ -267,7 +261,6 @@ Private Sub ConnectToPrinter
 	AddFooter
 		Select OutputType
 			Case Output_Screen 	: PrintOnScreen
-			Case Output_Text 	: PrintToTXT
 		End Select
 End Sub
 
@@ -314,19 +307,6 @@ Private Sub PrintOnScreen
 	btnClose.Text = "Close"
 	PrintBaseSV.Panel.AddView(btnClose, 0, l.Top + l.height, PrintBaseSV.Panel.Width, 52dip)
 	FitViewsInScroll(PrintBaseSV)
-End Sub
-
-'Saves the reciept as a TXT file / Записва бележката като TXT файл
-Private Sub PrintToTXT
-	SavedReceiptsFolder
-	File.WriteList(Main.SHAREDFolder & "/" & ReceiptFolder, ReceiptFileName & " " & ProgramData.LastOperations.DateIssued & ".txt", Contents)
-	ToastMessageShow("TXT Saved.", False)
-	If statusItem.IsInitialized Then statusItem.changeStatus(PrinterConstants.ERR_NoError)
-End Sub
-
-'Check and create directory if needed / Проверява и създава папката ако трябва
-Private Sub SavedReceiptsFolder
-	If Not(File.Exists(Main.SHAREDFolder, ReceiptFolder)) Then File.MakeDir(Main.SHAREDFolder, ReceiptFolder)
 End Sub
 
 'Closes the On-Screen Printer / Затваря екрана с принтера

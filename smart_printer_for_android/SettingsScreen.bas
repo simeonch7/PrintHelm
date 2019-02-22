@@ -256,6 +256,8 @@ Public Sub POS_Print
 	inn.InitializeFromBytesArray(ProgramData.req.GetBytes("UTF8"),0,ProgramData.req.GetBytes("UTF8").Length)
 	Log(inn.BytesAvailable)
 	Try
+		If ProgramData.GroupItemsMat.Size > 0 Then ProgramData.GroupItemsMat.Clear
+		
 		templates.Parse(inn, "xml")
 		
 		

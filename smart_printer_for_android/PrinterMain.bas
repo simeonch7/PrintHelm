@@ -242,8 +242,6 @@ Public Sub DoJobs
 '		CallSubDelayed(APrinter.driver,"doJobs")
 	Next
 	
-	CallSubDelayed(callBack, "Print_Finished")
-	
 	Jobs.Clear
 End Sub
 
