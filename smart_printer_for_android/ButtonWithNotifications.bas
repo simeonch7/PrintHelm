@@ -105,12 +105,12 @@ Public Sub showCounterButton
 	mBase.SetLayoutAnimated(300, fakePanel.Width * 0.85, mBase.Top, mBase.Width, mBase.Height)
 End Sub
 
-Public Sub hideCounterButton
-	mBase.SetLayoutAnimated(300, fakePanel.Width, mBase.Top, mBase.Width, mBase.Height)
-	Sleep(300)
-	fakePanel.Visible = False
-	StopPrinting
-End Sub
+'Public Sub hideCounterButton
+'	mBase.SetLayoutAnimated(300, fakePanel.Width, mBase.Top, mBase.Width, mBase.Height)
+'	Sleep(300)
+'	fakePanel.Visible = False
+'	StopPrinting
+'End Sub
 
 Public Sub StopPrinting
 	timerPrinting.Enabled = False

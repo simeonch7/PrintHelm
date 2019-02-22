@@ -237,8 +237,7 @@ Public Sub POS_Print
 			phone = "+7" & phone
 									
 	End If
-			
-					
+				
 	Else if Countries.SelectedCountry = Countries.Bulgaria Then
 		If Regex.IsMatch("((0)8[0-9]{8})",phone) Then
 			phone = "+359" & phone.SubString(1)
