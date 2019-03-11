@@ -10,7 +10,6 @@ Private Sub Class_Globals
 	Private PrinterIP, PrinterPort As EditText
 	Public btnloginPanel As Button
 	Public CAD As CustomAlertDialog
-'	Private usrString, PrinterPortString As String
 	Private settingsBG As BitmapDrawable
 	Private BMP_Options As Bitmap
 	
@@ -83,10 +82,13 @@ public Sub Show
 End Sub
 
 private Sub localNET As Boolean
+	
 	Dim ssocket As ServerSocket
+	
 	Log("<<<<<<<>>>>>>>")
 	Log("Ip address: " & ssocket.GetMyWifiIP)
 	Log("<<<<<<<>>>>>>>")	
+	
 	If ssocket.GetMyWifiIP = "127.0.0.1" Then
 		PrinterIP.Text = Main.translate.GetString("NolocalNet")  '"Device not connected to local network"
 		Return False

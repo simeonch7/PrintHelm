@@ -36,8 +36,6 @@ Version=8.3
 	Private Const ButtonRounding As Int = 60	'How much rounding is done on the buttons & edit text corners
 	Private Const ButtonsRounding As Int = 5	'for small buttons
 	Private HFHeight,HFsingleLineHeight As Int
-	Private edtbtnBG As BitmapDrawable
-	Private background As Bitmap
 	
 	'settings of printer
 	Public mode As Int
@@ -67,8 +65,7 @@ Public Sub Initialize
 	cFootersList.Initialize
 	cTotalsList.Initialize
 	
-	background.Initialize(File.DirAssets, "smartBG.jpg")	
-	settingsPanel.SetBackgroundImage(background)
+	settingsPanel.SetBackgroundImage(ImageResources.background)
 '	settingsPanel.Color = Colors.Transparent
 	
 	Countries.Initialize
@@ -95,10 +92,9 @@ Public Sub Initialize
 	spnActivePrinter.Initialize("PrinterChoose")
 	btnPrinterAdd.Initialize("AddbtnPrinter")
 	btnPrinterRemove.Initialize("removePrinter")
-	edtbtnBG.Initialize(LoadBitmap(File.DirAssets, "edit.png"))
+	
 	pnlEditImg.Initialize("editPrinter")
-	edtbtnBG = pnlEditImg.SetBackgroundImage(LoadBitmap(File.DirAssets,"edit.png"))
-	edtbtnBG.Gravity = Gravity.CENTER
+	pnlEditImg.SetBackgroundImage(ImageResources.edtbtnBG)
 	btnPrinterEdt.Initialize("EditPrinter")
 	
 	statusBtn.Initialize("")
@@ -157,7 +153,7 @@ End Sub
 public Sub SettingsScrtoActivity
 	Dim target As Panel
 	target = CallSub(Main, "Reference_Activity")
-	target.SetBackgroundImage(LoadBitmap(File.DirAssets, "smartBG.jpg"))
+	target.SetBackgroundImage(ImageResources.background)
 	target.AddView(settingsPanel, 0, 100%y, 100%x, 100%y)
 End Sub
 
@@ -481,7 +477,7 @@ End Sub
 #End Region
 '
 Private Sub fakeHolder_Click
-	Return True
+	Return True	'ignore
 End Sub
 
 Sub ColorPickerAndLabelTexts
@@ -808,19 +804,11 @@ private Sub FillControls(connectionParams As TConnectionParameters)
 			Case Main.PS_IPPort
 				Dim cEditText As EditText = control
 				cEditText.Text = connectionParams.IPPort
-				
-			Case Main.PS_Password
-				Dim cEditText As EditText = control
-				cEditText.Text = connectionParams.Password
-				
+		
 			Case Main.PS_SerialPort
 				Dim cEditText As EditText = control
 				cEditText.Text = connectionParams.SerialPort
-				
-			Case Main.PS_UserID
-				Dim cEditText As EditText = control
-				cEditText.Text = connectionParams.UserID
-				
+
 			Case Main.PS_DeviceMAC
 				Dim cTable As Spinner = control
 				cTable.SelectedIndex = cTable.IndexOf(connectionParams.DeviceMAC)
@@ -930,19 +918,6 @@ Private Sub getConnectionParams As TConnectionParameters
 				Else
 					connectionParams.IPPort = cEditText.Text
 				End If
-				
-			Case Main.PS_Password
-				Dim cEditText As EditText = control
-				If cEditText.Text.Length = 0 Then : getConnectionParamsFailed = True
-				Else : connectionParams.Password = cEditText.Text
-				End If
-				
-			Case Main.PS_UserID
-				Dim cEditText As EditText = control
-				If cEditText.Text.Length = 0 Then : getConnectionParamsFailed = True
-				Else : connectionParams.UserID = cEditText.Text
-				End If
-				
 			Case Main.PS_DeviceMAC
 				Dim cTable As Spinner = control
 				
@@ -1006,7 +981,8 @@ public Sub generateSettingView(Spnl As ScrollView, top As Int,  setting As Int, 
 			spn.DropdownTextColor = Colors.White
 			spn.DropdownBackgroundColor = 0xFF3577D5
 			spn.SetBackgroundImage(ImageResources.BMP_SpinnerBack)
-			HelperFunctions.Remove_Padding(spn)
+'			HelperFunctions.Remove_Padding(spn)
+			spn.Padding = array as int (0, 0, 0, 0)
 			hold.AddView(spn, info.Width, cHeight * 0.05, hold.Width - lblWidth, cHeight * 0.6)
 			
 			'Set spinner selected index
@@ -1079,8 +1055,8 @@ public Sub generateSettingView(Spnl As ScrollView, top As Int,  setting As Int, 
 			spn.Tag = setting
 			HelperFunctions.Apply_ViewStyle(spn, Colors.White, COLOR_NormalBottom, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 			spn.SetBackgroundImage(ImageResources.BMP_SpinnerBack)
-			HelperFunctions.Remove_Padding(spn)
-			
+'			HelperFunctions.Remove_Padding(spn)
+			spn.Padding = array as int (0, 0, 0, 0)
 			Dim btPort As Serial
 			btPort.Initialize("BTPort")
 			If btPort.GetPairedDevices.Size > 0 Then 
@@ -1120,14 +1096,16 @@ private Sub GenerateHeader(SV As ScrollView,top As Int) As Int 'ignore
 	title.TextSize = ProgramData.TextSize_ExtraLarge
 	title.TextColor = Colors.Gray
 	title.Gravity = Gravity.CENTER_VERTICAL + Gravity.LEFT
-	HelperFunctions.Remove_Padding(title)
+'	HelperFunctions.Remove_Padding(title)
+	title.Padding = array as int (0, 0, 0, 0)
 	outHeaderHolder.AddView(title,0,0,outHeaderHolder.Width - cHeight - UISizes.DefaultPadding,cHeight)
 	
 	'Build Add Button
 	btnAdd.Initialize("addHeader")
 	btnAdd.Text = "+"
 	HelperFunctions.Apply_ViewStyle(btnAdd, Colors.White, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_DISABLED, ProgramData.COLOR_BUTTON_DISABLED, 3)
-	HelperFunctions.Remove_Padding(btnAdd)
+'	HelperFunctions.Remove_Padding(btnAdd)
+	btnAdd.Padding = array as int (0, 0, 0, 0)
 	outHeaderHolder.AddView(btnAdd,title.Left + title.Width + UISizes.DefaultPadding,0,cHeight,cHeight)
 	
 	inHeaderHolder.Color = ProgramData.COLOR_BUTTON_NORMAL
@@ -1157,7 +1135,8 @@ Private Sub addHeader(value As String)
 	edtHeader.TextSize = ProgramData.TextSize_Large
 	edtHeader.Color = Colors.White
 	edtHeader.Text = value
-	HelperFunctions.Remove_Padding(edtHeader)
+'	HelperFunctions.Remove_Padding(edtHeader)
+	edtHeader.Padding = array as int (0, 0, 0, 0)
 	inHeaderHolder.AddView(edtHeader,padding,top+padding,inHeaderHolder.Width - 2*padding,HFsingleLineHeight)
 	
 	cHeadersList.Add(edtHeader)
@@ -1197,14 +1176,16 @@ private Sub GenerateDetails(SV As ScrollView,top As Int) As Int 'ignore
 	title.TextSize = ProgramData.TextSize_ExtraLarge
 	title.TextColor = Colors.Gray
 	title.Gravity = Gravity.CENTER_VERTICAL + Gravity.LEFT
-	HelperFunctions.Remove_Padding(title)
+'	HelperFunctions.Remove_Padding(title)
+	title.Padding = Array As Int (0, 0, 0, 0)
 	outDetailesHolder.AddView(title,0,0,outDetailesHolder.Width - cHeight - UISizes.DefaultPadding,cHeight)
 	
 	'Build Add Button
 	btnAdd.Initialize("addDetail")
 	btnAdd.Text = "+"
 	HelperFunctions.Apply_ViewStyle(btnAdd, Colors.White, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_DISABLED, ProgramData.COLOR_BUTTON_DISABLED, 3)
-	HelperFunctions.Remove_Padding(btnAdd)
+'	HelperFunctions.Remove_Padding(btnAdd)
+	btnAdd.Padding = Array As Int (0, 0, 0, 0)
 	outDetailesHolder.AddView(btnAdd,title.Left + title.Width + UISizes.DefaultPadding,0,cHeight,cHeight)
 	
 	inDetailesHolder.Color = ProgramData.COLOR_BUTTON_NORMAL
@@ -1234,7 +1215,8 @@ private Sub addDetail(value As String)
 	edtDetail.Color = Colors.White
 	edtDetail.Text = value
 	edtDetail.Hint = "Detail"
-	HelperFunctions.Remove_Padding(edtDetail)
+'	HelperFunctions.Remove_Padding(edtDetail)
+	edtDetail.Padding = Array As Int (0, 0, 0, 0)
 	inDetailesHolder.AddView(edtDetail,padding,top+padding,inDetailesHolder.Width - 2*padding,HFsingleLineHeight)
 	
 	cDetailesList.Add(edtDetail)
@@ -1269,7 +1251,8 @@ private Sub GenerateTotals(SV As ScrollView,top As Int) As Int 'ignore
 	title.TextSize = ProgramData.TextSize_ExtraLarge
 	title.TextColor = Colors.Gray
 	title.Gravity = Gravity.CENTER_VERTICAL + Gravity.LEFT
-	HelperFunctions.Remove_Padding(title)
+'	HelperFunctions.Remove_Padding(title)
+	title.Padding = Array As Int (0, 0, 0, 0)
 	outTotalsHolder.AddView(title,0,0,outTotalsHolder.Width - cHeight - UISizes.DefaultPadding,cHeight)
 	
 	'Build Add Button
@@ -1277,7 +1260,8 @@ private Sub GenerateTotals(SV As ScrollView,top As Int) As Int 'ignore
 	btnAdd.Text = "+"
 
 	HelperFunctions.Apply_ViewStyle(btnAdd, Colors.White, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_DISABLED, ProgramData.COLOR_BUTTON_DISABLED, 3)
-	HelperFunctions.Remove_Padding(btnAdd)
+'	HelperFunctions.Remove_Padding(btnAdd)
+	btnAdd.Padding = Array As Int (0, 0, 0, 0)
 	outTotalsHolder.AddView(btnAdd,title.Left + title.Width + UISizes.DefaultPadding,0,cHeight,cHeight)
 	
 	inTotalsHolder.Color = ProgramData.COLOR_BUTTON_NORMAL
@@ -1307,7 +1291,8 @@ private Sub addTotals(value As String)
 	edtTotal.Color = Colors.White
 	edtTotal.Text = value
 	edtTotal.Hint = "Total"
-	HelperFunctions.Remove_Padding(edtTotal)
+'	HelperFunctions.Remove_Padding(edtTotal)
+	edtTotal.Padding = array as int (0, 0, 0, 0)
 	inTotalsHolder.AddView(edtTotal,padding,top+padding,inTotalsHolder.Width - 2*padding,HFsingleLineHeight)
 	
 	cTotalsList.Add(edtTotal)
@@ -1338,14 +1323,16 @@ private Sub GenerateFooter(SV As ScrollView,top As Int) As Int 'ignore
 	title.TextSize = ProgramData.TextSize_ExtraLarge
 	title.TextColor = Colors.Gray
 	title.Gravity = Gravity.CENTER_VERTICAL + Gravity.LEFT
-	HelperFunctions.Remove_Padding(title)
+'	HelperFunctions.Remove_Padding(title)
+	title.Padding = array as int (0, 0, 0, 0)
 	outFooterHolder.AddView(title,0,0,outFooterHolder.Width - cHeight - UISizes.DefaultPadding,cHeight)
 	
 	'Build Add Button
 	btnAdd.Initialize("addFooter")
 	btnAdd.Text = "+"
 	HelperFunctions.Apply_ViewStyle(btnAdd, Colors.White, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_DISABLED, ProgramData.COLOR_BUTTON_DISABLED, 3)
-	HelperFunctions.Remove_Padding(btnAdd)
+'	HelperFunctions.Remove_Padding(btnAdd)
+	btnAdd.Padding = array as int (0, 0, 0, 0)
 	outFooterHolder.AddView(btnAdd,title.Left + title.Width + UISizes.DefaultPadding,0,cHeight,cHeight)
 	
 	inFooterHolder.Color = ProgramData.COLOR_BUTTON_NORMAL
@@ -1374,7 +1361,8 @@ private Sub addFooter(value As String)
 	edtFooter.TextSize = ProgramData.TextSize_Large
 	edtFooter.Color = Colors.White
 	edtFooter.Text = value
-	HelperFunctions.Remove_Padding(edtFooter)
+'	HelperFunctions.Remove_Padding(edtFooter)
+	edtFooter.Padding = array as int (0, 0, 0, 0)
 	inFooterHolder.AddView(edtFooter,padding,top+padding,inFooterHolder.Width - 2*padding,HFsingleLineHeight)
 	
 	cFootersList.Add(edtFooter)

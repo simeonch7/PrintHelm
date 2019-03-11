@@ -277,12 +277,12 @@ Public Sub RunPostProcessing(Script As List, lineChars As Int,commandSet As Int)
 	
 '	Go through every line
 	For i = 0 To Script.Size - 1
-		Dim line As String= Script.Get(i)						'Get the line
+		Dim line As String= Script.Get(i)							'Get the line
 		line = PostProcessingSingleLine(line, cmdSet, lineChars)	'Process the line
-		scripts.Add(line)										'Add new line in list
+		scripts.Add(line)											'Add new line in list
 	Next
 
-	Return scripts												'Return list with lines
+	Return scripts													'Return list with lines
 End Sub
 
 'Process single line
@@ -466,22 +466,22 @@ End Sub
 
 Private Sub ReplaceDetailScripts(line As String, job As TPrnJobFiscalSellItem) As String
 	Select True
-		Case line.Contains( "<itemname>") 			: line = line.Replace("<itemname>", job.ItemName)
-		Case line.Contains( "<itemcode>") 			: line = line.Replace("<itemcode>", " ")
-		Case line.Contains( "<itemgroup>") 			: line = line.Replace("<itemgroup>", " ")
-		Case line.Contains( "<itemprice>") 			: line = line.Replace("<itemprice>", NumberFormat2(job.Price, 1, 2, 2, False))
-		Case line.Contains( "<itempricenet>") 		: line = line.Replace("<itempricenet>", " ")
-		Case line.Contains( "<itempricefull>") 		: line = line.Replace("<itempricefull>", " ")
-		Case line.Contains( "<itempricenetfull>") 	: line = line.Replace("<itempricenetfull>", " ")
-		Case line.Contains( "<itemqtty>") 			: line = line.Replace("<itemqtty>", job.Quantity)
-		Case line.Contains( "<itemtotal>") 			: line = line.Replace("<itemtotal>", NumberFormat2(Round2(job.Price * job.Quantity, ProgramData.CurrentCompany.PricePercision), 1, ProgramData.CurrentCompany.PricePercision, ProgramData.CurrentCompany.PricePercision, False))
-		Case line.Contains( "<itemtotalnet>") 		: line = line.Replace("<itemtotalnet>", " ")
-		Case line.Contains( "<itemtotalfull>") 		: line = line.Replace("<itemtotalfull>", " ")
-		Case line.Contains( "<itemtotalnetfull>") 	: line = line.Replace("<itemtotalnetfull>", " ")
+		Case line.Contains( "<itemname>") 				: line = line.Replace("<itemname>", job.ItemName)
+		Case line.Contains( "<itemcode>") 				: line = line.Replace("<itemcode>", " ")
+		Case line.Contains( "<itemgroup>") 				: line = line.Replace("<itemgroup>", " ")
+		Case line.Contains( "<itemprice>") 				: line = line.Replace("<itemprice>", NumberFormat2(job.Price, 1, 2, 2, False))
+		Case line.Contains( "<itempricenet>") 			: line = line.Replace("<itempricenet>", " ")
+		Case line.Contains( "<itempricefull>") 			: line = line.Replace("<itempricefull>", " ")
+		Case line.Contains( "<itempricenetfull>") 		: line = line.Replace("<itempricenetfull>", " ")
+		Case line.Contains( "<itemqtty>") 				: line = line.Replace("<itemqtty>", job.Quantity)
+		Case line.Contains( "<itemtotal>") 				: line = line.Replace("<itemtotal>", NumberFormat2(Round2(job.Price * job.Quantity, ProgramData.CurrentCompany.PricePercision), 1, ProgramData.CurrentCompany.PricePercision, ProgramData.CurrentCompany.PricePercision, False))
+		Case line.Contains( "<itemtotalnet>") 			: line = line.Replace("<itemtotalnet>", " ")
+		Case line.Contains( "<itemtotalfull>") 			: line = line.Replace("<itemtotalfull>", " ")
+		Case line.Contains( "<itemtotalnetfull>") 		: line = line.Replace("<itemtotalnetfull>", " ")
 		Case line.Contains( "<itemvatcode>") 			: line = line.Replace("<itemvatcode>", " ")
 		Case line.Contains( "<itemvatpercent>") 		: line = line.Replace("<itemvatpercent>", job.VatPercent)
-		Case line.Contains( "<itemdiscounttotal>") 	: line = line.Replace("<itemdiscounttotal>", " ")
-		Case line.Contains( "<itemdiscountpercent>") 	: line = line.Replace("<itemdiscountpercent>", " ")
+		Case line.Contains( "<itemdiscounttotal>") 		: line = line.Replace("<itemdiscounttotal>", " ")
+		Case line.Contains( "<itemdiscountpercent>")	: line = line.Replace("<itemdiscountpercent>", " ")
 		Case line.Contains( "<itemdiscounttotalnet>")	: line = line.Replace("<itemdiscounttotalnet>", " ")
 		Case line.Contains( "<itemdescription>") 		: line = line.Replace("<itemdescription>", " ")
 	End Select

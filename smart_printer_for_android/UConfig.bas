@@ -22,7 +22,6 @@ Public Sub writeUSConfig
 		Log(LastException)
 		Msgbox(Main.translate.GetString("msgFailedToSavePrinters"), Main.translate.GetString("lblWarning"))
 	End Try
-	RAF.Close
 End Sub
 
 Public Sub LoadSavedUSConfig

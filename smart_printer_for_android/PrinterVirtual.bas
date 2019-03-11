@@ -33,12 +33,11 @@ Sub Class_Globals
 	Private DeviceParameters As TDeviceParameters
 	Private DeviceSettingsRequirements As Map	'Contains needed settings for selected device ("IP","Port".)
 	
-	Private VirtualOnScreenPrinter, VirtualTXTPrinter As Int
+	Private VirtualOnScreenPrinter As Int
 	
 	'Output types
 	Private OutputType As Int = 0				'CurrentOutput
 	Private Const Output_Screen As Int = 1		'Outputs to screen
-	Private Const Output_Text As Int = 2		'Saves as TXT file
 	
 End Sub
 
@@ -64,7 +63,6 @@ End Sub
 'If new printer is added then add it to setSelected_Printer() too!
 Private Sub fillMap
 	VirtualOnScreenPrinter = AddPrinter("Virtual On-Screen Printer", Countries.Universe)
-	VirtualTXTPrinter = AddPrinter("Virtual TEXT Printer", Countries.Universe)
 End Sub
 
 'Set the parameter correct to work with the give printer.
@@ -77,13 +75,7 @@ Public Sub setSelected_Printer(id As Int)
 			fiscalMemoryMode = False
 			DeviceSettingsRequirements.Clear
 			OutputType = Output_Screen
-			
-		Case VirtualTXTPrinter
-			setDeviceParams(48, 48)
-			fiscalMemoryMode = False
-			DeviceSettingsRequirements.Clear
-			OutputType = Output_Text
-			
+
 	End Select
 End Sub
 

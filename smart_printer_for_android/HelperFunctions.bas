@@ -7,18 +7,18 @@ Version=7.3
 Sub Process_Globals
 End Sub
 
-Public Sub Remove_Padding (obj As Object)		'Премахва отстоянията / Remove padding
-	Private pad = 0dip As Int
-	Private reflect As Reflector
-	reflect.Target = obj
-	reflect.RunMethod4("setPadding", Array As Object(pad, pad, pad, pad), Array As String("java.lang.int", "java.lang.int", "java.lang.int", "java.lang.int"))
-End Sub
-
-Public Sub Add_Padding (obj As Object, left As Int, top As Int, right As Int, bottom As Int )		'Премахва отстоянията / Remove padding
-	Private reflect As Reflector
-	reflect.Target = obj
-	reflect.RunMethod4("setPadding", Array As Object(left, top, right, bottom), Array As String("java.lang.int", "java.lang.int", "java.lang.int", "java.lang.int"))
-End Sub
+'Public Sub Remove_Padding (obj As Object)		'Премахва отстоянията / Remove padding
+'	Private pad = 0dip As Int
+'	Private reflect As Reflector
+'	reflect.Target = obj
+'	reflect.RunMethod4("setPadding", Array As Object(pad, pad, pad, pad), Array As String("java.lang.int", "java.lang.int", "java.lang.int", "java.lang.int"))
+'End Sub
+'
+'Public Sub Add_Padding (obj As Object, left As Int, top As Int, right As Int, bottom As Int )	
+'	Private reflect As Reflector
+'	reflect.Target = obj
+'	reflect.RunMethod4("setPadding", Array As Object(left, top, right, bottom), Array As String("java.lang.int", "java.lang.int", "java.lang.int", "java.lang.int"))
+'End Sub
 
 'Прилага визуалния стил върху контролите / Apply visual style over controls
 Public Sub Apply_ViewStyle (Control As View, TextColor As Int, ColorA As Int, ColorB As Int, ColorPressedA As Int, ColorPressedB As Int, ColorDisabledA As Int, ColorDisabledB As Int, CornerRound As Int)
@@ -38,7 +38,8 @@ Public Sub Apply_ViewStyle (Control As View, TextColor As Int, ColorA As Int, Co
 	End If		
 	'Apply background gradient
 	Control.Background = Helper_Gradient(ColorA, ColorB, ColorPressedA, ColorPressedB, ColorDisabledA, ColorDisabledB, CornerRound)
-	Remove_Padding(Control)
+'	Remove_Padding(Control)
+	Control.Padding = Array As Int (0, 0, 0, 0)
 End Sub
 
 'Задава градиент за фон на контролите в приложението - добавено заобляне / Defines background gradient for controls and views in the app

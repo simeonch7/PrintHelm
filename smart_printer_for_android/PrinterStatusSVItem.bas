@@ -131,28 +131,34 @@ Public Sub Build(parent As MiScrollView,ParentWidth As Int, ParentHeight As Int)
 	btnRetry.Text = Main.translate.GetString("strRetry")
 	btnRetry.Tag = PrinterConstants.Action_Retry
 	HelperFunctions.setButtonStyle(btnRetry)
-	HelperFunctions.Remove_Padding(btnRetry)
-			
+'	HelperFunctions.Remove_Padding(btnRetry)
+	btnRetry.Padding = Array As Int (0, 0, 0, 0)
 	btnAbort.Text = Main.translate.GetString("strAbort")
 	btnAbort.Tag = PrinterConstants.Action_Abort
 	HelperFunctions.setButtonStyle(btnAbort)
-	HelperFunctions.Remove_Padding(btnAbort)
+'	HelperFunctions.Remove_Padding(btnAbort)
+	btnAbort.Padding = Array As Int (0, 0, 0, 0)
 
 	btnXReport.Text = Main.translate.GetString("strXReport")
 	btnXReport.Tag = Constants.rpt_XReport
 	HelperFunctions.setButtonStyle(btnXReport)
-	HelperFunctions.Remove_Padding(btnXReport)
+'	HelperFunctions.Remove_Padding(btnXReport)
+	btnXReport.Padding = Array As Int (0, 0, 0, 0)
+	
 
 	btnZReport.Text = Main.translate.GetString("strZReport")
 	btnZReport.Tag = Constants.rpt_ZReport
 	HelperFunctions.setButtonStyle(btnZReport)
-	HelperFunctions.Remove_Padding(btnZReport)
+'	HelperFunctions.Remove_Padding(btnZReport)
+	btnZReport.Padding = Array As Int (0, 0, 0, 0)
 	
 	btnMenu.Text = "..."
 	HelperFunctions.setButtonStyle(btnMenu)
-	HelperFunctions.Remove_Padding(btnMenu)
+'	HelperFunctions.Remove_Padding(btnMenu)
+	btnMenu.Padding = Array As Int (0, 0, 0, 0)
+'	HelperFunctions.Remove_Padding(foot)
 	
-	HelperFunctions.Remove_Padding(foot)
+	foot.Padding = Array As Int (0, 0, 0, 0)
 	
 	Dim btnMenuWidth As Int = foot.Width * 0.2
 	Dim btnFiscalWidth As Int = (foot.Width - padding - btnMenuWidth)/2
