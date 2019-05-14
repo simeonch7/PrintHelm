@@ -55,10 +55,9 @@ Module20=BytesBuilder
 Module21=UConfig
 Module22=PrinterStatusSVItems
 Module23=Device
-Module24=UISizes
-Module25=Version
-Module26=B4XEval
-Module27=PriceMathFunctions
+Module24=Version
+Module25=B4XEval
+Module26=PriceMathFunctions
 Module3=IPscreen
 Module4=ImageResources
 Module5=PrinterMain
@@ -68,7 +67,7 @@ Module8=PrinterPriceCalculator
 Module9=PrinterPOS
 NumberOfFiles=11
 NumberOfLibraries=15
-NumberOfModules=27
+NumberOfModules=26
 Version=8.8
 @EndOfDesignText@
  #Region  Project Attributes 
@@ -138,7 +137,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	UConfig.LoadSavedUSConfig
 	
 	ProgramData.Initialize
-	UISizes.Initialize
+	programdata.Initialize
 	
 	loginScr.Initialize
 	loginScr.build_Screen(Activity)
