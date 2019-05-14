@@ -24,7 +24,7 @@ Sub Service_Create
 	Private n As Notification
 	n.Initialize
 	n.Icon = "icon"
-	n.SetInfo("Http Server is running", "", Main)
+	n.SetInfo("Http Server Is Running", "", Main)
 	Service.StartForeground(1, n)
 End Sub
 
@@ -38,7 +38,6 @@ Sub Server_HandleRequest (Request As ServletRequest, response As ServletResponse
 		urlResponse = su.DecodeUrl(Request.RequestURI, "UTF8")
 		urlResponse = urlResponse.Replace("/postMessage", "")
 		
-		Log("<<<<<<<>>>>>>>")
 		Log("Client: " & Request.RemoteAddress)
 		Log("--->"&urlResponse)
 		Log("<<<<<<<>>>>>>>")
@@ -61,8 +60,8 @@ Sub Server_HandleRequest (Request As ServletRequest, response As ServletResponse
 		
 	Catch
 		response.Status = 500
-		Log("Error serving request: " & LastException)
-		response.SendString("Error serving request: " & LastException)
+		Log("Error Serving Request For SMART PRINTER FOR ANDROID: " & LastException)
+		response.SendString("Error Serving Request For SMART PRINTER FOR ANDROID: " & LastException)
 	End Try
 End Sub
 

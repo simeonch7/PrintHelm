@@ -26,11 +26,10 @@ IconFile=
 Library1=core
 Library10=byteconverter
 Library11=micustomviews
-Library12=javaobject
-Library13=httpserver
-Library14=okhttputils2
-Library15=runtimepermissions
-Library16=scrollview2d
+Library12=httpserver
+Library13=okhttputils2
+Library14=runtimepermissions
+Library15=scrollview2d
 Library2=xmlsax
 Library3=randomaccessfile
 Library4=reflection
@@ -41,36 +40,35 @@ Library8=serial
 Library9=network
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="17" android:targetSdkVersion="26"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~'End of default text.~\n~~\n~AddPermission(android.hardware.usb.action.USB_DEVICE_DETACHED)~\n~CreateResource(xml, device_filter.xml,~\n~<resources>		~\n~    <usb-device />	~\n~</resources>~\n~)~\n~AddApplicationText(~\n~<activity android:name=".main" >~\n~   <intent-filter>~\n~    <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />~\n~   </intent-filter>  ~\n~    <meta-data android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" android:resource="@xml/device_filter" />   ~\n~ </activity>~\n~)
 Module1=SPAservice
-Module10=PrinterStatusScreen
-Module11=PrinterStatusSVItem
-Module12=PrinterVirtual
+Module10=SettingsScreen
+Module11=PrinterVirtual
+Module12=ProgramData
 Module13=ScriptMaster
-Module14=PrinterConstants
-Module15=UConfig
-Module16=Utilities
-Module17=Countries
-Module18=ProgramData
-Module19=Device
-Module2=IPscreen
-Module20=DataTypes
-Module21=UISizes
+Module14=Utilities
+Module15=Countries
+Module16=Translator
+Module17=DataTypes
+Module18=PrinterConstants
+Module19=HelperFunctions
+Module2=PrinterStatusScreen
+Module20=BytesBuilder
+Module21=UConfig
 Module22=PrinterStatusSVItems
-Module23=Translator
-Module24=Version
-Module25=B4XEval
-Module26=PriceMathFunctions
-Module27=BytesBuilder
-Module28=Constants
-Module3=ButtonWithNotifications
-Module4=SettingsScreen
-Module5=ImageResources
-Module6=PrinterPriceCalculator
-Module7=PrinterMain
-Module8=PrinterPOS
-Module9=HelperFunctions
+Module23=Device
+Module24=UISizes
+Module25=Version
+Module26=B4XEval
+Module27=PriceMathFunctions
+Module3=IPscreen
+Module4=ImageResources
+Module5=PrinterMain
+Module6=ButtonWithNotifications
+Module7=PrinterStatusSVItem
+Module8=PrinterPriceCalculator
+Module9=PrinterPOS
 NumberOfFiles=11
-NumberOfLibraries=16
-NumberOfModules=28
+NumberOfLibraries=15
+NumberOfModules=27
 Version=8.8
 @EndOfDesignText@
  #Region  Project Attributes 
@@ -92,24 +90,14 @@ Version=8.8
 Sub Process_Globals
 	Public translate As Translator
 	Public languageList As List
-	Public Const lng_BG As String = "BG"		'Bulgarian Language Abbreviation
-	Public Const lng_EN As String = "EN"		'English Language Abbreviation
-	Public Const lng_RU As String = "RU"		'Russian Language Abbreviation
-	Public Const lng_RO As String = "RO"		'Romanian Language Abbreviation
-	Public Const lng_ES As String = "ES"		'Spanish Language Abbreviation
-	Public Const lng_KA As String = "KA"		'Georgian Language Abbreviation
-	Public Const lng_DE As String = "DE"		'German Language Abbreviation
-	Public Const lng_KK As String = "KK"		'Kazakh Language Abbreviation
-	Public Const lng_EL As String = "EL"		'Greek Language Abbreviation
-	Public Const lng_FI As String = "FI"		'Finish Language Abbreviation
-	Public Const lng_UK As String = "UK"		'Ukranian Language Abbreviation
-	Public Const lng_CZ As String = "CZ"		'Czech Language Abbreviation
 	
 	Public  SCREEN_ID As Int = 0
-	Public Const SCREEN_LOGIN As Int = 1		'Login Screen ID
-	Public Const SCREEN_SETTINGS As Int = 2		'Setting Screen ID	
+	Public Const SCREEN_LOGIN As Int = 1				'Login Screen   ID
+	Public Const SCREEN_SETTINGS As Int = 2				'Setting Screen ID	
+	Public Const SCREEN_NOTIFICATIONS As Int = 3		'ProgressScreen ID
+	Public Const SCREEN_ADD_OR_EDIT_PRINTER As Int = 4	'Add/Edit Panel ID
 	
-	Public SelectedLanguage As String = lng_BG
+	Public SelectedLanguage As String
 
 	Public Math As B4XEval						'Used to calcualte string expressions
 
@@ -119,11 +107,8 @@ Sub Process_Globals
 	Public Const PS_SerialPort As Int = 3
 	Public Const PS_BaudRate As Int = 4
 	
-'	Private req As String
-	
 	Public rp As RuntimePermissions
 	Public SHAREDFolder As String	'This returns the safe dir now - replaces File.DirDefaultExternal
-	
 End Sub
 
 Sub Globals
@@ -190,10 +175,11 @@ Public Sub Login_SignsRefresh
 	CallSub(loginScr, "refreshLogin_Labels")
 End Sub
 
-'метод,с който пренаписваме бутонът за връщане назад на у-вото
+'метод,с който пренаписваме бутонa за връщане назад на у-вото
 Sub Activity_KeyPress (KeyCode As Int) As Boolean
-	If KeyCode = KeyCodes.KEYCODE_BACK Then	
+	If KeyCode = KeyCodes.KEYCODE_BACK Then
 		Select SCREEN_ID
+			
 			Case SCREEN_LOGIN
 				Private result As Int
 				result = Msgbox2("Are you sure?", "Exit!", "Yes", "Cancel", "No", Null)
@@ -202,9 +188,35 @@ Sub Activity_KeyPress (KeyCode As Int) As Boolean
 					ExitApplication
 				End If
 				Exit
+				
 			Case SCREEN_SETTINGS
+				
 				loginScr.goBackToLoginScreen
-				UConfig.writeUSConfig
+				UConfig.writeUSConfig			
+				
+				Exit
+				
+			Case SCREEN_ADD_OR_EDIT_PRINTER
+				
+				Private result As Int
+				result = Msgbox2("Save settings?", "Exit!", "Yes", "Cancel", "No", Null)
+				If result = DialogResponse.POSITIVE Then
+					loginScr.SettingsScr.Save_click
+					
+				else if result = DialogResponse.NEGATIVE Then
+					loginScr.SettingsScr.exit_Click
+				End If
+				
+				Exit
+			
+			Case SCREEN_NOTIFICATIONS
+				loginScr.SettingsScr.refNotificationCenter.hide_Screen
+			
+				If loginScr.SettingsScr.countourPanel.left = 0 Then
+					SCREEN_ID = SCREEN_ADD_OR_EDIT_PRINTER	
+				Else
+					SCREEN_ID = SCREEN_SETTINGS
+				End If
 				Exit
 		End Select
 	End If

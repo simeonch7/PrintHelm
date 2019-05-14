@@ -36,7 +36,7 @@ Private Sub Class_Globals
 	Private Const IDPrefixStep As Int = 500			'Step to Next ID
 	Private callBack As Object						'CallBack = POSScreen
 	
-	Private ScreenProgress As PrinterStatusScreen
+	Public ScreenProgress As PrinterStatusScreen
 
 	
 	Public ActivePrinters As List
@@ -50,7 +50,6 @@ Public Sub Initialize(CB As Object)
 	
 	PrinterConstants.initCommandSets
 	generateDefaultScripts
-	DisableStrictMode				'Allow Network on main thread (this is needed only once for app runtime)
 	callBack = CB
 	Jobs.Initialize
 	mapPrinters.Initialize
@@ -70,9 +69,7 @@ Private Sub initAllPrinterDrivers
 	Dim printPOS As PrinterPOS
 	printPOS.Initialize(Me, IDPrefix)
 	addToPrintersMap(printPOS.getPrintersMap, printPOS)
-		
-		
-		
+			
 	Dim printVirtual As PrinterVirtual
 	printVirtual.Initialize(Me, IDPrefix)
 	addToPrintersMap(printVirtual.getPrintersMap, printVirtual)
@@ -87,7 +84,7 @@ End Sub
 Public Sub addToActivePrinter(printer As TActivePrinter)
 	'First try to find the printer by name.
 	'If not found tries to find the printer by ID
-	'If found by ID and the printers are from old version there is chance that the driver will not be set curectly
+	'If found by ID and the printers are from old version there is chance that the driver will not be set correctly
 	Dim initPrinter As Printer
 	initPrinter = getInitialPrinterByName(printer.name)
 	If initPrinter <> Null Then
@@ -349,17 +346,4 @@ private Sub generateDefaultScripts
 	defaultScripts.Footers.Add("<Center>Благодарим ви!")
 	defaultScripts.Footers.Add("<Right><Date> <Time>")
 	
-End Sub
-
-Private Sub DisableStrictMode
-	Dim jo As JavaObject
-	jo.InitializeStatic("android.os.Build.VERSION")
-   
-	If jo.GetField("SDK_INT") > 9 Then
-		Dim policy As JavaObject
-		policy = policy.InitializeNewInstance("android.os.StrictMode.ThreadPolicy.Builder", Null)
-		policy = policy.RunMethodJO("permitAll", Null).RunMethodJO("build", Null)
-		Dim sm As JavaObject
-		sm.InitializeStatic("android.os.StrictMode").RunMethod("setThreadPolicy", Array(policy))
-	End If
 End Sub

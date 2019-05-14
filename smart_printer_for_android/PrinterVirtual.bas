@@ -75,7 +75,6 @@ Public Sub setSelected_Printer(id As Int)
 			fiscalMemoryMode = False
 			DeviceSettingsRequirements.Clear
 			OutputType = Output_Screen
-
 	End Select
 End Sub
 
@@ -270,7 +269,7 @@ Private Sub AddFooter
 	Next
 End Sub
 
-'Shows the reciept on-screen / Показва бележката на екрана
+'Shows the receipt on-screen / Показва бележката на екрана
 Private Sub PrintOnScreen
 	ScreenTarget = CallSub(Main, "Reference_Activity")
 	MeasureChars

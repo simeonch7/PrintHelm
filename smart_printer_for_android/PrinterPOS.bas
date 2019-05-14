@@ -460,7 +460,7 @@ Public Sub setSelected_Printer(id As Int)
 			PrinterCutterString = ESC & "i"
 			NumberEmptyLines = 3
 			DeviceSettingsRequirements.Clear
-			DeviceSettingsRequirements.Put(Main.PS_IPAddress, "192.168.63.170")
+			DeviceSettingsRequirements.Put(Main.PS_IPAddress, "192.168.63.140")
 			DeviceSettingsRequirements.Put(Main.PS_IPPort, "9100")
 			DeviceConnection = Conn_LAN
 			selectedCmdSet = PrinterConstants.ESC_POS_1

@@ -44,7 +44,7 @@ Public Sub LoadSavedUSConfig
 			writeUSConfig
 		End If
 	Catch
-		Msgbox("Fail load USConfig ","Warrning")
+		Msgbox("Fail load User Configuration","Warrning")
 		Log(LastException)
 	End Try
 End Sub

@@ -134,7 +134,7 @@ Private Sub ReplacePreProcScript(line As String, lineChars As Int) As String
 		Case line.Contains( "<invoicenumber>") 		: line = line.Replace("<invoicenumber>", " ")
 		Case line.Contains( "<invoicecomposer>") 	: line = line.Replace("<invoicecomposer>", " ")
 		Case line.Contains( "<invoicerecipient>") 	: line = line.Replace("<invoicerecipient>", " ")
-		Case line.Contains( "<invoicerecipientegn>") : line = line.Replace("<invoicerecipientegn>", " ")
+		Case line.Contains( "<invoicerecipientegn>"): line = line.Replace("<invoicerecipientegn>", " ")
 		Case line.Contains( "<discount>") 			: line = line.Replace("<discount>", " ")
 		Case line.Contains( "<invoicedealplace>") 	: line = line.Replace("<invoicedealplace>", " ")
 		Case line.Contains( "<discountpercent>") 	: line = line.Replace("<discountpercent>", " ")
@@ -143,8 +143,8 @@ Private Sub ReplacePreProcScript(line As String, lineChars As Int) As String
 	
 		Case line.Contains( "<guests>") 			: line = line.Replace("<guests>", " ")
 		Case line.Contains( "<empty>") 				: line = EmptyLine(line, lineChars)	'"Empty line")
-		Case line.Contains( "<esc>") 				: line = line.Replace("<esc>", Chr(27))
-		Case line.Contains( "<gs>") 				: line = line.Replace("<gs>",  Chr(29))
+		Case line.Contains( "<esc>") 				: line = line.Replace("<esc>", Chr(27))	'Командите по ESC/POS се кодират чрез един или няколко специални символа и параметрите на командата. Всичко това се описва в съответната секция (Header, Details, Totals или Footer) в настройката на принтерите ->	десетичен код 27.
+		Case line.Contains( "<gs>") 				: line = line.Replace("<gs>",  Chr(29))	'Tяхното действие е описано в документацията на принтера и е стандартизирано от ESC/POS протокола. group seperator
 		Case line.Contains( "<beep>") 				: line = line.Replace("<beep>", Chr(7))
 		Case line.Contains( "<File>MyFile.txt") 	: line = line.Replace("<File>MyFile.txt", "Send file to printer")
 		Case line.Contains( "<Random>MyFile.txt") 	: line = line.Replace("<Random>MyFile.txt", "Send 1 row from file to printer")
@@ -154,10 +154,10 @@ Private Sub ReplacePreProcScript(line As String, lineChars As Int) As String
 		Case line.Contains( "<limitl20>") 			: line = line.Replace("<limitl20>", "Left limit 20 symbols")
 		Case line.Contains( "<limitr30>") 			: line = line.Replace("<limitr30>", "Right limit 30 symbols")
 		Case line.Contains( "<limitc40>") 			: line = line.Replace("<limitc40>", "Center limit 40 symbols")
-		Case line.Contains( "<chr00>") 				: line = line.Replace("<chr00>", Chr(0))
-		Case line.Contains( "<chr01>") 				: line = line.Replace("<chr01>", Chr(1))
-		Case line.Contains( "<chrfe>") 				: line = line.Replace("<chrfe>", Chr(254))
-		Case line.Contains( "<chrff>") 				: line = line.Replace("<chrff>", Chr(255))
+		Case line.Contains( "<chr00>") 				: line = line.Replace("<chr00>", Chr(0))	'<ESC>!<CHR00> - Активира шрифт A;  <ESC>Е<CHR00> - Изключва удебелен шрифт;	<GS>B<CHR00> - Изключва инверсен печат;
+		Case line.Contains( "<chr01>") 				: line = line.Replace("<chr01>", Chr(1))	'<ESC>!<CHR01> - Активира шрифт B;	<ESC>Е<CHR01> - Включва удебелен шрифт;		<GS>B<CHR01> - Включва инверсен печат;
+		Case line.Contains( "<chrfe>") 				: line = line.Replace("<chrfe>", Chr(254))	'density ;> GS
+		Case line.Contains( "<chrff>") 				: line = line.Replace("<chrff>", Chr(255))	'Sets all contents set in printer function setting mode to the state at the			time of shipment.
 		Case line.Contains( "<farewell>") 			: line = line.Replace("<farewell>", "msgFareWell")
 			
 			'Tag based calculations and actions
@@ -176,12 +176,12 @@ Private Sub ReplacePreProcScript(line As String, lineChars As Int) As String
 		Case line.Contains( "<freetext>") 			: line = line.Replace("<freetextfreetext>", "Free Text")
 		Case line.Contains( "<exec>") 				: line = line.Replace("<exec>", "Execute/Start external file or app")
 		Case line.Contains( "<null>") 				: line = line.Replace("<null>", "Place string end")
-		Case line.Contains( "<ordercount") 			: line = line.Replace("<ordercount>", "Uniquie counter of mid(междинна) order")
+		Case line.Contains( "<ordercount>") 			: line = line.Replace("<ordercount>", "Uniquie counter of mid(междинна) order")
 		Case line.Contains( "<sdcddate>") 			: line = line.Replace("<sdcddate>", "Date of print from SDC device")
 		Case line.Contains( "<sdctime>") 			: line = line.Replace("<sdctime>", "SDCTime")
 		Case line.Contains( "<sdcinternaldate>") 	: line = line.Replace("<sdcinternaldate>", "SDCInternalDate")
 		Case line.Contains( "<sdcreceiptnumber>") 	: line = line.Replace("<sdcreceiptnumber>", "SDCReceiptNumber")
-		Case line.Contains( "<sdcreceiptsignature>") : line = line.Replace("<sdcreceiptsignature>", "SDCReceiptSignature")
+		Case line.Contains( "<sdcreceiptsignature>"): line = line.Replace("<sdcreceiptsignature>", "SDCReceiptSignature")
 		Case line.Contains( "<sdcid>") 				: line = line.Replace("<sdcid>", "Serial number of device")
 		Case line.Contains( "<sdcmrc>") 			: line = line.Replace("<sdcmrc>", "Machine registration code")
 		Case line.Contains( "<sdctin>") 			: line = line.Replace("<sdctin>", "Tax indentification number")
@@ -277,7 +277,7 @@ Public Sub RunPostProcessing(Script As List, lineChars As Int,commandSet As Int)
 	
 '	Go through every line
 	For i = 0 To Script.Size - 1
-		Dim line As String= Script.Get(i)							'Get the line
+		Dim line As String = Script.Get(i)							'Get the line
 		line = PostProcessingSingleLine(line, cmdSet, lineChars)	'Process the line
 		scripts.Add(line)											'Add new line in list
 	Next
@@ -342,7 +342,7 @@ Private Sub getCommandFromScript(tag As String, cmdSet As CommandSet) As String
 		Case tag.Contains("<Fontitalicoff>") : cmd = cmdSet.FontItalicOFF
 
 		'General
-		Case tag.Contains("<cutter>") 		 : cmd = cmdSet.Cutter
+		Case tag.Contains("<cutter>") 		 : cmd = cmdSet.Cutter	'<ESC>i – Активира ножа на принтера.
 		Case tag.Contains("<kickdrawer>") 	 : cmd = cmdSet.KickDrawer
 		Case tag.Contains("<counter>") 		 : cmd = cmdSet.Counter
 	End Select

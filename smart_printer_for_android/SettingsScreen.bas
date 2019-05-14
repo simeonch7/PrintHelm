@@ -5,7 +5,8 @@ Type=Class
 Version=8.3
 @EndOfDesignText@
  Sub Class_Globals
-	Private countourPanel, configPanel, statusBtn As Panel
+	Public countourPanel As Panel
+	Private configPanel, statusBtn As Panel
 	Public settingsPanel As Panel
 	Private inFooterHolder, outFooterHolder, outHeaderHolder, inHeaderHolder, outDetailesHolder, inDetailesHolder, outTotalsHolder, inTotalsHolder As Panel
 	Private country, language, printer, spnActivePrinter, spnMac As Spinner
@@ -66,7 +67,6 @@ Public Sub Initialize
 	cTotalsList.Initialize
 	
 	settingsPanel.SetBackgroundImage(ImageResources.background)
-'	settingsPanel.Color = Colors.Transparent
 	
 	Countries.Initialize
 	country.Initialize("countrySpinner")
@@ -94,7 +94,7 @@ Public Sub Initialize
 	btnPrinterRemove.Initialize("removePrinter")
 	
 	pnlEditImg.Initialize("editPrinter")
-	pnlEditImg.SetBackgroundImage(ImageResources.edtbtnBG)
+	pnlEditImg.SetBackgroundImage(ImageResources.edtbtnBG).Gravity = Gravity.CENTER
 	btnPrinterEdt.Initialize("EditPrinter")
 	
 	statusBtn.Initialize("")
@@ -112,7 +112,6 @@ Public Sub Initialize
 
 	ColorPickerAndLabelTexts
 	masterP.Initialize(Me)
-	refillSpPrinters
 	PrinterList.Initialize
 	templates.Initialize
 	BoudRatesList.Add("1200")
@@ -175,6 +174,10 @@ Private Sub deviceprinterFill
 	printer.AddAll(PrinterList)
 End Sub
 
+public Sub refNotificationCenter As PrinterStatusScreen
+	Return masterP.ScreenProgress
+End Sub
+
 Sub SettingsUI
 	
 	settingsPanel.AddView(countourPanel, -100%x, 50%y, 100%x, 50%y)
@@ -188,7 +191,7 @@ Sub SettingsUI
 	LabelLanguage.Gravity = Gravity.CENTER_HORIZONTAL
 	settingsPanel.AddView(language, 32.5%x, LabelLanguage.Top + LabelLanguage.Height , 35%x, 5%y)
 		
-	settingsPanel.AddView(LabelAcPrinter, 0%x, language.Top + language.Height + 5%y, 100%x, 5%y)
+	settingsPanel.AddView(LabelAcPrinter, 0%x, language.Top + language.Height + 5%y, 100%x, 5%y) 
 	LabelAcPrinter.Gravity = Gravity.CENTER_HORIZONTAL
 	
 	settingsPanel.AddView(spnActivePrinter, 29%x, LabelAcPrinter.Top + LabelAcPrinter.Height + UISizes.DefaultPadding, 41%x, 5%y)
@@ -336,8 +339,7 @@ Private Sub xml_EndElement (Uri As String, Name As String, Text As StringBuilder
 				Private itemCart As CartItem
 				
 				itemCart = CopyWorkingToLocalItem
-'				ProgramData.selectedObjectID = objectStorer.storeCode
-'				tempList.Add(itemCart)
+
 				ProgramData.GroupItemsMat.Put(itemCart.itemCode, itemCart)
 				
 			End If
@@ -480,6 +482,10 @@ Private Sub fakeHolder_Click
 	Return True	'ignore
 End Sub
 
+Private Sub CountourPanel_Click
+	Return True	'ignore -> fakeHolder
+End Sub
+
 Sub ColorPickerAndLabelTexts
 	LabelCountry.Text = Main.translate.GetString("lblCountry")
 	LabelCountry.TextColor = Colors.white
@@ -505,11 +511,13 @@ Sub ColorPickerAndLabelTexts
 	spnActivePrinter.DropdownTextColor = Colors.White
 
 	btnPrinterRemove.Text = "-"
-	btnPrinterRemove.Textsize = 19
+	btnPrinterRemove.textColor = Colors.White
+	btnPrinterRemove.Textsize = 25
 	btnPrinterRemove.Gravity = Gravity.CENTER
 	
 	btnPrinterAdd.Text = "+"
-	btnPrinterAdd.TextSize = 19
+	btnPrinterRemove.Textsize = 25
+	btnPrinterAdd.textcolor = Colors.white
 	btnPrinterAdd.Gravity = Gravity.CENTER
 	
 	
@@ -523,7 +531,7 @@ End Sub
 Private Sub removePrinter_Click
 	If spnActivePrinter.SelectedIndex <> - 1 Then
 		masterP.removeFromActivePrinter(spnActivePrinter.SelectedIndex)
-		spnActivePrinter.RemoveAt(spnActivePrinter.SelectedIndex)
+		refillSpPrinters
 	End If
 	If spnActivePrinter.Size > 0 Then spnActivePrinter.SelectedIndex = 0
 	SavePrinters
@@ -565,6 +573,8 @@ Sub Save_click
 End Sub
 
 Private Sub AddbtnPrinter_Click
+	Main.SCREEN_ID = Main.SCREEN_ADD_OR_EDIT_PRINTER
+	
 	If countourPanel.left = 0 Then
 		hideScreen
 		Return
@@ -575,13 +585,14 @@ Private Sub AddbtnPrinter_Click
 	setVisible(True)
 	configPanel.Color = Colors.White
 
-	countourPanel.BringToFront	
+	countourPanel.BringToFront
 	country.Enabled = False
 	language.Enabled = False
 	countourPanel.SetLayoutAnimated(500, 0, 50%y, 100%x, 50%y)
 End Sub
 
 Private Sub EditPrinter_Click
+	Main.SCREEN_ID = Main.SCREEN_ADD_OR_EDIT_PRINTER
 	If spnActivePrinter.Size >= 1 Then 
 		If countourPanel.left = 0 Then
 			hideScreen
@@ -601,11 +612,13 @@ Private Sub EditPrinter_Click
 	
 End Sub
 
-Private Sub exit_Click
+Public Sub exit_Click
 	hideScreen
 End Sub
 
 Public Sub hideScreen
+	Main.SCREEN_ID = Main.SCREEN_SETTINGS
+	
 	printer.SelectedIndex = 0
 	controlsMap.Clear
 	BTSettingsSV.Panel.RemoveAllViews
@@ -681,7 +694,7 @@ End Sub
 Sub countrySpinner_ItemClick (Position As Int, Value As Object)
 	UConfig.USConfig.country = Position
 	ToastMessageShow("Click back button to save configurations", False)
-	
+	deviceprinterFill
 End Sub
 
 Sub languageSpinner_ItemClick (Position As Int, Value As Object)
@@ -796,7 +809,7 @@ private Sub FillControls(connectionParams As TConnectionParameters)
 				Dim cSpinner As Spinner = control
 				
 				cSpinner.SelectedIndex =  cSpinner.IndexOf(connectionParams.BaudRate)
-'				
+				
 			Case Main.PS_IPAddress
 				Dim cEditText As EditText = control
 				cEditText.Text = connectionParams.IPAddress
@@ -981,8 +994,9 @@ public Sub generateSettingView(Spnl As ScrollView, top As Int,  setting As Int, 
 			spn.DropdownTextColor = Colors.White
 			spn.DropdownBackgroundColor = 0xFF3577D5
 			spn.SetBackgroundImage(ImageResources.BMP_SpinnerBack)
+			spn.TextColor = Colors.white
 '			HelperFunctions.Remove_Padding(spn)
-			spn.Padding = array as int (0, 0, 0, 0)
+			spn.Padding = Array As Int (0, 0, 0, 0)
 			hold.AddView(spn, info.Width, cHeight * 0.05, hold.Width - lblWidth, cHeight * 0.6)
 			
 			'Set spinner selected index
@@ -1055,8 +1069,11 @@ public Sub generateSettingView(Spnl As ScrollView, top As Int,  setting As Int, 
 			spn.Tag = setting
 			HelperFunctions.Apply_ViewStyle(spn, Colors.White, COLOR_NormalBottom, COLOR_NormalBottom, COLOR_PressedTop, COLOR_PressedBottom, COLOR_DisabledTop, COLOR_DisabledBottom, ButtonRounding)
 			spn.SetBackgroundImage(ImageResources.BMP_SpinnerBack)
+			
+			spn.TextColor = Colors.white
+			
 '			HelperFunctions.Remove_Padding(spn)
-			spn.Padding = array as int (0, 0, 0, 0)
+			spn.Padding = Array As Int (0, 0, 0, 0)
 			Dim btPort As Serial
 			btPort.Initialize("BTPort")
 			If btPort.GetPairedDevices.Size > 0 Then 
@@ -1097,7 +1114,7 @@ private Sub GenerateHeader(SV As ScrollView,top As Int) As Int 'ignore
 	title.TextColor = Colors.Gray
 	title.Gravity = Gravity.CENTER_VERTICAL + Gravity.LEFT
 '	HelperFunctions.Remove_Padding(title)
-	title.Padding = array as int (0, 0, 0, 0)
+	title.Padding = Array As Int (0, 0, 0, 0)
 	outHeaderHolder.AddView(title,0,0,outHeaderHolder.Width - cHeight - UISizes.DefaultPadding,cHeight)
 	
 	'Build Add Button
@@ -1105,7 +1122,7 @@ private Sub GenerateHeader(SV As ScrollView,top As Int) As Int 'ignore
 	btnAdd.Text = "+"
 	HelperFunctions.Apply_ViewStyle(btnAdd, Colors.White, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_DISABLED, ProgramData.COLOR_BUTTON_DISABLED, 3)
 '	HelperFunctions.Remove_Padding(btnAdd)
-	btnAdd.Padding = array as int (0, 0, 0, 0)
+	btnAdd.Padding = Array As Int (0, 0, 0, 0)
 	outHeaderHolder.AddView(btnAdd,title.Left + title.Width + UISizes.DefaultPadding,0,cHeight,cHeight)
 	
 	inHeaderHolder.Color = ProgramData.COLOR_BUTTON_NORMAL
@@ -1124,7 +1141,7 @@ End Sub
 
 Private Sub addHeader(value As String)
 	Dim edtHeader As EditText
-	Dim padding As Int = 1dip
+	Dim padding As Int = 2dip
 	Dim id As Int = inHeaderHolder.NumberOfViews
 	Dim top As Int = id*HFsingleLineHeight+padding*id
 
@@ -1136,7 +1153,7 @@ Private Sub addHeader(value As String)
 	edtHeader.Color = Colors.White
 	edtHeader.Text = value
 '	HelperFunctions.Remove_Padding(edtHeader)
-	edtHeader.Padding = array as int (0, 0, 0, 0)
+	edtHeader.Padding = Array As Int (0, 0, 0, 0)
 	inHeaderHolder.AddView(edtHeader,padding,top+padding,inHeaderHolder.Width - 2*padding,HFsingleLineHeight)
 	
 	cHeadersList.Add(edtHeader)
@@ -1204,7 +1221,7 @@ End Sub
 
 private Sub addDetail(value As String)
 	Dim edtDetail As EditText
-	Dim padding As Int = 1dip
+	Dim padding As Int = 2dip
 	Dim id As Int = inDetailesHolder.NumberOfViews
 	Dim top As Int = id*HFsingleLineHeight+padding*id
 
@@ -1280,7 +1297,7 @@ End Sub
 
 private Sub addTotals(value As String)
 	Dim edtTotal As EditText
-	Dim padding As Int = 1dip
+	Dim padding As Int = 2dip
 	Dim id As Int = inTotalsHolder.NumberOfViews
 	Dim top As Int = id*HFsingleLineHeight+padding*id
 
@@ -1292,7 +1309,7 @@ private Sub addTotals(value As String)
 	edtTotal.Text = value
 	edtTotal.Hint = "Total"
 '	HelperFunctions.Remove_Padding(edtTotal)
-	edtTotal.Padding = array as int (0, 0, 0, 0)
+	edtTotal.Padding = Array As Int (0, 0, 0, 0)
 	inTotalsHolder.AddView(edtTotal,padding,top+padding,inTotalsHolder.Width - 2*padding,HFsingleLineHeight)
 	
 	cTotalsList.Add(edtTotal)
@@ -1324,7 +1341,7 @@ private Sub GenerateFooter(SV As ScrollView,top As Int) As Int 'ignore
 	title.TextColor = Colors.Gray
 	title.Gravity = Gravity.CENTER_VERTICAL + Gravity.LEFT
 '	HelperFunctions.Remove_Padding(title)
-	title.Padding = array as int (0, 0, 0, 0)
+	title.Padding = Array As Int (0, 0, 0, 0)
 	outFooterHolder.AddView(title,0,0,outFooterHolder.Width - cHeight - UISizes.DefaultPadding,cHeight)
 	
 	'Build Add Button
@@ -1332,7 +1349,7 @@ private Sub GenerateFooter(SV As ScrollView,top As Int) As Int 'ignore
 	btnAdd.Text = "+"
 	HelperFunctions.Apply_ViewStyle(btnAdd, Colors.White, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_DISABLED, ProgramData.COLOR_BUTTON_DISABLED, 3)
 '	HelperFunctions.Remove_Padding(btnAdd)
-	btnAdd.Padding = array as int (0, 0, 0, 0)
+	btnAdd.Padding = Array As Int (0, 0, 0, 0)
 	outFooterHolder.AddView(btnAdd,title.Left + title.Width + UISizes.DefaultPadding,0,cHeight,cHeight)
 	
 	inFooterHolder.Color = ProgramData.COLOR_BUTTON_NORMAL
@@ -1350,7 +1367,7 @@ End Sub
 
 private Sub addFooter(value As String)
 	Dim edtFooter As EditText
-	Dim padding As Int = 1dip
+	Dim padding As Int = 2dip
 	Dim id As Int = inFooterHolder.NumberOfViews
 	Dim top As Int = id*HFsingleLineHeight+padding*id
 
@@ -1362,7 +1379,7 @@ private Sub addFooter(value As String)
 	edtFooter.Color = Colors.White
 	edtFooter.Text = value
 '	HelperFunctions.Remove_Padding(edtFooter)
-	edtFooter.Padding = array as int (0, 0, 0, 0)
+	edtFooter.Padding = Array As Int (0, 0, 0, 0)
 	inFooterHolder.AddView(edtFooter,padding,top+padding,inFooterHolder.Width - 2*padding,HFsingleLineHeight)
 	
 	cFootersList.Add(edtFooter)

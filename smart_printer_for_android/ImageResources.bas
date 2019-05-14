@@ -6,7 +6,7 @@ Version=7.3
 @EndOfDesignText@
 'Code module
 Sub Process_Globals
-	Public Const edtbtnBG, BMP_SpinnerBack,background, BMP_PrinterIcon1, BMP_PrinterIcon2, BMP_PrinterIcon3, BMP_PrintItemIconError, BMP_PrintItemIconSuccess, BMP_PrintItemIconPressed As Bitmap
+	Public Const bitmapPressed, settingsBG, edtbtnBG, addbtnBG, removebtnBG, BMP_SpinnerBack,background, BMP_PrinterIcon1, BMP_PrinterIcon2, BMP_PrinterIcon3, BMP_PrintItemIconError, BMP_PrintItemIconSuccess, BMP_PrintItemIconPressed As Bitmap
 End Sub
 
 'Loads images
@@ -20,4 +20,6 @@ Public Sub LoadImages
 	BMP_PrintItemIconSuccess.Initialize(File.DirAssets, "print_item_success_icon.png")
 	BMP_PrintItemIconPressed.Initialize(File.DirAssets, "printer_icon_pressed.png")
 	edtbtnBG.Initialize(File.DirAssets, "edit.png")
+	settingsBG.Initialize(File.DirAssets, "settingsIcon.png")
+	bitmapPressed.Initialize(File.DirAssets, "printer_icon_pressed.png")
 End Sub

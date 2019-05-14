@@ -9,9 +9,6 @@ Private Sub Class_Globals
 	Private appTitle, lblConnection As Label
 	Private PrinterIP, PrinterPort As EditText
 	Public btnloginPanel As Button
-	Public CAD As CustomAlertDialog
-	Private settingsBG As BitmapDrawable
-	Private BMP_Options As Bitmap
 	
 	Private ETColorTP As Int = 0xFF87B0EA
 	Public SettingsScr As SettingsScreen
@@ -27,11 +24,7 @@ Public Sub Initialize
 	PrinterIP.Initialize("PrinterIPName")
 	PrinterPort.Initialize("PrinterPort")
 	btnloginPanel.Initialize("ButtonloginPanel")
-	BMP_Options.Initialize(File.DirAssets, "settingsIcon.png")
 
-
-	settingsBG.Initialize(BMP_Options)
-	btnloginPanel.Background = settingsBG
 	If localNET Then
 		StartService(SPAservice)
 	Else
@@ -85,9 +78,8 @@ private Sub localNET As Boolean
 	
 	Dim ssocket As ServerSocket
 	
-	Log("<<<<<<<>>>>>>>")
 	Log("Ip address: " & ssocket.GetMyWifiIP)
-	Log("<<<<<<<>>>>>>>")	
+	Log("<<<<<<<!>>>>>>>")	
 	
 	If ssocket.GetMyWifiIP = "127.0.0.1" Then
 		PrinterIP.Text = Main.translate.GetString("NolocalNet")  '"Device not connected to local network"
@@ -101,7 +93,8 @@ End Sub
 
 'Прилагане на стилове за външния вид на екрана за влизане / Applying visual styles for loginPanel screen
 Private Sub loginPanel_Configurations
-	loginPanel.SetBackgroundImage(LoadBitmap(File.DirAssets,"smartBG.jpg"))
+
+	loginPanel.SetBackgroundImage(ImageResources.background)
 	
 	appTitle.Text = Main.translate.GetString("title")
 	appTitle.TextSize = 20
@@ -116,7 +109,7 @@ Private Sub loginPanel_Configurations
 	PrinterPort.HintColor = Colors.Gray
 	
 	btnloginPanel.Gravity = Gravity.CENTER
-	btnloginPanel.Background = settingsBG
+	btnloginPanel.SetBackgroundImage(ImageResources.settingsBG)
 	
 	lblConnection.TextSize = 14
 	lblConnection.Gravity = Gravity.CENTER
@@ -125,7 +118,7 @@ End Sub
 'Метод прехвърлящ фокус между полетата / Changes focus between input fields
 Private Sub PrinterPort_FocusChanged (HasFocus As Boolean)
 	If HasFocus Then
-		PrinterPort.Text=""
+'		PrinterPort.Text=""
 	End If
 End Sub
 
@@ -140,7 +133,6 @@ End Sub
 
 public Sub goBackToLoginScreen
 	Main.SCREEN_ID = Main.SCREEN_LOGIN
-
 	SettingsScr.settingsPanel.setlayoutanimated(500, 0, 100%y, 100%x, 100%y)
 
 	btnloginPanel.Enabled = True

@@ -11,9 +11,6 @@ Sub Class_Globals
 	Private mBase As Panel
 	Private fakePanel As Panel
 	Private notifyWarnings, notifyError, notifyReady As Label
-	Private bitmapPrinting1, bitmapPrinting2, bitmapPrinting3, bitmapPressed As Bitmap
-	Private timerPrinting As Timer
-	Private counter As Int = 0	
 	Private countWarning, countErr, countReady As Int	
 	Private Const COLOR_ERR As Int = Colors.RGB(146, 1, 0)
 	Private Const COLOR_RDY As Int = Colors.RGB(3, 123, 0)
@@ -28,16 +25,14 @@ Public Sub Initialize (Callback As Object, EventName As String)
 	notifyWarnings.Initialize("fakeLabel")
 	notifyReady.Initialize("fakeLabel")
 	fakePanel.Initialize("HolderFakeCounterButton")
-	timerPrinting.Initialize("printing", 200)
 End Sub
 
 Public Sub BuildButtonNotifications(parent As Panel)
 	parent.AddView(mBase, 0, 0, parent.Width, parent.Height)
 	
 	Dim controlSide As Int = mBase.Width * 0.3
-	bitmapPressed.Initialize(File.DirAssets, "printer_icon_pressed.png")
 	
-	mBase.SetBackgroundImage(bitmapPressed)
+	mBase.SetBackgroundImage(ImageResources.bitmapPressed)
 	
 	notifyError.TextSize = ProgramData.TextSize_Small
 	notifyError.Gravity = Gravity.CENTER
@@ -55,20 +50,6 @@ Public Sub BuildButtonNotifications(parent As Panel)
 	mBase.AddView(notifyReady, mBase.Width - controlSide, mBase.Height - controlSide, controlSide, controlSide)
 
 	ResetCounterButton
-End Sub
-
-Private Sub printing_Tick
-	Select counter
-		Case 0
-			counter = 1
-			mBase.SetBackgroundImage(bitmapPrinting1)
-		Case 1
-			counter = 2
-			mBase.SetBackgroundImage(bitmapPrinting2)
-		Case 2
-			counter = 0
-			mBase.SetBackgroundImage(bitmapPrinting3)
-	End Select
 End Sub
 
 Private Sub UpdateStatusCounterButton
@@ -111,10 +92,6 @@ End Sub
 '	fakePanel.Visible = False
 '	StopPrinting
 'End Sub
-
-Public Sub StopPrinting
-	timerPrinting.Enabled = False
-End Sub
 
 'Ready
 Public Sub IncrementReady

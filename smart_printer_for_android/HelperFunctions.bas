@@ -59,7 +59,7 @@ Private Sub Helper_Gradient(ColorA As Int, ColorB As Int, ColorPressedA As Int, 
 	Private colsDisabled(2) As Int				'Дефинира два цвята за неактивния режим на работа
 	colsDisabled(0) = ColorDisabledA
 	colsDisabled(1) = ColorDisabledB	
-	Private gdwDisabled As GradientDrawable		'Дефинира градиент за натиснат бутон
+	Private gdwDisabled As GradientDrawable		'Дефинира градиент за спрян от експлоатация бутон
 	gdwDisabled.Initialize("TOP_BOTTOM", colsDisabled)
 	gdwDisabled.CornerRadius = CornerRound
 	Private stdGradient As StateListDrawable	'Дефинира StateListDrawable като контейнер на градиента
@@ -77,7 +77,6 @@ Private Sub Helper_Gradient(ColorA As Int, ColorB As Int, ColorPressedA As Int, 
 	Return stdGradient							'Връща градиента като параметър / Returns Gradient as Parameter
 End Sub
 
-'To be changed later, when printer module are synchronised
 'Побира контрола (изгледа) в основния скроу панел/Fit views inside Main Scroll panel
 Public Sub FitViewsInScroll(targetScroll As ScrollView)
 	Private viewLast As View = Find_LastView(targetScroll.Panel)

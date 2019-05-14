@@ -27,7 +27,7 @@ Private Sub Class_Globals
 	Private Expanded As Boolean = False
 	Private printOK As Boolean
 	
-	Private btnRetry, btnAbort, btnZReport, btnXReport As Button
+	Private btnRetry, btnAbort As Button
 	Private btnMenu As Button
 	
 	Private lblStatus As Label
@@ -45,7 +45,7 @@ Private Sub Class_Globals
 	Private internalSTATUS_NOERR As Int = 1	
 End Sub
 
-Public Sub Initialize (pCallBack As Object, printer As TActivePrinter, isFiscal As Boolean, Test As Boolean )
+Public Sub Initialize (pCallBack As Object, printer As TActivePrinter, isFiscal As Boolean, Test As Boolean)
 	CallBackParent = pCallBack
 	
 	Status = PrinterConstants.ERR_NoError
@@ -80,8 +80,6 @@ Public Sub Initialize (pCallBack As Object, printer As TActivePrinter, isFiscal 
 	name.Text = printer.name
 	
 	lblStatus.Initialize("")
-	btnXReport.Initialize("ReportAction")
-	btnZReport.Initialize("ReportAction")
 	btnMenu.Initialize("AditionalActions")
 	btnAbort.Initialize("Action")
 	btnRetry.Initialize("Action")
@@ -139,41 +137,22 @@ Public Sub Build(parent As MiScrollView,ParentWidth As Int, ParentHeight As Int)
 '	HelperFunctions.Remove_Padding(btnAbort)
 	btnAbort.Padding = Array As Int (0, 0, 0, 0)
 
-	btnXReport.Text = Main.translate.GetString("strXReport")
-	btnXReport.Tag = Constants.rpt_XReport
-	HelperFunctions.setButtonStyle(btnXReport)
-'	HelperFunctions.Remove_Padding(btnXReport)
-	btnXReport.Padding = Array As Int (0, 0, 0, 0)
-	
-
-	btnZReport.Text = Main.translate.GetString("strZReport")
-	btnZReport.Tag = Constants.rpt_ZReport
-	HelperFunctions.setButtonStyle(btnZReport)
-'	HelperFunctions.Remove_Padding(btnZReport)
-	btnZReport.Padding = Array As Int (0, 0, 0, 0)
-	
 	btnMenu.Text = "..."
 	HelperFunctions.setButtonStyle(btnMenu)
 '	HelperFunctions.Remove_Padding(btnMenu)
 	btnMenu.Padding = Array As Int (0, 0, 0, 0)
 '	HelperFunctions.Remove_Padding(foot)
 	
-	foot.Padding = Array As Int (0, 0, 0, 0)
-	
-	Dim btnMenuWidth As Int = foot.Width * 0.2
-	Dim btnFiscalWidth As Int = (foot.Width - padding - btnMenuWidth)/2
 	
 	foot.AddView(footNormal,0,0,foot.Width,foot.Height)
 	foot.AddView(footFiscal,0,0,foot.Width,foot.Height)	
+	foot.Padding = Array As Int (0, 0, 0, 0)
 
 	footNormal.AddView(btnRetry,0,0,footNormal.Width * 0.6,foot.Height)
 	footNormal.AddView(btnAbort,btnRetry.Width+padding,0,footNormal.Width * 0.4, foot.Height)
 	
 	footFiscal.Visible = False
-	footFiscal.AddView(btnZReport,0,0,btnFiscalWidth,footFiscal.Height)
-	footFiscal.AddView(btnXReport,btnFiscalWidth+padding,0,btnFiscalWidth,footFiscal.Height)
-	footFiscal.AddView(btnMenu,btnXReport.Left + btnXReport.Width + padding,0,btnMenuWidth,footFiscal.Height)
-	
+
 	changeStatus(PrinterConstants.ERR_NoError)
 	FoldView
 End Sub

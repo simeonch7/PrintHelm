@@ -50,7 +50,7 @@ Public Sub BuildScreen(Parent As Panel, buttonHolder As Panel)
 	
 	Parent.AddView(BG,0,0,Parent.Width,Parent.Height)
 
-	
+	 
 	BG.AddView(darkBG,0,0,BG.Width,BG.Height)
 	BG.BringToFront
 	darkBG.Color = Colors.ARGB(190,64,64,64)
@@ -116,9 +116,10 @@ Private Sub increment_Ready
 End Sub
 
 Private Sub show_Screen
+	Main.SCREEN_ID = Main.SCREEN_NOTIFICATIONS
+	
 	BG.Visible = True
 '	BG.BringToFront
-	
 	lblTitle.Text = Main.translate.GetString("msgPrintingStatusTitle")
 '	BG.SetVisibleAnimated(500, True)
 	outerHolder.SetLayoutAnimated(500, showLeft,outerHolder.Top, outerHolder.Width, outerHolder.Height)
@@ -135,6 +136,7 @@ Private Sub holderFake_Click
 End Sub
 
 Private Sub BG_Click
+	Main.SCREEN_ID = Main.SCREEN_SETTINGS
 	hide_Screen
 End Sub
 
