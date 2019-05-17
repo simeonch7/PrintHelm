@@ -259,10 +259,8 @@ private Sub LoadSavedPrinters
 		Log(LastException)
 	End Try
 End Sub
-'
+
 Private Sub ReadPrinters
-	'Clear printer settings file for debuging
-	'If File.Exists(File.DirDefaultExternal, "Printers.config") Then File.Delete(File.DirDefaultExternal, "Printers.config")
 	Try
 		ActivePrinters.Clear
 		If savedPrinters.Size > 0 Then
@@ -341,7 +339,7 @@ private Sub generateDefaultScripts
 	defaultScripts.Totals.Add("<Right><TotalCaption> <Total>")
 	defaultScripts.Totals.Add("<Right><PaymentsCaption> <Payments>")
 	defaultScripts.Totals.Add("<Right><ChangeCaption> <Change>")
-	'
+	
 	defaultScripts.Details.Add("<empty>")
 	defaultScripts.Footers.Add("<Center>Благодарим ви!")
 	defaultScripts.Footers.Add("<Right><Date> <Time>")

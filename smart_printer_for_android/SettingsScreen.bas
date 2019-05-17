@@ -194,14 +194,14 @@ Sub SettingsUI
 	settingsPanel.AddView(LabelAcPrinter, 0%x, language.Top + language.Height + 5%y, 100%x, 5%y) 
 	LabelAcPrinter.Gravity = Gravity.CENTER_HORIZONTAL
 	
-	settingsPanel.AddView(spnActivePrinter, 29%x, LabelAcPrinter.Top + LabelAcPrinter.Height + programdata.DefaultPadding, 41%x, 5%y)
+	settingsPanel.AddView(spnActivePrinter, 29%x, LabelAcPrinter.Top + LabelAcPrinter.Height + ProgramData.DefaultPadding, 41%x, 5%y)
 	
 	settingsPanel.AddView(statusBtn, 100%x - 12%x, 2%y, 10%x, 6%y)
 	
-	settingsPanel.AddView(btnPrinterAdd, 50%x - (15%x + 6 * programdata.DefaultPadding) / 2, spnActivePrinter.top + spnActivePrinter.Height + programdata.DefaultPadding, 5%x, 5%y)
-	settingsPanel.AddView(btnPrinterRemove, btnPrinterAdd.Left + btnPrinterAdd.Width + programdata.DefaultPadding, btnPrinterAdd.top, 5%x, 5%y)
-	settingsPanel.AddView(btnPrinterEdt, btnPrinterRemove.Left + btnPrinterRemove.Width + programdata.DefaultPadding, btnPrinterAdd.top, 5%x, 5%y)
-	settingsPanel.AddView(pnlEditImg, btnPrinterRemove.Left + btnPrinterRemove.Width + programdata.DefaultPadding, btnPrinterAdd.top, 5%x, 5%y)
+	settingsPanel.AddView(btnPrinterAdd, 50%x - (15%x + 6 * ProgramData.DefaultPadding) / 2, spnActivePrinter.top + spnActivePrinter.Height + ProgramData.DefaultPadding, 5%x, 5%y)
+	settingsPanel.AddView(btnPrinterRemove, btnPrinterAdd.Left + btnPrinterAdd.Width + ProgramData.DefaultPadding, btnPrinterAdd.top, 5%x, 5%y)
+	settingsPanel.AddView(btnPrinterEdt, btnPrinterRemove.Left + btnPrinterRemove.Width + ProgramData.DefaultPadding, btnPrinterAdd.top, 5%x, 5%y)
+	settingsPanel.AddView(pnlEditImg, btnPrinterRemove.Left + btnPrinterRemove.Width + ProgramData.DefaultPadding, btnPrinterAdd.top, 5%x, 5%y)
 	
 	'PrinterSettingsPanel
 	configPanel.AddView(LabelPrinter, 2%x, 2%y, 35%x, 5%y)
@@ -609,7 +609,6 @@ Private Sub EditPrinter_Click
 	Else
 		ToastMessageShow("No Active Printers", False)
 	End If
-	
 End Sub
 
 Public Sub exit_Click
@@ -627,7 +626,6 @@ Public Sub hideScreen
 	language.Enabled = True
 
 	countourPanel.SetLayoutAnimated(500, -100%x, 50%y, 100%x, 50%y)
-'	setVisible(False)
 End Sub
 
 
@@ -693,8 +691,8 @@ End Sub
 
 Sub countrySpinner_ItemClick (Position As Int, Value As Object)
 	UConfig.USConfig.country = Position
-	ToastMessageShow("Click back button to save configurations", False)
 	deviceprinterFill
+	UConfig.writeUSConfig
 End Sub
 
 Sub languageSpinner_ItemClick (Position As Int, Value As Object)
@@ -702,7 +700,7 @@ Sub languageSpinner_ItemClick (Position As Int, Value As Object)
 	Main.SelectedLanguage = Value
 	Main.translate.SetLanguage(Value)
 	InitialSetSignsRefresh
-	ToastMessageShow("Click back button to save configurations", False)
+	UConfig.writeUSConfig
 	
 End Sub
 
@@ -740,6 +738,7 @@ public Sub fillSettings
 	Dim fiscalMode As Boolean = CallSub(printerInfo.ref, "getFiscal_MemoryMode")
 	
 	runMap(m,fiscalMode)
+	
 End Sub
 
 Private Sub fillEditSettings(APrinterIndex As Int)
@@ -965,7 +964,6 @@ Private Sub checkConnectionParams As Boolean
 End Sub
 
 public Sub generateSettingView(Spnl As ScrollView, top As Int,  setting As Int, value As Object) As Int
-'	If controlsMap.ContainsKey(setting) Then Return top
 
 	Dim hold As Panel
 	Dim cHeight As Int = 40dip
@@ -1090,7 +1088,7 @@ public Sub generateSettingView(Spnl As ScrollView, top As Int,  setting As Int, 
 		
 	End Select
 	'Calculate next top
-	top = top + hold.Height + programdata.DefaultPadding
+	top = top + hold.Height + ProgramData.DefaultPadding
 	
 	Return top
 
@@ -1115,7 +1113,7 @@ private Sub GenerateHeader(SV As ScrollView,top As Int) As Int 'ignore
 	title.Gravity = Gravity.CENTER_VERTICAL + Gravity.LEFT
 '	HelperFunctions.Remove_Padding(title)
 	title.Padding = Array As Int (0, 0, 0, 0)
-	outHeaderHolder.AddView(title,0,0,outHeaderHolder.Width - cHeight - programdata.DefaultPadding,cHeight)
+	outHeaderHolder.AddView(title,0,0,outHeaderHolder.Width - cHeight - ProgramData.DefaultPadding,cHeight)
 	
 	'Build Add Button
 	btnAdd.Initialize("addHeader")
@@ -1123,16 +1121,16 @@ private Sub GenerateHeader(SV As ScrollView,top As Int) As Int 'ignore
 	HelperFunctions.Apply_ViewStyle(btnAdd, Colors.White, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_DISABLED, ProgramData.COLOR_BUTTON_DISABLED, 3)
 '	HelperFunctions.Remove_Padding(btnAdd)
 	btnAdd.Padding = Array As Int (0, 0, 0, 0)
-	outHeaderHolder.AddView(btnAdd,title.Left + title.Width + programdata.DefaultPadding,0,cHeight,cHeight)
+	outHeaderHolder.AddView(btnAdd,title.Left + title.Width + ProgramData.DefaultPadding,0,cHeight,cHeight)
 	
 	inHeaderHolder.Color = ProgramData.COLOR_BUTTON_NORMAL
 	
-	outHeaderHolder.AddView(inHeaderHolder,0,title.Top + title.Height + programdata.DefaultPadding,outHeaderHolder.Width,0)
+	outHeaderHolder.AddView(inHeaderHolder,0,title.Top + title.Height + ProgramData.DefaultPadding,outHeaderHolder.Width,0)
 	
-	outHeaderHolder.Height = inHeaderHolder.Top + inHeaderHolder.Height + programdata.DefaultPadding
+	outHeaderHolder.Height = inHeaderHolder.Top + inHeaderHolder.Height + ProgramData.DefaultPadding
 
 	
-	Return outHeaderHolder.Top + outHeaderHolder.Height + programdata.DefaultPadding
+	Return outHeaderHolder.Top + outHeaderHolder.Height + ProgramData.DefaultPadding
 End Sub
 
 private Sub addHeader_Click
@@ -1174,7 +1172,7 @@ Private Sub addHeader(value As String)
 	End If
 	
 	HelperFunctions.FitViewsInScroll(BTSettingsSV)
-	BTSettingsSV.ScrollPosition = outHeaderHolder.Top + outHeaderHolder.Height - programdata.DefaultPadding
+	BTSettingsSV.ScrollPosition = outHeaderHolder.Top + outHeaderHolder.Height - ProgramData.DefaultPadding
 
 End Sub
 
@@ -1195,7 +1193,7 @@ private Sub GenerateDetails(SV As ScrollView,top As Int) As Int 'ignore
 	title.Gravity = Gravity.CENTER_VERTICAL + Gravity.LEFT
 '	HelperFunctions.Remove_Padding(title)
 	title.Padding = Array As Int (0, 0, 0, 0)
-	outDetailesHolder.AddView(title,0,0,outDetailesHolder.Width - cHeight - programdata.DefaultPadding,cHeight)
+	outDetailesHolder.AddView(title,0,0,outDetailesHolder.Width - cHeight - ProgramData.DefaultPadding,cHeight)
 	
 	'Build Add Button
 	btnAdd.Initialize("addDetail")
@@ -1203,16 +1201,16 @@ private Sub GenerateDetails(SV As ScrollView,top As Int) As Int 'ignore
 	HelperFunctions.Apply_ViewStyle(btnAdd, Colors.White, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_DISABLED, ProgramData.COLOR_BUTTON_DISABLED, 3)
 '	HelperFunctions.Remove_Padding(btnAdd)
 	btnAdd.Padding = Array As Int (0, 0, 0, 0)
-	outDetailesHolder.AddView(btnAdd,title.Left + title.Width + programdata.DefaultPadding,0,cHeight,cHeight)
+	outDetailesHolder.AddView(btnAdd,title.Left + title.Width + ProgramData.DefaultPadding,0,cHeight,cHeight)
 	
 	inDetailesHolder.Color = ProgramData.COLOR_BUTTON_NORMAL
 	
-	outDetailesHolder.AddView(inDetailesHolder,0,title.Top + title.Height + programdata.DefaultPadding,outDetailesHolder.Width,0)
+	outDetailesHolder.AddView(inDetailesHolder,0,title.Top + title.Height + ProgramData.DefaultPadding,outDetailesHolder.Width,0)
 	
-	outDetailesHolder.Height = inDetailesHolder.Top + inDetailesHolder.Height + programdata.DefaultPadding
+	outDetailesHolder.Height = inDetailesHolder.Top + inDetailesHolder.Height + ProgramData.DefaultPadding
 
 	
-	Return outDetailesHolder.Top + outDetailesHolder.Height + programdata.DefaultPadding
+	Return outDetailesHolder.Top + outDetailesHolder.Height + ProgramData.DefaultPadding
 End Sub
 
 private Sub addDetail_Click
@@ -1250,7 +1248,7 @@ private Sub addDetail(value As String)
 	End If
 	
 	HelperFunctions.FitViewsInScroll(BTSettingsSV)
-	BTSettingsSV.ScrollPosition = outDetailesHolder.Top + outDetailesHolder.Height - programdata.DefaultPadding
+	BTSettingsSV.ScrollPosition = outDetailesHolder.Top + outDetailesHolder.Height - ProgramData.DefaultPadding
 End Sub
 
 'Totals
@@ -1270,7 +1268,7 @@ private Sub GenerateTotals(SV As ScrollView,top As Int) As Int 'ignore
 	title.Gravity = Gravity.CENTER_VERTICAL + Gravity.LEFT
 '	HelperFunctions.Remove_Padding(title)
 	title.Padding = Array As Int (0, 0, 0, 0)
-	outTotalsHolder.AddView(title,0,0,outTotalsHolder.Width - cHeight - programdata.DefaultPadding,cHeight)
+	outTotalsHolder.AddView(title,0,0,outTotalsHolder.Width - cHeight - ProgramData.DefaultPadding,cHeight)
 	
 	'Build Add Button
 	btnAdd.Initialize("addTotals")
@@ -1279,16 +1277,16 @@ private Sub GenerateTotals(SV As ScrollView,top As Int) As Int 'ignore
 	HelperFunctions.Apply_ViewStyle(btnAdd, Colors.White, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_DISABLED, ProgramData.COLOR_BUTTON_DISABLED, 3)
 '	HelperFunctions.Remove_Padding(btnAdd)
 	btnAdd.Padding = Array As Int (0, 0, 0, 0)
-	outTotalsHolder.AddView(btnAdd,title.Left + title.Width + programdata.DefaultPadding,0,cHeight,cHeight)
+	outTotalsHolder.AddView(btnAdd,title.Left + title.Width + ProgramData.DefaultPadding,0,cHeight,cHeight)
 	
 	inTotalsHolder.Color = ProgramData.COLOR_BUTTON_NORMAL
 	
-	outTotalsHolder.AddView(inTotalsHolder,0,title.Top + title.Height + programdata.DefaultPadding,outTotalsHolder.Width,0)
+	outTotalsHolder.AddView(inTotalsHolder,0,title.Top + title.Height + ProgramData.DefaultPadding,outTotalsHolder.Width,0)
 	
-	outTotalsHolder.Height = inTotalsHolder.Top + inTotalsHolder.Height + programdata.DefaultPadding
+	outTotalsHolder.Height = inTotalsHolder.Top + inTotalsHolder.Height + ProgramData.DefaultPadding
 
 	
-	Return outTotalsHolder.Top + outTotalsHolder.Height + programdata.DefaultPadding
+	Return outTotalsHolder.Top + outTotalsHolder.Height + ProgramData.DefaultPadding
 End Sub
 
 private Sub addTotals_Click
@@ -1322,7 +1320,7 @@ private Sub addTotals(value As String)
 	End If
 	
 	HelperFunctions.FitViewsInScroll(BTSettingsSV)
-	BTSettingsSV.ScrollPosition = outTotalsHolder.Top + outTotalsHolder.Height - programdata.DefaultPadding
+	BTSettingsSV.ScrollPosition = outTotalsHolder.Top + outTotalsHolder.Height - ProgramData.DefaultPadding
 End Sub
 
 'Footer
@@ -1342,7 +1340,7 @@ private Sub GenerateFooter(SV As ScrollView,top As Int) As Int 'ignore
 	title.Gravity = Gravity.CENTER_VERTICAL + Gravity.LEFT
 '	HelperFunctions.Remove_Padding(title)
 	title.Padding = Array As Int (0, 0, 0, 0)
-	outFooterHolder.AddView(title,0,0,outFooterHolder.Width - cHeight - programdata.DefaultPadding,cHeight)
+	outFooterHolder.AddView(title,0,0,outFooterHolder.Width - cHeight - ProgramData.DefaultPadding,cHeight)
 	
 	'Build Add Button
 	btnAdd.Initialize("addFooter")
@@ -1350,15 +1348,15 @@ private Sub GenerateFooter(SV As ScrollView,top As Int) As Int 'ignore
 	HelperFunctions.Apply_ViewStyle(btnAdd, Colors.White, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_NORMAL, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_PRESSED, ProgramData.COLOR_BUTTON_DISABLED, ProgramData.COLOR_BUTTON_DISABLED, 3)
 '	HelperFunctions.Remove_Padding(btnAdd)
 	btnAdd.Padding = Array As Int (0, 0, 0, 0)
-	outFooterHolder.AddView(btnAdd,title.Left + title.Width + programdata.DefaultPadding,0,cHeight,cHeight)
+	outFooterHolder.AddView(btnAdd,title.Left + title.Width + ProgramData.DefaultPadding,0,cHeight,cHeight)
 	
 	inFooterHolder.Color = ProgramData.COLOR_BUTTON_NORMAL
 	
-	outFooterHolder.AddView(inFooterHolder,0,title.Top + title.Height + programdata.DefaultPadding,outFooterHolder.Width,0)
+	outFooterHolder.AddView(inFooterHolder,0,title.Top + title.Height + ProgramData.DefaultPadding,outFooterHolder.Width,0)
 	
-	outFooterHolder.Height = inFooterHolder.Top + inFooterHolder.Height + programdata.DefaultPadding
+	outFooterHolder.Height = inFooterHolder.Top + inFooterHolder.Height + ProgramData.DefaultPadding
 	
-	Return outFooterHolder.Top+outFooterHolder.Height + programdata.DefaultPadding
+	Return outFooterHolder.Top+outFooterHolder.Height + ProgramData.DefaultPadding
 End Sub
 
 private Sub addFooter_Click
@@ -1388,7 +1386,7 @@ private Sub addFooter(value As String)
 	outFooterHolder.Height = outFooterHolder.Height + edtFooter.Height + padding
 	
 	HelperFunctions.FitViewsInScroll(BTSettingsSV)
-	BTSettingsSV.ScrollPosition = outFooterHolder.Top + outFooterHolder.Height - programdata.DefaultPadding
+	BTSettingsSV.ScrollPosition = outFooterHolder.Top + outFooterHolder.Height - ProgramData.DefaultPadding
 End Sub
 #End Region
 

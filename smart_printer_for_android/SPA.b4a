@@ -40,16 +40,16 @@ Library8=serial
 Library9=network
 ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="17" android:targetSdkVersion="26"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~'End of default text.~\n~~\n~AddPermission(android.hardware.usb.action.USB_DEVICE_DETACHED)~\n~CreateResource(xml, device_filter.xml,~\n~<resources>		~\n~    <usb-device />	~\n~</resources>~\n~)~\n~AddApplicationText(~\n~<activity android:name=".main" >~\n~   <intent-filter>~\n~    <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />~\n~   </intent-filter>  ~\n~    <meta-data android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" android:resource="@xml/device_filter" />   ~\n~ </activity>~\n~)
 Module1=SPAservice
-Module10=SettingsScreen
-Module11=PrinterVirtual
-Module12=ProgramData
-Module13=ScriptMaster
-Module14=Utilities
-Module15=Countries
-Module16=Translator
-Module17=DataTypes
-Module18=PrinterConstants
-Module19=HelperFunctions
+Module10=IPscreen
+Module11=ScriptMaster
+Module12=HelperFunctions
+Module13=PrinterVirtual
+Module14=ProgramData
+Module15=Utilities
+Module16=Countries
+Module17=Translator
+Module18=DataTypes
+Module19=PrinterConstants
 Module2=PrinterStatusScreen
 Module20=BytesBuilder
 Module21=UConfig
@@ -58,13 +58,13 @@ Module23=Device
 Module24=Version
 Module25=B4XEval
 Module26=PriceMathFunctions
-Module3=IPscreen
-Module4=ImageResources
-Module5=PrinterMain
-Module6=ButtonWithNotifications
-Module7=PrinterStatusSVItem
-Module8=PrinterPriceCalculator
-Module9=PrinterPOS
+Module3=ImageResources
+Module4=PrinterMain
+Module5=ButtonWithNotifications
+Module6=PrinterStatusSVItem
+Module7=PrinterPriceCalculator
+Module8=PrinterPOS
+Module9=SettingsScreen
 NumberOfFiles=11
 NumberOfLibraries=15
 NumberOfModules=26
@@ -73,7 +73,7 @@ Version=8.8
  #Region  Project Attributes 
 	#ApplicationLabel: Smart Printer for Android
 	#VersionCode: 1
-	#VersionName: 
+	#VersionName: 1
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: portrait
 	#CanInstallToExternalStorage: False
@@ -137,7 +137,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	UConfig.LoadSavedUSConfig
 	
 	ProgramData.Initialize
-	programdata.Initialize
+	ProgramData.Initialize
 	
 	loginScr.Initialize
 	loginScr.build_Screen(Activity)

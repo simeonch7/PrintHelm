@@ -76,13 +76,12 @@ End Sub
 
 private Sub localNET As Boolean
 	
-	Dim ssocket As ServerSocket
+	Dim ssocket As ServerSocket	'ignore
 	
-	Log("Ip address: " & ssocket.GetMyWifiIP)
-	Log("<<<<<<<!>>>>>>>")	
+	Log("Android device IP address: " & ssocket.GetMyWifiIP)
 	
 	If ssocket.GetMyWifiIP = "127.0.0.1" Then
-		PrinterIP.Text = Main.translate.GetString("NolocalNet")  '"Device not connected to local network"
+		PrinterIP.Text = Main.translate.GetString("NolocalNet")
 		Return False
 	Else
 		PrinterIP.Text = ssocket.GetMyWifiIP
@@ -122,7 +121,7 @@ Private Sub PrinterPort_FocusChanged (HasFocus As Boolean)
 	End If
 End Sub
 
-'Метода, който вкарва потребителя в системата / Method for log in 
+'Метода, който вкарва потребителя в настрйките на приложението и при конфигурациите на принтерите / Method for log in 
 Private Sub ButtonloginPanel_Click
 	SettingsScr.Initialize
 '	Hide

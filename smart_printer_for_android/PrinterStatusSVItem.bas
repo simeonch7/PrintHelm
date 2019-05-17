@@ -206,26 +206,6 @@ End Sub
 
 Private Sub AditionalActions_Click
 	cadAlertDialog.display_InputList(additionalOptions, True, -1, Main.translate.GetString("strAdditionalPrinterOptions"))
-	
-End Sub
-
-Private Sub InputList_Checked(option As String, optionId As Int)
-'	CallSub2(Main,"show_KeyboardForPrinterOption",Array As Object(name.Text,option,Me))
-	wait For KeyboardAcceptClick_Printer(input As String)
-
-	If input = 0 Then Return
-	Dim job As TPrnJobPayInOut
-	job.PaySum = input
-	
-	Select optionId 
-		Case 0 
-			job.PayType = 1	'Внасяне
-		Case 1
-			job.PayType = 2	'Изплащане
-	End Select
-	
-	CallSub2(driverReference,"AddJob",job)
-	CallSubDelayed(driverReference,"doJobs")
 End Sub
 
 ' Метод променящ иконата на принтера в Принтерното меню.
@@ -261,8 +241,8 @@ Private Sub head_Click
 End Sub
 
 Private Sub FoldView
-	content.Height = 0
 	content.Visible = False
+	content.Height = 0
 End Sub
 
 Private Sub ExpandView
